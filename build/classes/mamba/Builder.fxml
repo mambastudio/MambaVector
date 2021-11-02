@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Menu?>
+<?import javafx.scene.control.MenuBar?>
+<?import javafx.scene.control.MenuItem?>
+<?import javafx.scene.control.Separator?>
+<?import javafx.scene.control.SplitPane?>
+<?import javafx.scene.control.ToolBar?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.VBox?>
+
+<StackPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="800.0" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mamba.BuilderController">
+   <children>
+      <BorderPane prefHeight="200.0" prefWidth="200.0">
+         <left>
+            <VBox prefHeight="400.0" spacing="2.0" BorderPane.alignment="CENTER">
+               <children>
+                  <Button minWidth="30.0" mnemonicParsing="false" onAction="#addCircle" text="C" />
+                  <Button minWidth="30.0" mnemonicParsing="false" onAction="#addRectangle" text="R" />
+                  <Button minWidth="30.0" mnemonicParsing="false" text="L" />
+               </children>
+               <padding>
+                  <Insets left="1.0" right="1.0" top="1.0" />
+               </padding>
+            </VBox>
+         </left>
+         <top>
+            <VBox BorderPane.alignment="CENTER">
+               <children>
+                  <MenuBar>
+                    <menus>
+                      <Menu mnemonicParsing="false" text="File">
+                        <items>
+                          <MenuItem mnemonicParsing="false" text="Close" />
+                        </items>
+                      </Menu>
+                      <Menu mnemonicParsing="false" text="Help">
+                        <items>
+                          <MenuItem mnemonicParsing="false" text="About" />
+                        </items>
+                      </Menu>
+                    </menus>
+                  </MenuBar>
+                  <ToolBar minHeight="-Infinity" minWidth="-Infinity" prefHeight="32.0" prefWidth="800.0">
+                     <items>
+                        <Button mnemonicParsing="false" onAction="#clearAll" text="CA" />
+                     </items>
+                     <padding>
+                        <Insets bottom="2.0" left="2.0" top="2.0" />
+                     </padding>
+                     <VBox.margin>
+                        <Insets />
+                     </VBox.margin>
+                  </ToolBar>
+               </children>
+            </VBox>
+         </top>
+         <center>
+            <SplitPane dividerPositions="0.6762402088772846" prefHeight="200.0" prefWidth="200.0" BorderPane.alignment="CENTER">
+               <items>
+                  <StackPane fx:id="baseDrawPanel" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="150.0" prefWidth="200.0" />
+                  <VBox fx:id="propertyPanel" prefHeight="200.0" prefWidth="100.0" SplitPane.resizableWithParent="false" />
+               </items>
+            </SplitPane>
+         </center>
+         <bottom>
+            <VBox BorderPane.alignment="CENTER">
+               <children>
+                  <Separator prefWidth="200.0" />
+                  <HBox prefHeight="29.0" prefWidth="600.0" />
+               </children>
+            </VBox>
+         </bottom>
+      </BorderPane>
+   </children>
+</StackPane>
