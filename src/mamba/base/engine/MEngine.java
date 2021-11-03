@@ -64,12 +64,13 @@ public class MEngine implements MambaEngine2D {
     @Override
     public void removeAll() {
         listShapes.clear();
+        selectedShape.set(null);
         draw();
     }
 
     @Override
     public void remove(MambaShape shape) {
-        listShapes.remove(shape);       
+        listShapes.remove(shape);            
         draw();
     }
 

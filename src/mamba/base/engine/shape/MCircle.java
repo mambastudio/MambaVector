@@ -32,7 +32,7 @@ public class MCircle implements MambaShape<MEngine> {
     private final DoubleProperty width = new SimpleDoubleProperty(90);
     private final DoubleProperty height = new SimpleDoubleProperty(90);
     private final ObjectProperty<Color> solidColor = new SimpleObjectProperty(Color.YELLOW);
-    private final DoubleProperty lineWidth = new SimpleDoubleProperty(0);
+    private final DoubleProperty lineWidth = new SimpleDoubleProperty(0.001);
     private final ObjectProperty<Color> lineColor = new SimpleObjectProperty(Color.BLACK);
     
     private final DoubleProperty translateX = new SimpleDoubleProperty(50);
@@ -74,15 +74,15 @@ public class MCircle implements MambaShape<MEngine> {
         graphicContext.save();
         graphicContext.setStroke(Color.rgb(230, 230, 230));
         graphicContext.setLineWidth(0.5);
-        graphicContext.strokeRect(anchorX.doubleValue() + translateX.doubleValue(), 
-                                  anchorY.doubleValue() + translateY.doubleValue(), 
-                                   width.doubleValue(), height.doubleValue());
+        graphicContext.strokeRect(anchorX.doubleValue() + translateX.doubleValue() - lineWidth.doubleValue()/2, 
+                                  anchorY.doubleValue() + translateY.doubleValue() - lineWidth.doubleValue()/2, 
+                                  width.doubleValue() + lineWidth.doubleValue(), height.doubleValue() + lineWidth.doubleValue());
         graphicContext.setStroke(Color.rgb(80, 80, 80));
         graphicContext.setLineWidth(2);
         graphicContext.setLineDashes(5);
-        graphicContext.strokeRect(anchorX.doubleValue() + translateX.doubleValue(), 
-                                anchorY.doubleValue() + translateY.doubleValue(), 
-                                width.doubleValue(), height.doubleValue());
+        graphicContext.strokeRect(anchorX.doubleValue() + translateX.doubleValue() - lineWidth.doubleValue()/2, 
+                                  anchorY.doubleValue() + translateY.doubleValue() - lineWidth.doubleValue()/2, 
+                                  width.doubleValue() + lineWidth.doubleValue(), height.doubleValue() + lineWidth.doubleValue());
         graphicContext.restore();
     }
 
@@ -97,9 +97,9 @@ public class MCircle implements MambaShape<MEngine> {
     @Override
     public boolean contains(Point2D p) {
         BoundingBox bounds = new BoundingBox(
-                anchorX.doubleValue() + translateX.doubleValue(), 
-                anchorY.doubleValue() + translateY.doubleValue(), 
-                width.doubleValue(), height.doubleValue());
+                                anchorX.doubleValue() + translateX.doubleValue() - lineWidth.doubleValue()/2, 
+                                anchorY.doubleValue() + translateY.doubleValue() - lineWidth.doubleValue()/2, 
+                                width.doubleValue() + lineWidth.doubleValue(), height.doubleValue() + lineWidth.doubleValue());
         return bounds.contains(p);
     }
 
