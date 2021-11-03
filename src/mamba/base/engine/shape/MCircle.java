@@ -32,6 +32,8 @@ public class MCircle implements MambaShape<MEngine> {
     private final DoubleProperty width = new SimpleDoubleProperty(90);
     private final DoubleProperty height = new SimpleDoubleProperty(90);
     private final ObjectProperty<Color> solidColor = new SimpleObjectProperty(Color.YELLOW);
+    private final DoubleProperty lineWidth = new SimpleDoubleProperty(0);
+    private final ObjectProperty<Color> lineColor = new SimpleObjectProperty(Color.BLACK);
     
     private final DoubleProperty translateX = new SimpleDoubleProperty(50);
     private final DoubleProperty translateY = new SimpleDoubleProperty(50);
@@ -58,6 +60,12 @@ public class MCircle implements MambaShape<MEngine> {
         graphicContext.fillOval(anchorX.doubleValue() + translateX.doubleValue(), 
                                 anchorY.doubleValue() + translateY.doubleValue(), 
                                 width.doubleValue(), height.doubleValue());
+        
+        graphicContext.setStroke(lineColor.get());
+        graphicContext.setLineWidth(lineWidth.doubleValue());
+        graphicContext.strokeOval(anchorX.doubleValue() + translateX.doubleValue(), 
+                                  anchorY.doubleValue() + translateY.doubleValue(), 
+                                  width.doubleValue(), height.doubleValue());
         graphicContext.restore();
     }
 
@@ -166,7 +174,37 @@ public class MCircle implements MambaShape<MEngine> {
     public ObjectProperty<Color> solidColorProperty(){
         return solidColor;
     }
-
+    
+    public double getLineWidth()
+    {        
+        return this.lineWidth.doubleValue();
+    }
+    
+    public void setLineWidth(double lineWidth)
+    {       
+        this.lineWidth.set(lineWidth);
+        this.getEngine2D().draw();
+    }
+    
+    public DoubleProperty lineWidthProperty()
+    {
+        return lineWidth;
+    }
+    
+    public void setLineColor(Color lineColor)
+    {       
+        this.lineColor.set(lineColor);
+        this.getEngine2D().draw();
+    }
+    
+    public Color getLineColor()
+    {
+        return this.lineColor.get();
+    }
+    
+    public ObjectProperty<Color> lineColorProperty(){
+        return lineColor;
+    }
 
     @Override
     public void translate(double x, double y) {
