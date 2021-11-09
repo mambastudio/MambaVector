@@ -40,7 +40,7 @@ public class MBeanPropertySheet<P extends MBeanPropertyItem, E extends MInterfac
         this.propertyEditorFactory = callBack;
     }
     
-    private class PropertyPane extends GridPane {
+    private final class PropertyPane extends GridPane {
         public PropertyPane( List<P> properties ) 
         {
             this( properties, 0 );

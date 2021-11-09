@@ -21,6 +21,7 @@ import mamba.base.engine.MEngine;
 import mamba.beans.MBeanPropertyItem;
 import mamba.beans.MBeanPropertySheet;
 import mamba.beans.MBeanPropertyUtility;
+import mamba.beans.editors.MDefaultDisplayNameFactory;
 import mamba.beans.editors.MDefaultEditorFactory;
 
 /**
@@ -136,7 +137,7 @@ public class ResizeableCanvas extends Region implements MambaCanvas<MEngine, VBo
         if(shape != null && shape.getState() != DISPLAY)
         {
             propertyDisplayPanel.getChildren().clear();
-            ObservableList<MBeanPropertyItem> properties = MBeanPropertyUtility.getProperties(shape);
+            ObservableList<MBeanPropertyItem> properties = MBeanPropertyUtility.getProperties(shape, new MDefaultDisplayNameFactory());
             MBeanPropertySheet propertySheet = new MBeanPropertySheet();
             propertySheet.setFactory(new MDefaultEditorFactory());
             propertySheet.init(properties);

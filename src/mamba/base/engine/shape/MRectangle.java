@@ -34,6 +34,8 @@ public class MRectangle implements MambaShape<MEngine>{
     private final DoubleProperty width = new SimpleDoubleProperty(90);
     private final DoubleProperty height = new SimpleDoubleProperty(90);
     private final ObjectProperty<Color> solidColor = new SimpleObjectProperty(Color.YELLOW);
+    private final DoubleProperty lineWidth = new SimpleDoubleProperty(0.001);
+    private final ObjectProperty<Color> lineColor = new SimpleObjectProperty(Color.BLACK);
     private final DoubleProperty arcWidth = new SimpleDoubleProperty(0);
     private final DoubleProperty arcHeight = new SimpleDoubleProperty(0);
     
@@ -130,6 +132,37 @@ public class MRectangle implements MambaShape<MEngine>{
     public DoubleProperty arcHeightProperty(){
         return arcHeight;
     }
+    
+    public double getLineWidth()
+    {        
+        return this.lineWidth.doubleValue();
+    }
+    
+    public void setLineWidth(double lineWidth)
+    {       
+        this.lineWidth.set(lineWidth);
+        this.getEngine2D().draw();
+    }
+    
+    public DoubleProperty lineWidthProperty()
+    {
+        return lineWidth;
+    }
+    
+    public void setLineColor(Color lineColor)
+    {       
+        this.lineColor.set(lineColor);
+        this.getEngine2D().draw();
+    }
+    
+    public Color getLineColor()
+    {
+        return this.lineColor.get();
+    }
+    
+    public ObjectProperty<Color> lineColorProperty(){
+        return lineColor;
+    }
 
     @Override
     public void translate(double x, double y) {
@@ -173,8 +206,13 @@ public class MRectangle implements MambaShape<MEngine>{
                                 anchorY.doubleValue() + translateY.doubleValue(), 
                                 width.doubleValue(), height.doubleValue(),
                                 arcWidth.doubleValue(), arcHeight.doubleValue());
+        graphicContext.setStroke(lineColor.get());
+        graphicContext.setLineWidth(lineWidth.doubleValue());
+        graphicContext.strokeRoundRect(anchorX.doubleValue() + translateX.doubleValue(), 
+                                  anchorY.doubleValue() + translateY.doubleValue(), 
+                                  width.doubleValue(), height.doubleValue(),
+                                  arcWidth.doubleValue(), arcHeight.doubleValue());
         
-        drawSelect();
         graphicContext.restore();
     }
 
@@ -182,17 +220,19 @@ public class MRectangle implements MambaShape<MEngine>{
     public void drawSelect() {
         if(shapeState == SELECT)
         {
+            graphicContext.save();
             graphicContext.setStroke(Color.rgb(230, 230, 230));
             graphicContext.setLineWidth(0.5);
-            graphicContext.strokeRect(anchorX.doubleValue() + translateX.doubleValue(), 
-                                      anchorY.doubleValue() + translateY.doubleValue(), 
-                                       width.doubleValue(), height.doubleValue());
+            graphicContext.strokeRect(anchorX.doubleValue() + translateX.doubleValue() - lineWidth.doubleValue()/2, 
+                                  anchorY.doubleValue() + translateY.doubleValue() - lineWidth.doubleValue()/2, 
+                                  width.doubleValue() + lineWidth.doubleValue(), height.doubleValue() + lineWidth.doubleValue());
             graphicContext.setStroke(Color.rgb(80, 80, 80));
             graphicContext.setLineWidth(2);
             graphicContext.setLineDashes(5);
-            graphicContext.strokeRect(anchorX.doubleValue() + translateX.doubleValue(), 
-                                    anchorY.doubleValue() + translateY.doubleValue(), 
-                                    width.doubleValue(), height.doubleValue());
+            graphicContext.strokeRect(anchorX.doubleValue() + translateX.doubleValue() - lineWidth.doubleValue()/2, 
+                                  anchorY.doubleValue() + translateY.doubleValue() - lineWidth.doubleValue()/2, 
+                                  width.doubleValue() + lineWidth.doubleValue(), height.doubleValue() + lineWidth.doubleValue());
+            graphicContext.restore();
         }
     }
 
@@ -207,9 +247,9 @@ public class MRectangle implements MambaShape<MEngine>{
     @Override
     public boolean contains(Point2D p) {
         BoundingBox bounds = new BoundingBox(
-                anchorX.doubleValue() + translateX.doubleValue(), 
-                anchorY.doubleValue() + translateY.doubleValue(), 
-                width.doubleValue(), height.doubleValue());
+                                anchorX.doubleValue() + translateX.doubleValue() - lineWidth.doubleValue()/2, 
+                                anchorY.doubleValue() + translateY.doubleValue() - lineWidth.doubleValue()/2, 
+                                width.doubleValue() + lineWidth.doubleValue(), height.doubleValue() + lineWidth.doubleValue());
         return bounds.contains(p);
     }
 

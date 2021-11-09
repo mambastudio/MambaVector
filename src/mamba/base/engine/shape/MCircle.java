@@ -14,7 +14,6 @@ import javafx.geometry.Point2D;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
 import mamba.base.MambaShape;
-import static mamba.base.MambaShape.ShapeState.SELECT;
 import mamba.base.engine.MEngine;
 
 /**

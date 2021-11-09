@@ -50,7 +50,7 @@
                         <Button mnemonicParsing="false" onAction="#clearAll" text="CA" />
                      </items>
                      <padding>
-                        <Insets bottom="2.0" left="2.0" top="2.0" />
+                        <Insets bottom="2.0" left="1.0" top="2.0" />
                      </padding>
                      <VBox.margin>
                         <Insets />

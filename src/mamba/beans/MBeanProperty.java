@@ -17,7 +17,7 @@ import mamba.beans.light.MPropertyDescriptor;
  *
  * @author user
  */
-public class MBeanProperty implements MBeanPropertyItem{
+public final class MBeanProperty implements MBeanPropertyItem{
     public static final String CATEGORY_LABEL_KEY = "propertysheet.item.category.label";
     
     private final Object bean;
@@ -69,8 +69,9 @@ public class MBeanProperty implements MBeanPropertyItem{
     public Object getValue() {
         try {
             return this.readMethod.invoke(this.bean);
-        } catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
-            e.printStackTrace();
+        } catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException | NullPointerException e) {
+            System.err.println(e);
+            System.out.println(getName());
             return null;
         }
     }
