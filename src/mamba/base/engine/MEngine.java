@@ -9,6 +9,8 @@ import java.util.ArrayList;
 import java.util.List;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.geometry.Point2D;
 import javafx.scene.canvas.GraphicsContext;
 import mamba.base.MambaEngine2D;
@@ -21,15 +23,21 @@ import mamba.base.MambaShape;
 public class MEngine implements MambaEngine2D {
     private GraphicsContext graphicContext;
     private final List<MambaShape> listShapes;
-    private ObjectProperty<MambaShape> selectedShape = null;
-    private ObjectProperty<MambaShape> expertShape = null;
+    private ObjectProperty<MambaShape> selectedShape = null;   
+    
+    //for controlling morphing of underlying shape
+    private ObservableList<MambaShape> anchorShapes = null; 
     
     public MEngine()
     {
         graphicContext = null;
         listShapes = new ArrayList<>();
         selectedShape = new SimpleObjectProperty();
-        expertShape = new SimpleObjectProperty();
+        anchorShapes = FXCollections.observableArrayList(); //currently empty
+        
+        selectedShape.addListener((o, ov, nv) ->{
+            initAnchorShapes();
+        });
     }
 
     @Override
@@ -50,7 +58,13 @@ public class MEngine implements MambaEngine2D {
             shape.draw();
         });
         if(isSelected())
+        {
+            
             selectedShape.get().drawSelect();
+            anchorShapes.forEach(shape->{
+                shape.draw();
+            });
+        }
     }
 
     @Override
@@ -122,4 +136,11 @@ public class MEngine implements MambaEngine2D {
         return selectedShape;
     }
     
+    public void initAnchorShapes()
+    {
+        anchorShapes.removeAll(anchorShapes);
+            if(selectedShape.get() != null)
+                anchorShapes.addAll(selectedShape.get().getAnchorShapes());
+    }
+       
 }

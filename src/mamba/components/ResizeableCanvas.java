@@ -5,6 +5,7 @@
  */
 package mamba.components;
 
+import javafx.application.Platform;
 import javafx.collections.ObservableList;
 import javafx.geometry.Point2D;
 import javafx.scene.canvas.Canvas;
@@ -16,7 +17,6 @@ import mamba.base.MambaCanvas;
 import mamba.base.MambaShape;
 import mamba.base.MambaShape.ShapeState;
 import static mamba.base.MambaShape.ShapeState.DISPLAY;
-import static mamba.base.MambaShape.ShapeState.EXPERT;
 import mamba.base.engine.MEngine;
 import mamba.beans.MBeanPropertyItem;
 import mamba.beans.MBeanPropertySheet;
@@ -28,14 +28,14 @@ import mamba.beans.editors.MDefaultEditorFactory;
  *
  * @author user
  */
-public class ResizeableCanvas extends Region implements MambaCanvas<MEngine, VBox>
+public final class ResizeableCanvas extends Region implements MambaCanvas<MEngine, VBox>
 {
     private final Canvas canvas;
     private MEngine engine2D = null;
     private long lastClickTime = 0;
       
     private VBox propertyDisplayPanel = null;
-           
+               
     public ResizeableCanvas(double width, double height) 
     {
         //set the width and height of this and the canvas as the same
@@ -89,8 +89,7 @@ public class ResizeableCanvas extends Region implements MambaCanvas<MEngine, VBo
     
     public void mousePressed(MouseEvent e)
     {        
-        
-        
+      
         //remove selection drawing first
         MambaShape previousSelected = engine2D.getSelected();        
         if(previousSelected != null){
@@ -126,8 +125,10 @@ public class ResizeableCanvas extends Region implements MambaCanvas<MEngine, VBo
         if(e.isPrimaryButtonDown() && engine2D.isSelected())
         {        
             Point2D p = new Point2D(e.getX(), e.getY());
-            engine2D.getSelected().translate(p.getX(), p.getY());
-            engine2D.draw();
+            engine2D.getSelected().translate(p.getX(), p.getY());    
+            engine2D.initAnchorShapes();
+            Platform.runLater(()->engine2D.draw());
+           
         }
         
     }

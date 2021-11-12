@@ -9,11 +9,14 @@ import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleDoubleProperty;
 import javafx.beans.property.SimpleObjectProperty;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.geometry.BoundingBox;
 import javafx.geometry.Point2D;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
 import mamba.base.MambaShape;
+import static mamba.base.MambaShape.ShapeState.EXPERT;
 import mamba.base.engine.MEngine;
 
 /**
@@ -87,10 +90,9 @@ public class MCircle implements MambaShape<MEngine> {
 
     @Override
     public BoundingBox getBounds() {
-        return new BoundingBox( anchorX.doubleValue() + translateX.doubleValue(), 
-                                anchorY.doubleValue() + translateY.doubleValue(), 
-                                width.doubleValue(), 
-                                height.doubleValue());
+        return new BoundingBox(anchorX.doubleValue() + translateX.doubleValue() - lineWidth.doubleValue()/2, 
+                                anchorY.doubleValue() + translateY.doubleValue() - lineWidth.doubleValue()/2, 
+                                width.doubleValue() + lineWidth.doubleValue(), height.doubleValue() + lineWidth.doubleValue());
     }
 
     @Override
@@ -130,7 +132,9 @@ public class MCircle implements MambaShape<MEngine> {
     public void setWidth(double width)
     {
         this.width.set(width);
+        engine2D.initAnchorShapes();
         this.getEngine2D().draw();
+        
     }
     
     public double getWidth()
@@ -141,7 +145,9 @@ public class MCircle implements MambaShape<MEngine> {
     public void setHeight(double height)
     {       
         this.height.set(height);
+        engine2D.initAnchorShapes();
         this.getEngine2D().draw();
+        
     }
     
     public double getHeight()
@@ -152,7 +158,9 @@ public class MCircle implements MambaShape<MEngine> {
     public void setSolidColor(Color solidColor)
     {       
         this.solidColor.set(solidColor);
+        engine2D.initAnchorShapes();
         this.getEngine2D().draw();
+        
     }
     
     public Color getSolidColor()
@@ -182,7 +190,9 @@ public class MCircle implements MambaShape<MEngine> {
     public void setLineWidth(double lineWidth)
     {       
         this.lineWidth.set(lineWidth);
+        engine2D.initAnchorShapes();
         this.getEngine2D().draw();
+      
     }
     
     public DoubleProperty lineWidthProperty()
@@ -193,7 +203,9 @@ public class MCircle implements MambaShape<MEngine> {
     public void setLineColor(Color lineColor)
     {       
         this.lineColor.set(lineColor);
+        engine2D.initAnchorShapes();
         this.getEngine2D().draw();
+        
     }
     
     public Color getLineColor()
@@ -222,5 +234,33 @@ public class MCircle implements MambaShape<MEngine> {
         this.offset = offset;
     }
     
+    @Override
+    public ObservableList<MambaShape> getAnchorShapes()
+    {
+        ObservableList<MambaShape> anchorShapes = FXCollections.observableArrayList();
+        
+        BoundingBox bound = getBounds();
+                
+        anchorShapes.add(getAnchorShape(bound.getMinX() - 5, bound.getMinY() - 5));
+        anchorShapes.add(getAnchorShape(bound.getMaxX() - 5, bound.getMaxY() - 5));
+        anchorShapes.add(getAnchorShape(bound.getMinX() - 5, bound.getMaxY() - 5));
+        anchorShapes.add(getAnchorShape(bound.getMaxX() - 5, bound.getMinY() - 5));
+        
+        return anchorShapes;
+    }
     
+    private MCircle getAnchorShape(double x, double y)
+    {
+        MCircle anchorCircle = new MCircle();
+        anchorCircle.width.set(10);
+        anchorCircle.height.set(10);
+        anchorCircle.translateX.set(x);
+        anchorCircle.translateY.set(y);
+        anchorCircle.solidColor.setValue(Color.web("#8099FF"));
+        anchorCircle.lineWidth.setValue(1);
+        anchorCircle.setState(EXPERT);
+        anchorCircle.setGraphicContext(getGraphicsContext());
+        anchorCircle.setEngine(getEngine2D());
+        return anchorCircle;
+    }
 }

@@ -6,9 +6,15 @@
 package mamba.base;
 
 import javafx.beans.property.DoubleProperty;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.geometry.BoundingBox;
 import javafx.geometry.Point2D;
 import javafx.scene.canvas.GraphicsContext;
+import static mamba.base.MambaShape.ShapeState.ANIMATION;
+import static mamba.base.MambaShape.ShapeState.DISPLAY;
+import static mamba.base.MambaShape.ShapeState.EXPERT;
+import static mamba.base.MambaShape.ShapeState.SELECT;
 
 /**
  *
@@ -36,8 +42,33 @@ public interface MambaShape<Engine2D extends MambaEngine2D> {
     public ShapeState getState();
     public void setState(ShapeState shapeState);
     
+    default boolean isDisplay()
+    {
+        return getState() == DISPLAY;
+    }
+    
+    default boolean isSelect()
+    {
+        return getState() == SELECT;
+    }
+    
+    default boolean isAnimation()
+    {
+        return getState() == ANIMATION;
+    }
+    
+    default boolean isExpert()
+    {
+        return getState() == EXPERT;
+    }
+    
     default String getSVGString()
     {
         return null;
+    }
+    
+    default ObservableList<MambaShape> getAnchorShapes()
+    {
+        return FXCollections.emptyObservableList();
     }
 }
