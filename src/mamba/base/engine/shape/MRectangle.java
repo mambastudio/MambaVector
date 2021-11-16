@@ -15,6 +15,7 @@ import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
 import mamba.base.MambaShape;
 import static mamba.base.MambaShape.ShapeState.SELECT;
+import mamba.base.MambaSupplierVoid;
 import mamba.base.engine.MEngine;
 
 /**
@@ -261,6 +262,16 @@ public class MRectangle implements MambaShape<MEngine>{
     @Override
     public void setState(ShapeState shapeState) {
         this.shapeState = shapeState;
+    }
+
+    @Override
+    public void initProperties() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public void setInitPropertiesCall(MambaSupplierVoid msv) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
     
 }
