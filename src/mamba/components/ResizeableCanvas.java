@@ -92,7 +92,7 @@ public final class ResizeableCanvas extends Region implements MambaCanvas<MEngin
       
         //remove selection drawing first
         MambaShape previousSelected = engine2D.getSelected();        
-        if(previousSelected != null){
+        if(previousSelected != null && !previousSelected.isExpert()){
             previousSelected.setState(ShapeState.DISPLAY);
             engine2D.draw();
         }
@@ -104,7 +104,8 @@ public final class ResizeableCanvas extends Region implements MambaCanvas<MEngin
         //init new shape for dragging and init select state
         if(engine2D.isSelected())
         {
-            engine2D.getSelected().setState(ShapeState.SELECT); //set selection
+            if(!engine2D.getSelected().isExpert())
+                engine2D.getSelected().setState(ShapeState.SELECT); //set selection
             engine2D.getSelected().setOffset(p.subtract(engine2D.getSelected().getPosition()));            
             engine2D.draw();
         }
@@ -112,7 +113,8 @@ public final class ResizeableCanvas extends Region implements MambaCanvas<MEngin
             engine2D.draw();
         
         //property of new selected shape
-        initPropertySheet(engine2D.getSelected());
+        if(engine2D.isSelected() && !engine2D.getSelected().isExpert())
+            initPropertySheet(engine2D.getSelected());
     }
     
     public void mouseReleased(MouseEvent e)

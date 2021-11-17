@@ -27,7 +27,7 @@ public class MambaVector extends Application{
         
         
         
-        Scene scene = new Scene(root, 1500, 900);
+        Scene scene = new Scene(root, 900, 600);
         primaryStage.setScene(scene);
        // primaryStage.setMaximized(true);
         primaryStage.show();

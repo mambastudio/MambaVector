@@ -265,12 +265,12 @@ public class MRectangle implements MambaShape<MEngine>{
     }
 
     @Override
-    public void initProperties() {
+    public void recalculateProperties() {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
     @Override
-    public void setInitPropertiesCall(MambaSupplierVoid msv) {
+    public void setRecalculatePropertiesCall(MambaSupplierVoid msv) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
     

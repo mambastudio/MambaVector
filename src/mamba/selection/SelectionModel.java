@@ -17,13 +17,14 @@ public class SelectionModel
 {    
     private final List<MambaShape> selection = new ArrayList<>();
     
-    public void add(MambaShape cell) {
+    public void add(MambaShape shape) {
 
         // don't add duplicates or else duplicates might be added to the javafx scene graph which causes exceptions
-        if( selection.contains(cell))
+        if( selection.contains(shape))
             return;
        
-        selection.add( cell);
+        selection.add(shape);
+        
     }
     
     public void remove(MambaShape cell) 

@@ -36,7 +36,8 @@ public class MEngine implements MambaEngine2D {
         anchorShapes = FXCollections.observableArrayList(); //currently empty
         
         selectedShape.addListener((o, ov, nv) ->{
-            initAnchorShapes();
+            if(!nv.isExpert())
+                initAnchorShapes();
         });
     }
 
@@ -59,8 +60,8 @@ public class MEngine implements MambaEngine2D {
         });
         if(isSelected())
         {
-            
-            selectedShape.get().drawSelect();
+            if(!selectedShape.get().isExpert())
+                selectedShape.get().drawSelect();
             anchorShapes.forEach(shape->{
                 shape.draw();
             });
@@ -88,6 +89,7 @@ public class MEngine implements MambaEngine2D {
         draw();
     }
 
+    //never used anywhere
     @Override
     public MambaShape hit(Point2D p) {        
         for(int i = listShapes.size()-1; i>-1; i--)
@@ -102,7 +104,17 @@ public class MEngine implements MambaEngine2D {
     }
     
     @Override
-    public MambaShape hitSelect(Point2D p) {        
+    public MambaShape hitSelect(Point2D p) {  
+        for(int i = anchorShapes.size()-1; i>-1; i--)
+        {
+            if(anchorShapes.get(i).contains(p))
+            {
+                MambaShape shape = anchorShapes.get(i);
+                this.selectedShape.set(shape);
+                return shape;
+            }
+        }
+        
         for(int i = listShapes.size()-1; i>-1; i--)
         {
             if(listShapes.get(i).contains(p))
@@ -142,5 +154,6 @@ public class MEngine implements MambaEngine2D {
             if(selectedShape.get() != null)
                 anchorShapes.addAll(selectedShape.get().getAnchorShapes());
     }
-       
+
+    
 }
