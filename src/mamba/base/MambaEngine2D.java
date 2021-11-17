@@ -9,6 +9,7 @@ import javafx.beans.property.ObjectProperty;
 import javafx.beans.value.ObservableValue;
 import javafx.geometry.Point2D;
 import javafx.scene.canvas.GraphicsContext;
+import mamba.overlayselect.MSelectionModel;
 
 /**
  *
@@ -26,8 +27,8 @@ public interface MambaEngine2D<MShape extends MambaShape> {
     public void remove(MShape shape);
     
     public MShape getSelected();
-    public MShape hit(Point2D p);
     public MShape hitSelect(Point2D p);
     public void setSelected(MShape shape);
-    public ObjectProperty<MShape> selectedObjectProperty();
+    
+    public void setSelectionModel(MSelectionModel selectionModel);
 }

@@ -13,12 +13,14 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.geometry.BoundingBox;
 import javafx.geometry.Point2D;
+import javafx.scene.Cursor;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
 import mamba.base.MambaShape;
 import static mamba.base.MambaShape.ShapeState.EXPERT;
 import mamba.base.MambaSupplierVoid;
 import mamba.base.engine.MEngine;
+import mamba.overlayselect.MDragHandle;
 
 /**
  *
@@ -35,7 +37,7 @@ public class MCircle implements MambaShape<MEngine> {
     private final DoubleProperty width = new SimpleDoubleProperty(90);
     private final DoubleProperty height = new SimpleDoubleProperty(90);
     private final ObjectProperty<Color> solidColor = new SimpleObjectProperty(Color.YELLOW);
-    private final DoubleProperty lineWidth = new SimpleDoubleProperty(0.001);
+    private  DoubleProperty lineWidth;
     private final ObjectProperty<Color> lineColor = new SimpleObjectProperty(Color.BLACK);
     
     private final DoubleProperty translateX = new SimpleDoubleProperty(50);
@@ -47,11 +49,11 @@ public class MCircle implements MambaShape<MEngine> {
     
     private MEngine engine2D;
     
-    private MambaSupplierVoid supplierVoid = null;
+    ObservableList<MDragHandle> dragHandles = FXCollections.observableArrayList();
    
     public MCircle()
     {
-        
+        lineWidth = new SimpleDoubleProperty(0.001);
     }
     
     @Override
@@ -73,23 +75,6 @@ public class MCircle implements MambaShape<MEngine> {
         graphicContext.strokeOval(anchorX.doubleValue() + translateX.doubleValue(), 
                                   anchorY.doubleValue() + translateY.doubleValue(), 
                                   width.doubleValue(), height.doubleValue());
-        graphicContext.restore();
-    }
-
-    @Override
-    public void drawSelect() {
-        graphicContext.save();
-        graphicContext.setStroke(Color.rgb(230, 230, 230));
-        graphicContext.setLineWidth(0.5);
-        graphicContext.strokeRect(anchorX.doubleValue() + translateX.doubleValue() - lineWidth.doubleValue()/2, 
-                                  anchorY.doubleValue() + translateY.doubleValue() - lineWidth.doubleValue()/2, 
-                                  width.doubleValue() + lineWidth.doubleValue(), height.doubleValue() + lineWidth.doubleValue());
-        graphicContext.setStroke(Color.rgb(80, 80, 80));
-        graphicContext.setLineWidth(2);
-        graphicContext.setLineDashes(5);
-        graphicContext.strokeRect(anchorX.doubleValue() + translateX.doubleValue() - lineWidth.doubleValue()/2, 
-                                  anchorY.doubleValue() + translateY.doubleValue() - lineWidth.doubleValue()/2, 
-                                  width.doubleValue() + lineWidth.doubleValue(), height.doubleValue() + lineWidth.doubleValue());
         graphicContext.restore();
     }
 
@@ -131,7 +116,6 @@ public class MCircle implements MambaShape<MEngine> {
     public void setWidth(double width)
     {
         this.width.set(width);
-        engine2D.initAnchorShapes();
         this.updateBounds();
         this.getEngine2D().draw();
         
@@ -145,7 +129,6 @@ public class MCircle implements MambaShape<MEngine> {
     public void setHeight(double height)
     {       
         this.height.set(height);
-        engine2D.initAnchorShapes();
         this.updateBounds();
         this.getEngine2D().draw();
         
@@ -159,7 +142,6 @@ public class MCircle implements MambaShape<MEngine> {
     public void setSolidColor(Color solidColor)
     {       
         this.solidColor.set(solidColor);
-        engine2D.initAnchorShapes();
         this.updateBounds();
         this.getEngine2D().draw();
         
@@ -192,7 +174,6 @@ public class MCircle implements MambaShape<MEngine> {
     public void setLineWidth(double lineWidth)
     {       
         this.lineWidth.set(lineWidth);
-        engine2D.initAnchorShapes();
         this.updateBounds();
         this.getEngine2D().draw();
       
@@ -206,7 +187,6 @@ public class MCircle implements MambaShape<MEngine> {
     public void setLineColor(Color lineColor)
     {       
         this.lineColor.set(lineColor);
-        engine2D.initAnchorShapes();
         this.updateBounds();
         this.getEngine2D().draw();
         
@@ -240,67 +220,45 @@ public class MCircle implements MambaShape<MEngine> {
     }
     
     @Override
-    public ObservableList<MambaShape> getAnchorShapes()
+    public ObservableList<MDragHandle> getDragHandles()
     {
-        ObservableList<MambaShape> anchorShapes = FXCollections.observableArrayList();
-               
-        MCircle c1 = getAnchorShape(getBounds().getMinX() - 5, getBounds().getMinY() - 5);
-        c1.setInitPropertiesCall(()->{
-            translateX.set(getBounds().getMinX() - 5);
-            translateY.set(getBounds().getMinY() - 5);
-        });
-        anchorShapes.add(c1);
-        
-        MCircle c2 = getAnchorShape(getBounds().getMaxX() - 5, getBounds().getMaxY() - 5);
-        c2.setInitPropertiesCall(()->{
-            translateX.set(getBounds().getMaxX() - 5);
-            translateY.set(getBounds().getMaxY() - 5);
-        });
-        anchorShapes.add(c2);
-        
-        MCircle c3 = getAnchorShape(getBounds().getMinX() - 5, getBounds().getMaxY() - 5);
-        c3.setInitPropertiesCall(()->{
-            translateX.set(getBounds().getMinX() - 5);
-            translateY.set(getBounds().getMaxY() - 5);
-        });
-        anchorShapes.add(c3);
+        if(dragHandles.isEmpty())
+        {
+            MDragHandle c1 = new MDragHandle(5, Cursor.DEFAULT);            
+            c1.setX(getBounds().getMinX() - 5);
+            c1.setY(getBounds().getMinY() - 5);
+            dragHandles.add(c1);
+            
+            
+            MDragHandle c2 = new MDragHandle(5, Cursor.DEFAULT);
+            c2.setX(getBounds().getMaxX() - 5);
+            c2.setY(getBounds().getMaxY() - 5);
+            dragHandles.add(c2);
+                        
+            MDragHandle c3 = new MDragHandle(5, Cursor.DEFAULT);
+            c3.setX(getBounds().getMinX() - 5);
+            c3.setY(getBounds().getMaxY() - 5);
+            dragHandles.add(c3);
+                       
+            MDragHandle c4 = new MDragHandle(5, Cursor.DEFAULT);
+            c4.setX(getBounds().getMaxX() - 5);
+            c4.setY(getBounds().getMinY() - 5);
+            dragHandles.add(c4);
+            c4.setOnMousePressed(e->{
+               Point2D p = new Point2D(e.getX(), e.getY()); 
+               System.out.println(p);
+            });
+            c4.setOnMouseDragged(e->{
+                Point2D p = new Point2D(e.getX(), e.getY()); 
+                double newWidth = p.getX() - this.getBounds().getMinX();
+                setWidth(newWidth);
+                updateDragHandles(null);
+            });
+        }
                 
-        MCircle c4 = getAnchorShape(getBounds().getMaxX() - 5, getBounds().getMinY() - 5);
-        c4.setInitPropertiesCall(()->{
-            translateX.set(getBounds().getMaxX() - 5);
-            translateY.set(getBounds().getMinY() - 5);
-        });
-        anchorShapes.add(c4);
-                
-        return anchorShapes;
+        return dragHandles;
     }
     
-    private MCircle getAnchorShape(double x, double y)
-    {
-        MCircle anchorCircle = new MCircle();
-        anchorCircle.width.set(10);
-        anchorCircle.height.set(10);
-        anchorCircle.translateX.set(x);
-        anchorCircle.translateY.set(y);
-        anchorCircle.solidColor.setValue(Color.web("#8099FF"));
-        anchorCircle.lineWidth.setValue(1);
-        anchorCircle.setState(EXPERT);
-        anchorCircle.setGraphicContext(getGraphicsContext());
-        anchorCircle.setEngine(getEngine2D());
-        return anchorCircle;
-    }
-
-    @Override
-    public void initProperties() {
-        if(supplierVoid != null)
-            supplierVoid.run();
-    }
-
-    @Override
-    public void setInitPropertiesCall(MambaSupplierVoid supplierVoid) {
-        this.supplierVoid = supplierVoid;
-    }
-
     @Override
     public ObjectProperty<BoundingBox> getBoundsProperty() {
         if(boundingBox.get() == null)
@@ -315,5 +273,25 @@ public class MCircle implements MambaShape<MEngine> {
                 anchorY.doubleValue() + translateY.doubleValue() - lineWidth.doubleValue()/2, 
                 width.doubleValue()   + lineWidth.doubleValue(), 
                 height.doubleValue()  + lineWidth.doubleValue()));
+    }
+
+    //called from resizable canvas
+    @Override
+    public void updateDragHandles(MDragHandle referenceHandle) {
+        MDragHandle c1 = dragHandles.get(0);
+        c1.setX(getBounds().getMinX() - 5);
+        c1.setY(getBounds().getMinY() - 5);
+        
+        MDragHandle c2 = dragHandles.get(1);
+        c2.setX(getBounds().getMaxX() - 5);
+        c2.setY(getBounds().getMaxY() - 5);
+       
+        MDragHandle c3 = dragHandles.get(2);
+        c3.setX(getBounds().getMinX() - 5);
+        c3.setY(getBounds().getMaxY() - 5);
+        
+        MDragHandle c4 = dragHandles.get(3);
+        c4.setX(getBounds().getMaxX() - 5);
+        c4.setY(getBounds().getMinY() - 5);        
     }
 }

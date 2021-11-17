@@ -71,7 +71,7 @@ public final class MBeanProperty implements MBeanPropertyItem{
             return this.readMethod.invoke(this.bean);
         } catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException | NullPointerException e) {
             System.err.println(e);
-            System.out.println(getName());
+            
             return null;
         }
     }

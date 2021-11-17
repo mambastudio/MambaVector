@@ -10,6 +10,8 @@ import java.util.ResourceBundle;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.Group;
+import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import mamba.base.engine.MEngine;
@@ -17,6 +19,7 @@ import mamba.base.engine.shape.MCircle;
 import mamba.base.engine.shape.MRectangle;
 import mamba.components.BackgroundPane;
 import mamba.components.ResizeableCanvas;
+import mamba.overlayselect.MSelectionModel;
 
 /**
  * FXML Controller class
@@ -30,12 +33,13 @@ public class BuilderController implements Initializable {
      */
     
     @FXML
-    StackPane baseDrawPanel;
+    Pane baseDrawPanel;
     @FXML
     VBox propertyPanel;
     
     private final BackgroundPane backgroundPanel = new BackgroundPane();
     private final ResizeableCanvas renderCanvas = new ResizeableCanvas(500, 500);
+    private final Group selectionLayer = new Group();
     private final MEngine engine2D = new MEngine();
     
     
@@ -43,9 +47,18 @@ public class BuilderController implements Initializable {
     public void initialize(URL url, ResourceBundle rb) {
         // TODO
         
-        baseDrawPanel.getChildren().addAll(backgroundPanel, renderCanvas);
+        baseDrawPanel.getChildren().addAll(backgroundPanel, renderCanvas, selectionLayer);
+        
+        //ensure they grow according to base draw panel
+        backgroundPanel.prefWidthProperty().bind(baseDrawPanel.widthProperty());
+        backgroundPanel.prefHeightProperty().bind(baseDrawPanel.heightProperty());        
+        renderCanvas.prefWidthProperty().bind(baseDrawPanel.widthProperty());
+        renderCanvas.prefHeightProperty().bind(baseDrawPanel.heightProperty());
+        
         renderCanvas.setEngine2D(engine2D);
         renderCanvas.setPropertyDisplayPanel(propertyPanel);
+        
+        engine2D.setSelectionModel(new MSelectionModel(selectionLayer));
               
         /*
         engine2D.selectedObjectProperty().addListener((o, ov, nv)->{

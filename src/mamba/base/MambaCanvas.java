@@ -16,7 +16,6 @@ import javafx.scene.layout.Pane;
  */
 public interface MambaCanvas<Engine2D extends MambaEngine2D, PropertyDisplayPanel extends Pane> {
     public void setEngine2D(Engine2D engine2D);
-    public Engine2D getEngine2D();
-    public MambaShape hit(Point2D point);
+    public Engine2D getEngine2D();    
     public void setPropertyDisplayPanel(PropertyDisplayPanel propertyDisplayPanel);
 }

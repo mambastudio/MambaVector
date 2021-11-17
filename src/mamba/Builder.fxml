@@ -10,6 +10,7 @@
 <?import javafx.scene.control.ToolBar?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Pane?>
 <?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
 
@@ -60,9 +61,9 @@
             </VBox>
          </top>
          <center>
-            <SplitPane dividerPositions="0.6762402088772846" prefHeight="200.0" prefWidth="200.0" BorderPane.alignment="CENTER">
+            <SplitPane dividerPositions="0.7049608355091384" prefHeight="200.0" prefWidth="200.0" BorderPane.alignment="CENTER">
                <items>
-                  <StackPane fx:id="baseDrawPanel" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="150.0" prefWidth="200.0" />
+                  <Pane fx:id="baseDrawPanel" prefHeight="509.0" prefWidth="706.0" />
                   <VBox fx:id="propertyPanel" prefHeight="200.0" prefWidth="100.0" SplitPane.resizableWithParent="false" />
                </items>
             </SplitPane>

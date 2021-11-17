@@ -17,6 +17,7 @@ import mamba.base.MambaShape;
 import static mamba.base.MambaShape.ShapeState.SELECT;
 import mamba.base.MambaSupplierVoid;
 import mamba.base.engine.MEngine;
+import mamba.overlayselect.MDragHandle;
 
 /**
  *
@@ -218,26 +219,6 @@ public class MRectangle implements MambaShape<MEngine>{
     }
 
     @Override
-    public void drawSelect() {
-        if(shapeState == SELECT)
-        {
-            graphicContext.save();
-            graphicContext.setStroke(Color.rgb(230, 230, 230));
-            graphicContext.setLineWidth(0.5);
-            graphicContext.strokeRect(anchorX.doubleValue() + translateX.doubleValue() - lineWidth.doubleValue()/2, 
-                                  anchorY.doubleValue() + translateY.doubleValue() - lineWidth.doubleValue()/2, 
-                                  width.doubleValue() + lineWidth.doubleValue(), height.doubleValue() + lineWidth.doubleValue());
-            graphicContext.setStroke(Color.rgb(80, 80, 80));
-            graphicContext.setLineWidth(2);
-            graphicContext.setLineDashes(5);
-            graphicContext.strokeRect(anchorX.doubleValue() + translateX.doubleValue() - lineWidth.doubleValue()/2, 
-                                  anchorY.doubleValue() + translateY.doubleValue() - lineWidth.doubleValue()/2, 
-                                  width.doubleValue() + lineWidth.doubleValue(), height.doubleValue() + lineWidth.doubleValue());
-            graphicContext.restore();
-        }
-    }
-
-    @Override
     public BoundingBox getBounds() {
         return new BoundingBox( anchorX.doubleValue() + translateX.doubleValue(), 
                                 anchorY.doubleValue() + translateY.doubleValue(), 
@@ -265,13 +246,20 @@ public class MRectangle implements MambaShape<MEngine>{
     }
 
     @Override
-    public void recalculateProperties() {
+    public ObjectProperty<BoundingBox> getBoundsProperty() {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
     @Override
-    public void setRecalculatePropertiesCall(MambaSupplierVoid msv) {
+    public void updateBounds() {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
+
+    @Override
+    public void updateDragHandles(MDragHandle referenceHandle) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    
     
 }

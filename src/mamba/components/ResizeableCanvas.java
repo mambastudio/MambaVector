@@ -75,13 +75,6 @@ public final class ResizeableCanvas extends Region implements MambaCanvas<MEngin
         return engine2D;
     }
 
-    @Override
-    public MambaShape hit(Point2D point) { 
-        MambaShape shape = engine2D.hit(point);
-        System.out.println(engine2D.getSelected());
-        return shape;
-    }
-    
     public void mouseClicked(MouseEvent e)
     {
         boolean isDoubleClick = isDoubleClick(500);
@@ -128,7 +121,7 @@ public final class ResizeableCanvas extends Region implements MambaCanvas<MEngin
         {        
             Point2D p = new Point2D(e.getX(), e.getY());
             engine2D.getSelected().translate(p.getX(), p.getY());    
-            engine2D.initAnchorShapes();
+            engine2D.getSelected().updateDragHandles(null);
             Platform.runLater(()->engine2D.draw());
            
         }

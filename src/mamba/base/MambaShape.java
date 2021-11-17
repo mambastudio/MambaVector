@@ -7,7 +7,6 @@ package mamba.base;
 
 import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.ObjectProperty;
-import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.geometry.BoundingBox;
@@ -17,6 +16,7 @@ import static mamba.base.MambaShape.ShapeState.ANIMATION;
 import static mamba.base.MambaShape.ShapeState.DISPLAY;
 import static mamba.base.MambaShape.ShapeState.EXPERT;
 import static mamba.base.MambaShape.ShapeState.SELECT;
+import mamba.overlayselect.MDragHandle;
 
 /**
  *
@@ -38,8 +38,7 @@ public interface MambaShape<Engine2D extends MambaEngine2D> {
     public void setGraphicContext(GraphicsContext context);
     public GraphicsContext getGraphicsContext();
     public void draw();
-    public void drawSelect();
-    
+        
     public ObjectProperty<BoundingBox> getBoundsProperty();
     public BoundingBox getBounds();
     public void updateBounds();
@@ -47,10 +46,7 @@ public interface MambaShape<Engine2D extends MambaEngine2D> {
     public boolean contains(Point2D p);    
     public ShapeState getState();
     public void setState(ShapeState shapeState);
-    
-    public void initProperties();
-    
-    public void setInitPropertiesCall(MambaSupplierVoid supplierVoid);
+      
     
     default boolean isDisplay()
     {
@@ -77,8 +73,11 @@ public interface MambaShape<Engine2D extends MambaEngine2D> {
         return null;
     }
     
-    default ObservableList<MambaShape> getAnchorShapes()
+    default ObservableList<MDragHandle> getDragHandles()
     {
         return FXCollections.emptyObservableList();
     }
+    
+    public void updateDragHandles(MDragHandle referenceHandle);
+    
 }

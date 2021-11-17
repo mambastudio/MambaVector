@@ -7,14 +7,11 @@ package mamba.base.engine;
 
 import java.util.ArrayList;
 import java.util.List;
-import javafx.beans.property.ObjectProperty;
-import javafx.beans.property.SimpleObjectProperty;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
 import javafx.geometry.Point2D;
 import javafx.scene.canvas.GraphicsContext;
 import mamba.base.MambaEngine2D;
 import mamba.base.MambaShape;
+import mamba.overlayselect.MSelectionModel;
 
 /**
  *
@@ -23,22 +20,13 @@ import mamba.base.MambaShape;
 public class MEngine implements MambaEngine2D {
     private GraphicsContext graphicContext;
     private final List<MambaShape> listShapes;
-    private ObjectProperty<MambaShape> selectedShape = null;   
     
-    //for controlling morphing of underlying shape
-    private ObservableList<MambaShape> anchorShapes = null; 
+    MSelectionModel selectionModel = null;
     
     public MEngine()
     {
         graphicContext = null;
-        listShapes = new ArrayList<>();
-        selectedShape = new SimpleObjectProperty();
-        anchorShapes = FXCollections.observableArrayList(); //currently empty
-        
-        selectedShape.addListener((o, ov, nv) ->{
-            if(!nv.isExpert())
-                initAnchorShapes();
-        });
+        listShapes = new ArrayList<>();        
     }
 
     @Override
@@ -57,15 +45,7 @@ public class MEngine implements MambaEngine2D {
                 
         listShapes.forEach(shape -> {
             shape.draw();
-        });
-        if(isSelected())
-        {
-            if(!selectedShape.get().isExpert())
-                selectedShape.get().drawSelect();
-            anchorShapes.forEach(shape->{
-                shape.draw();
-            });
-        }
+        });        
     }
 
     @Override
@@ -79,7 +59,7 @@ public class MEngine implements MambaEngine2D {
     @Override
     public void removeAll() {
         listShapes.clear();
-        selectedShape.set(null);
+        selectionModel.clear();
         draw();
     }
 
@@ -89,70 +69,42 @@ public class MEngine implements MambaEngine2D {
         draw();
     }
 
-    //never used anywhere
-    @Override
-    public MambaShape hit(Point2D p) {        
-        for(int i = listShapes.size()-1; i>-1; i--)
-        {
-            if(listShapes.get(i).contains(p))
-            {
-                MambaShape shape = listShapes.get(i);                
-                return shape;
-            }
-        }        
-        return null;
-    }
-    
+        
     @Override
     public MambaShape hitSelect(Point2D p) {  
-        for(int i = anchorShapes.size()-1; i>-1; i--)
-        {
-            if(anchorShapes.get(i).contains(p))
-            {
-                MambaShape shape = anchorShapes.get(i);
-                this.selectedShape.set(shape);
-                return shape;
-            }
-        }
-        
+               
         for(int i = listShapes.size()-1; i>-1; i--)
         {
             if(listShapes.get(i).contains(p))
             {
+                
                 MambaShape shape = listShapes.get(i);
-                this.selectedShape.set(shape);
+                selectionModel.set(shape);               
                 return shape;
             }
         }
-        this.selectedShape.set(null);
+        this.selectionModel.clear();
         return null;
     }
 
     @Override
     public MambaShape getSelected() {
-        return selectedShape.get();
+        return selectionModel.getSelected();
     }
 
     @Override
     public void setSelected(MambaShape shape) {
-        this.selectedShape.set(shape);
+        this.selectionModel.set(shape);
     }
     
     public boolean isSelected()
     {
-        return selectedShape.get()!=null;
+        return selectionModel.isSelected();
     }
-
+  
     @Override
-    public ObjectProperty<MambaShape> selectedObjectProperty() {
-        return selectedShape;
-    }
-    
-    public void initAnchorShapes()
-    {
-        anchorShapes.removeAll(anchorShapes);
-            if(selectedShape.get() != null)
-                anchorShapes.addAll(selectedShape.get().getAnchorShapes());
+    public void setSelectionModel(MSelectionModel selectionModel) {
+        this.selectionModel = selectionModel;
     }
 
     

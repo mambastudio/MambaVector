@@ -22,6 +22,7 @@ public class BackgroundPane extends Pane {
  
     public BackgroundPane() {
         getChildren().add(canvas);
+        
     }
  
     @Override protected void layoutChildren() 
