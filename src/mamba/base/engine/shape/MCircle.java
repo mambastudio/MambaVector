@@ -41,6 +41,8 @@ public class MCircle implements MambaShape<MEngine> {
     private final DoubleProperty translateX = new SimpleDoubleProperty(50);
     private final DoubleProperty translateY = new SimpleDoubleProperty(50);
     
+    private final ObjectProperty<BoundingBox> boundingBox = new SimpleObjectProperty();
+    
     private Point2D offset = new Point2D(0, 0);
     
     private MEngine engine2D;
@@ -93,18 +95,12 @@ public class MCircle implements MambaShape<MEngine> {
 
     @Override
     public BoundingBox getBounds() {
-        return new BoundingBox(anchorX.doubleValue() + translateX.doubleValue() - lineWidth.doubleValue()/2, 
-                                anchorY.doubleValue() + translateY.doubleValue() - lineWidth.doubleValue()/2, 
-                                width.doubleValue() + lineWidth.doubleValue(), height.doubleValue() + lineWidth.doubleValue());
+        return getBoundsProperty().get();
     }
 
     @Override
-    public boolean contains(Point2D p) {
-        BoundingBox bounds = new BoundingBox(
-                                anchorX.doubleValue() + translateX.doubleValue() - lineWidth.doubleValue()/2, 
-                                anchorY.doubleValue() + translateY.doubleValue() - lineWidth.doubleValue()/2, 
-                                width.doubleValue() + lineWidth.doubleValue(), height.doubleValue() + lineWidth.doubleValue());
-        return bounds.contains(p);
+    public boolean contains(Point2D p) {        
+        return getBoundsProperty().get().contains(p);
     }
 
     @Override
@@ -136,6 +132,7 @@ public class MCircle implements MambaShape<MEngine> {
     {
         this.width.set(width);
         engine2D.initAnchorShapes();
+        this.updateBounds();
         this.getEngine2D().draw();
         
     }
@@ -149,6 +146,7 @@ public class MCircle implements MambaShape<MEngine> {
     {       
         this.height.set(height);
         engine2D.initAnchorShapes();
+        this.updateBounds();
         this.getEngine2D().draw();
         
     }
@@ -162,6 +160,7 @@ public class MCircle implements MambaShape<MEngine> {
     {       
         this.solidColor.set(solidColor);
         engine2D.initAnchorShapes();
+        this.updateBounds();
         this.getEngine2D().draw();
         
     }
@@ -194,6 +193,7 @@ public class MCircle implements MambaShape<MEngine> {
     {       
         this.lineWidth.set(lineWidth);
         engine2D.initAnchorShapes();
+        this.updateBounds();
         this.getEngine2D().draw();
       
     }
@@ -207,6 +207,7 @@ public class MCircle implements MambaShape<MEngine> {
     {       
         this.lineColor.set(lineColor);
         engine2D.initAnchorShapes();
+        this.updateBounds();
         this.getEngine2D().draw();
         
     }
@@ -223,7 +224,8 @@ public class MCircle implements MambaShape<MEngine> {
     @Override
     public void translate(double x, double y) {
         this.translateX.set(x - offset.getX());
-        this.translateY.set(y - offset.getY());
+        this.translateY.set(y - offset.getY());        
+        this.updateBounds();
     }
 
     @Override
@@ -297,5 +299,21 @@ public class MCircle implements MambaShape<MEngine> {
     @Override
     public void setInitPropertiesCall(MambaSupplierVoid supplierVoid) {
         this.supplierVoid = supplierVoid;
+    }
+
+    @Override
+    public ObjectProperty<BoundingBox> getBoundsProperty() {
+        if(boundingBox.get() == null)
+            updateBounds();
+        return boundingBox;
+    }
+
+    @Override
+    public void updateBounds() {
+        boundingBox.set(new BoundingBox(
+                anchorX.doubleValue() + translateX.doubleValue() - lineWidth.doubleValue()/2, 
+                anchorY.doubleValue() + translateY.doubleValue() - lineWidth.doubleValue()/2, 
+                width.doubleValue()   + lineWidth.doubleValue(), 
+                height.doubleValue()  + lineWidth.doubleValue()));
     }
 }
