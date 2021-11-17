@@ -6,6 +6,8 @@
 package mamba.base;
 
 import javafx.beans.property.DoubleProperty;
+import javafx.beans.property.ObjectProperty;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.geometry.BoundingBox;
@@ -37,14 +39,18 @@ public interface MambaShape<Engine2D extends MambaEngine2D> {
     public GraphicsContext getGraphicsContext();
     public void draw();
     public void drawSelect();
+    
+    public ObjectProperty<BoundingBox> getBoundsProperty();
     public BoundingBox getBounds();
+    public void updateBounds();
+    
     public boolean contains(Point2D p);    
     public ShapeState getState();
     public void setState(ShapeState shapeState);
     
-    public void recalculateAnchorProperties();    
-    public void recalculateProperties();    
-    public void setRecalculatePropertiesCall(MambaSupplierVoid supplierVoid);
+    public void initProperties();
+    
+    public void setInitPropertiesCall(MambaSupplierVoid supplierVoid);
     
     default boolean isDisplay()
     {

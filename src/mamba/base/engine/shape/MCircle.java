@@ -41,13 +41,13 @@ public class MCircle implements MambaShape<MEngine> {
     private final DoubleProperty translateX = new SimpleDoubleProperty(50);
     private final DoubleProperty translateY = new SimpleDoubleProperty(50);
     
+    private final ObjectProperty<BoundingBox> boundingBox = new SimpleObjectProperty();
+    
     private Point2D offset = new Point2D(0, 0);
     
     private MEngine engine2D;
     
     private MambaSupplierVoid supplierVoid = null;
-    
-    ObservableList<MambaShape> anchorShapes = FXCollections.observableArrayList();
    
     public MCircle()
     {
@@ -95,18 +95,12 @@ public class MCircle implements MambaShape<MEngine> {
 
     @Override
     public BoundingBox getBounds() {
-        return new BoundingBox(anchorX.doubleValue() + translateX.doubleValue() - lineWidth.doubleValue()/2, 
-                                anchorY.doubleValue() + translateY.doubleValue() - lineWidth.doubleValue()/2, 
-                                width.doubleValue() + lineWidth.doubleValue(), height.doubleValue() + lineWidth.doubleValue());
+        return getBoundsProperty().get();
     }
 
     @Override
-    public boolean contains(Point2D p) {
-        BoundingBox bounds = new BoundingBox(
-                                anchorX.doubleValue() + translateX.doubleValue() - lineWidth.doubleValue()/2, 
-                                anchorY.doubleValue() + translateY.doubleValue() - lineWidth.doubleValue()/2, 
-                                width.doubleValue() + lineWidth.doubleValue(), height.doubleValue() + lineWidth.doubleValue());
-        return bounds.contains(p);
+    public boolean contains(Point2D p) {        
+        return getBoundsProperty().get().contains(p);
     }
 
     @Override
@@ -138,6 +132,7 @@ public class MCircle implements MambaShape<MEngine> {
     {
         this.width.set(width);
         engine2D.initAnchorShapes();
+        this.updateBounds();
         this.getEngine2D().draw();
         
     }
@@ -151,6 +146,7 @@ public class MCircle implements MambaShape<MEngine> {
     {       
         this.height.set(height);
         engine2D.initAnchorShapes();
+        this.updateBounds();
         this.getEngine2D().draw();
         
     }
@@ -164,6 +160,7 @@ public class MCircle implements MambaShape<MEngine> {
     {       
         this.solidColor.set(solidColor);
         engine2D.initAnchorShapes();
+        this.updateBounds();
         this.getEngine2D().draw();
         
     }
@@ -196,6 +193,7 @@ public class MCircle implements MambaShape<MEngine> {
     {       
         this.lineWidth.set(lineWidth);
         engine2D.initAnchorShapes();
+        this.updateBounds();
         this.getEngine2D().draw();
       
     }
@@ -209,6 +207,7 @@ public class MCircle implements MambaShape<MEngine> {
     {       
         this.lineColor.set(lineColor);
         engine2D.initAnchorShapes();
+        this.updateBounds();
         this.getEngine2D().draw();
         
     }
@@ -225,7 +224,8 @@ public class MCircle implements MambaShape<MEngine> {
     @Override
     public void translate(double x, double y) {
         this.translateX.set(x - offset.getX());
-        this.translateY.set(y - offset.getY());
+        this.translateY.set(y - offset.getY());        
+        this.updateBounds();
     }
 
     @Override
@@ -240,48 +240,38 @@ public class MCircle implements MambaShape<MEngine> {
     }
     
     @Override
-    public void recalculateAnchorProperties()
-    {
-        anchorShapes.forEach(anchorShape-> anchorShape.recalculateProperties());
-    }
-    
-    @Override
     public ObservableList<MambaShape> getAnchorShapes()
     {
-        recalculateAnchorProperties();
-        if(anchorShapes.isEmpty())
-        {
-            MCircle c1 = getAnchorShape(getBounds().getMinX() - 5, getBounds().getMinY() - 5);
-            c1.setRecalculatePropertiesCall(()->{
-                c1.translateX.set(getBounds().getMinX() - 5);
-                c1.translateY.set(getBounds().getMinY() - 5);
-            });
-            anchorShapes.add(c1);
-
-            MCircle c2 = getAnchorShape(getBounds().getMaxX() - 5, getBounds().getMaxY() - 5);
-            c2.setRecalculatePropertiesCall(()->{
-                c2.translateX.set(getBounds().getMaxX() - 5);
-                c2.translateY.set(getBounds().getMaxY() - 5);
-                c2.translateX.addListener((o, ov, nv)->{
-                    System.out.println(nv.doubleValue() - ov.doubleValue());
-                });
-            });
-            anchorShapes.add(c2);
-
-            MCircle c3 = getAnchorShape(getBounds().getMinX() - 5, getBounds().getMaxY() - 5);
-            c3.setRecalculatePropertiesCall(()->{
-                c3.translateX.set(getBounds().getMinX() - 5);
-                c3.translateY.set(getBounds().getMaxY() - 5);
-            });
-            anchorShapes.add(c3);
-
-            MCircle c4 = getAnchorShape(getBounds().getMaxX() - 5, getBounds().getMinY() - 5);
-            c4.setRecalculatePropertiesCall(()->{
-                c4.translateX.set(getBounds().getMaxX() - 5);
-                c4.translateY.set(getBounds().getMinY() - 5);
-            });
-            anchorShapes.add(c4);
-        }        
+        ObservableList<MambaShape> anchorShapes = FXCollections.observableArrayList();
+               
+        MCircle c1 = getAnchorShape(getBounds().getMinX() - 5, getBounds().getMinY() - 5);
+        c1.setInitPropertiesCall(()->{
+            translateX.set(getBounds().getMinX() - 5);
+            translateY.set(getBounds().getMinY() - 5);
+        });
+        anchorShapes.add(c1);
+        
+        MCircle c2 = getAnchorShape(getBounds().getMaxX() - 5, getBounds().getMaxY() - 5);
+        c2.setInitPropertiesCall(()->{
+            translateX.set(getBounds().getMaxX() - 5);
+            translateY.set(getBounds().getMaxY() - 5);
+        });
+        anchorShapes.add(c2);
+        
+        MCircle c3 = getAnchorShape(getBounds().getMinX() - 5, getBounds().getMaxY() - 5);
+        c3.setInitPropertiesCall(()->{
+            translateX.set(getBounds().getMinX() - 5);
+            translateY.set(getBounds().getMaxY() - 5);
+        });
+        anchorShapes.add(c3);
+                
+        MCircle c4 = getAnchorShape(getBounds().getMaxX() - 5, getBounds().getMinY() - 5);
+        c4.setInitPropertiesCall(()->{
+            translateX.set(getBounds().getMaxX() - 5);
+            translateY.set(getBounds().getMinY() - 5);
+        });
+        anchorShapes.add(c4);
+                
         return anchorShapes;
     }
     
@@ -301,13 +291,29 @@ public class MCircle implements MambaShape<MEngine> {
     }
 
     @Override
-    public void recalculateProperties() {
+    public void initProperties() {
         if(supplierVoid != null)
             supplierVoid.run();
     }
 
     @Override
-    public void setRecalculatePropertiesCall(MambaSupplierVoid supplierVoid) {
+    public void setInitPropertiesCall(MambaSupplierVoid supplierVoid) {
         this.supplierVoid = supplierVoid;
+    }
+
+    @Override
+    public ObjectProperty<BoundingBox> getBoundsProperty() {
+        if(boundingBox.get() == null)
+            updateBounds();
+        return boundingBox;
+    }
+
+    @Override
+    public void updateBounds() {
+        boundingBox.set(new BoundingBox(
+                anchorX.doubleValue() + translateX.doubleValue() - lineWidth.doubleValue()/2, 
+                anchorY.doubleValue() + translateY.doubleValue() - lineWidth.doubleValue()/2, 
+                width.doubleValue()   + lineWidth.doubleValue(), 
+                height.doubleValue()  + lineWidth.doubleValue()));
     }
 }
