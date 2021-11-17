@@ -42,9 +42,9 @@ public interface MambaShape<Engine2D extends MambaEngine2D> {
     public ShapeState getState();
     public void setState(ShapeState shapeState);
     
-    public void initProperties();
-    
-    public void setInitPropertiesCall(MambaSupplierVoid supplierVoid);
+    public void recalculateAnchorProperties();    
+    public void recalculateProperties();    
+    public void setRecalculatePropertiesCall(MambaSupplierVoid supplierVoid);
     
     default boolean isDisplay()
     {
