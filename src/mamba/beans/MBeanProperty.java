@@ -32,7 +32,7 @@ public final class MBeanProperty implements MBeanPropertyItem{
         this.beanPropertyDescriptor = propertyDescriptor;
         this.readMethod = propertyDescriptor.getReadMethod();
         if (this.beanPropertyDescriptor.getWriteMethod() == null) {
-            this.setEditable(false);
+            this.setEditable(false);            
         }
 
         this.findObservableValue();
@@ -68,10 +68,12 @@ public final class MBeanProperty implements MBeanPropertyItem{
     @Override
     public Object getValue() {
         try {
-            return this.readMethod.invoke(this.bean);
+            Object obj = this.readMethod.invoke(this.bean);
+            
+            return obj;
         } catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException | NullPointerException e) {
             System.err.println(e);
-            
+            System.out.println(readMethod+ " " +getName());
             return null;
         }
     }

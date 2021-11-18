@@ -34,10 +34,8 @@ public class MEditors {
                     }
                     
                     @Override
-                    public void initEditorValue() {
-                        System.out.println(this.getPropertyValue()+ " kubafu " +this.getMBeanProperty().getName());
-                        getEditor().setText(this.getPropertyValue().toString());
-                        
+                    public void initEditorValue() {                        
+                        getEditor().setText(this.getPropertyValue().toString());                        
                     }
                 };
     }

@@ -34,11 +34,11 @@ public class MCircle implements MambaShape<MEngine> {
     private final DoubleProperty anchorX = new SimpleDoubleProperty(0);
     private final DoubleProperty anchorY = new SimpleDoubleProperty(0);
     
-    private final DoubleProperty width = new SimpleDoubleProperty(90);
-    private final DoubleProperty height = new SimpleDoubleProperty(90);
-    private final ObjectProperty<Color> solidColor = new SimpleObjectProperty(Color.YELLOW);
-    private  DoubleProperty lineWidth;
-    private final ObjectProperty<Color> lineColor = new SimpleObjectProperty(Color.BLACK);
+    private final DoubleProperty width;
+    private final DoubleProperty height;
+    private final ObjectProperty<Color> solidColor;
+    private final DoubleProperty strokeWidth;
+    private final ObjectProperty<Color> strokeColor;
     
     private final DoubleProperty translateX = new SimpleDoubleProperty(50);
     private final DoubleProperty translateY = new SimpleDoubleProperty(50);
@@ -53,7 +53,11 @@ public class MCircle implements MambaShape<MEngine> {
    
     public MCircle()
     {
-        lineWidth = new SimpleDoubleProperty(0.001);
+        width = new SimpleDoubleProperty(90);
+        height = new SimpleDoubleProperty(90);
+        solidColor = new SimpleObjectProperty(Color.YELLOW);
+        strokeWidth = new SimpleDoubleProperty(0.001);
+        strokeColor = new SimpleObjectProperty(Color.BLACK);
     }
     
     @Override
@@ -70,8 +74,8 @@ public class MCircle implements MambaShape<MEngine> {
                                 anchorY.doubleValue() + translateY.doubleValue(), 
                                 width.doubleValue(), height.doubleValue());
         
-        graphicContext.setStroke(lineColor.get());
-        graphicContext.setLineWidth(lineWidth.doubleValue());
+        graphicContext.setStroke(strokeColor.get());
+        graphicContext.setLineWidth(strokeWidth.doubleValue());
         graphicContext.strokeOval(anchorX.doubleValue() + translateX.doubleValue(), 
                                   anchorY.doubleValue() + translateY.doubleValue(), 
                                   width.doubleValue(), height.doubleValue());
@@ -166,39 +170,39 @@ public class MCircle implements MambaShape<MEngine> {
         return solidColor;
     }
     
-    public double getLineWidth()
+    public double getStrokeWidth()
     {        
-        return this.lineWidth.doubleValue();
+        return this.strokeWidth.doubleValue();
     }
     
-    public void setLineWidth(double lineWidth)
+    public void setStrokeWidth(double strokeWidth)
     {       
-        this.lineWidth.set(lineWidth);
+        this.strokeWidth.set(strokeWidth);
         this.updateBounds();
         this.getEngine2D().draw();
       
     }
     
-    public DoubleProperty lineWidthProperty()
+    public DoubleProperty strokeWidthProperty()
     {
-        return lineWidth;
+        return strokeWidth;
     }
     
-    public void setLineColor(Color lineColor)
+    public void setStrokeColor(Color strokeColor)
     {       
-        this.lineColor.set(lineColor);
+        this.strokeColor.set(strokeColor);
         this.updateBounds();
         this.getEngine2D().draw();
         
     }
     
-    public Color getLineColor()
+    public Color getStrokeColor()
     {
-        return this.lineColor.get();
+        return this.strokeColor.get();
     }
     
-    public ObjectProperty<Color> lineColorProperty(){
-        return lineColor;
+    public ObjectProperty<Color> strokeColorProperty(){
+        return strokeColor;
     }
 
     @Override
@@ -269,10 +273,10 @@ public class MCircle implements MambaShape<MEngine> {
     @Override
     public void updateBounds() {
         boundingBox.set(new BoundingBox(
-                anchorX.doubleValue() + translateX.doubleValue() - lineWidth.doubleValue()/2, 
-                anchorY.doubleValue() + translateY.doubleValue() - lineWidth.doubleValue()/2, 
-                width.doubleValue()   + lineWidth.doubleValue(), 
-                height.doubleValue()  + lineWidth.doubleValue()));
+                anchorX.doubleValue() + translateX.doubleValue() - strokeWidth.doubleValue()/2, 
+                anchorY.doubleValue() + translateY.doubleValue() - strokeWidth.doubleValue()/2, 
+                width.doubleValue()   + strokeWidth.doubleValue(), 
+                height.doubleValue()  + strokeWidth.doubleValue()));
     }
 
     //called from resizable canvas

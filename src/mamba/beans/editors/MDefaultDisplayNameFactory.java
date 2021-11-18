@@ -26,10 +26,10 @@ public class MDefaultDisplayNameFactory implements Function<String, String> {
                 return "Arc height";
             case "solidColor":
                 return "Solid color";
-            case "lineColor":
-                return "Line color";
-            case "lineWidth":
-                return "Line width";
+            case "strokeColor":
+                return "Stroke color";
+            case "strokeWidth":
+                return "Stroke width";
             default:
                 return t;
         }

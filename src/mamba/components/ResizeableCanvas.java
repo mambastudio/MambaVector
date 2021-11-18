@@ -106,7 +106,7 @@ public final class ResizeableCanvas extends Region implements MambaCanvas<MEngin
             engine2D.draw();
         
         //property of new selected shape
-        if(engine2D.isSelected() && !engine2D.getSelected().isExpert())
+        if(engine2D.isSelected())
             initPropertySheet(engine2D.getSelected());
     }
     

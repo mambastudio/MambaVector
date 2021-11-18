@@ -38,7 +38,7 @@ public class MBeanPropertyUtility {
                 
                 //init bean property
                 MBeanProperty property = new MBeanProperty(bean, p);
-                if(property.isObservable())
+                if(property.isObservable() && property.isEditable())
                 {                            
                     list.add(property);
                 }                
