@@ -273,8 +273,7 @@ public class MCircle implements MambaShape<MEngine> {
                Point2D p = new Point2D(e.getX(), e.getY());                
                
                Point2D off = p.subtract(getPosition());
-               if(off.getY() < 0)
-                   off = new Point2D(off.getX(), 0);               
+                         
                setOffset(off);
                
                c4.setCurrentPressedPoint(p);
@@ -285,7 +284,7 @@ public class MCircle implements MambaShape<MEngine> {
                 Point2D p = new Point2D(e.getX(), e.getY()); 
                 Point2D p2 = c4.getCurrentPressedPoint();
                 Point2D pc = getPosition();
-               
+                               
                 double newWidth = p.getX() - this.getBounds().getMinX();
                 setWidth(newWidth);
                 
@@ -294,8 +293,8 @@ public class MCircle implements MambaShape<MEngine> {
                 setHeight(newHeight);
                 
               
-               
-                this.translate(p.getX(), p.getY());
+                double px = pc.getX() + offset.getX(); //ensures position x never changes
+                this.translate(px, p.getY());
                 
                 updateDragHandles(null);
                 c4.setCurrentPressedPoint(p);
