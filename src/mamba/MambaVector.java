@@ -3,8 +3,10 @@ package mamba;
 
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
+import javafx.geometry.Rectangle2D;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.stage.Screen;
 import javafx.stage.Stage;
 
 /*
@@ -25,9 +27,10 @@ public class MambaVector extends Application{
         FXMLLoader loader = new FXMLLoader(getClass().getResource("Builder.fxml"));
         Parent root = loader.load();
         
+        //three quarter size of the screen monitor
+        Rectangle2D screenBounds = Screen.getPrimary().getBounds();        
+        Scene scene = new Scene(root, screenBounds.getWidth() * 0.75, screenBounds.getHeight() * 0.75);
         
-        
-        Scene scene = new Scene(root, 900, 600);
         primaryStage.setScene(scene);
        // primaryStage.setMaximized(true);
         primaryStage.show();

@@ -232,31 +232,77 @@ public class MCircle implements MambaShape<MEngine> {
             c1.setX(getBounds().getMinX() - 5);
             c1.setY(getBounds().getMinY() - 5);
             dragHandles.add(c1);
+            c1.setOnMouseMoved(e->{
+                c1.setCursor(Cursor.HAND);
+            });
             
             
             MDragHandle c2 = new MDragHandle(5, Cursor.DEFAULT);
             c2.setX(getBounds().getMaxX() - 5);
             c2.setY(getBounds().getMaxY() - 5);
             dragHandles.add(c2);
+            c2.setOnMouseDragged(e->{
+                Point2D p = new Point2D(e.getX(), e.getY());
+                
+                double newWidth = p.getX() - this.getBounds().getMinX();
+                setWidth(newWidth);
+                
+                double newHeight = p.getY() - this.getBounds().getMinY();
+                setHeight(newHeight);
+                
+                updateDragHandles(null);
+            });
+            c2.setOnMouseMoved(e->{
+                c2.setCursor(Cursor.HAND);
+            });
                         
             MDragHandle c3 = new MDragHandle(5, Cursor.DEFAULT);
             c3.setX(getBounds().getMinX() - 5);
             c3.setY(getBounds().getMaxY() - 5);
             dragHandles.add(c3);
+            c3.setOnMouseMoved(e->{
+                c3.setCursor(Cursor.HAND);
+            });
                        
             MDragHandle c4 = new MDragHandle(5, Cursor.DEFAULT);
             c4.setX(getBounds().getMaxX() - 5);
             c4.setY(getBounds().getMinY() - 5);
             dragHandles.add(c4);
+            
             c4.setOnMousePressed(e->{
-               Point2D p = new Point2D(e.getX(), e.getY()); 
-               System.out.println(p);
+               Point2D p = new Point2D(e.getX(), e.getY());                
+               
+               Point2D off = p.subtract(getPosition());
+               if(off.getY() < 0)
+                   off = new Point2D(off.getX(), 0);               
+               setOffset(off);
+               
+               c4.setCurrentPressedPoint(p);
+               
             });
+            
             c4.setOnMouseDragged(e->{
                 Point2D p = new Point2D(e.getX(), e.getY()); 
+                Point2D p2 = c4.getCurrentPressedPoint();
+                Point2D pc = getPosition();
+               
                 double newWidth = p.getX() - this.getBounds().getMinX();
                 setWidth(newWidth);
+                
+                double changeY = p2.getY() - p.getY();                
+                double newHeight = getHeight() + changeY;               
+                setHeight(newHeight);
+                
+              
+               
+                this.translate(p.getX(), p.getY());
+                
                 updateDragHandles(null);
+                c4.setCurrentPressedPoint(p);
+            });
+            
+            c4.setOnMouseMoved(e->{
+                c4.setCursor(Cursor.HAND);
             });
         }
                 
@@ -294,7 +340,7 @@ public class MCircle implements MambaShape<MEngine> {
         c3.setX(getBounds().getMinX() - 5);
         c3.setY(getBounds().getMaxY() - 5);
         
-        MDragHandle c4 = dragHandles.get(3);
+        MDragHandle c4 = dragHandles.get(3);        
         c4.setX(getBounds().getMaxX() - 5);
         c4.setY(getBounds().getMinY() - 5);        
     }

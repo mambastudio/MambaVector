@@ -5,6 +5,7 @@
  */
 package mamba.overlayselect;
 
+import javafx.geometry.Point2D;
 import javafx.scene.Cursor;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
@@ -16,6 +17,7 @@ import javafx.scene.shape.StrokeType;
  */
 public class MDragHandle extends Rectangle {
     Cursor dragCursor;
+    Point2D currentPressed;
 
     public MDragHandle(double size, Cursor dragCursor) {
 
@@ -24,11 +26,22 @@ public class MDragHandle extends Rectangle {
         setWidth(size);
         setHeight(size);
         
-        this.setFill(Color.rgb(0, 128, 0, 0.6));
-        this.setStroke(Color.GREEN);
+        this.setFill(Color.WHITE);
+        this.setStroke(Color.BLACK);
         this.setStrokeWidth(1);
         this.setStrokeType(StrokeType.OUTSIDE);
       
+        this.currentPressed = new Point2D(0, 0);
+    }
+    
+    public void setCurrentPressedPoint(Point2D p)
+    {
+        this.currentPressed = p;
+    }
+    
+    public Point2D getCurrentPressedPoint()
+    {
+        return this.currentPressed;
     }
 
     public Cursor getDragCursor() {
