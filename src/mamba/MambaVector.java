@@ -29,7 +29,7 @@ public class MambaVector extends Application{
         
         //three quarter size of the screen monitor
         Rectangle2D screenBounds = Screen.getPrimary().getBounds();        
-        Scene scene = new Scene(root, screenBounds.getWidth() * 0.75, screenBounds.getHeight() * 0.75);
+        Scene scene = new Scene(root, screenBounds.getWidth() * 0.95, screenBounds.getHeight() * 0.85);
         
         primaryStage.setScene(scene);
        // primaryStage.setMaximized(true);

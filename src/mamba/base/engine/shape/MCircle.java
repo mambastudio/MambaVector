@@ -17,8 +17,6 @@ import javafx.scene.Cursor;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
 import mamba.base.MambaShape;
-import static mamba.base.MambaShape.ShapeState.EXPERT;
-import mamba.base.MambaSupplierVoid;
 import mamba.base.engine.MEngine;
 import mamba.overlayselect.MDragHandle;
 
@@ -117,6 +115,7 @@ public class MCircle implements MambaShape<MEngine> {
         this.engine2D = engine2D;
     }
     
+    @Override
     public void setWidth(double width)
     {
         this.width.set(width);
@@ -125,11 +124,13 @@ public class MCircle implements MambaShape<MEngine> {
         
     }
     
+    @Override
     public double getWidth()
     {        
         return this.width.doubleValue();
     }
     
+    @Override
     public void setHeight(double height)
     {       
         this.height.set(height);
@@ -138,6 +139,7 @@ public class MCircle implements MambaShape<MEngine> {
         
     }
     
+    @Override
     public double getHeight()
     {
         return this.height.doubleValue();
@@ -228,81 +230,7 @@ public class MCircle implements MambaShape<MEngine> {
     {
         if(dragHandles.isEmpty())
         {
-            MDragHandle c1 = new MDragHandle(5, Cursor.DEFAULT);            
-            c1.setX(getBounds().getMinX() - 5);
-            c1.setY(getBounds().getMinY() - 5);
-            dragHandles.add(c1);
-            c1.setOnMouseMoved(e->{
-                c1.setCursor(Cursor.HAND);
-            });
-            
-            
-            MDragHandle c2 = new MDragHandle(5, Cursor.DEFAULT);
-            c2.setX(getBounds().getMaxX() - 5);
-            c2.setY(getBounds().getMaxY() - 5);
-            dragHandles.add(c2);
-            c2.setOnMouseDragged(e->{
-                Point2D p = new Point2D(e.getX(), e.getY());
-                
-                double newWidth = p.getX() - this.getBounds().getMinX();
-                setWidth(newWidth);
-                
-                double newHeight = p.getY() - this.getBounds().getMinY();
-                setHeight(newHeight);
-                
-                updateDragHandles(null);
-            });
-            c2.setOnMouseMoved(e->{
-                c2.setCursor(Cursor.HAND);
-            });
-                        
-            MDragHandle c3 = new MDragHandle(5, Cursor.DEFAULT);
-            c3.setX(getBounds().getMinX() - 5);
-            c3.setY(getBounds().getMaxY() - 5);
-            dragHandles.add(c3);
-            c3.setOnMouseMoved(e->{
-                c3.setCursor(Cursor.HAND);
-            });
-                       
-            MDragHandle c4 = new MDragHandle(5, Cursor.DEFAULT);
-            c4.setX(getBounds().getMaxX() - 5);
-            c4.setY(getBounds().getMinY() - 5);
-            dragHandles.add(c4);
-            
-            c4.setOnMousePressed(e->{
-               Point2D p = new Point2D(e.getX(), e.getY());                
-               
-               Point2D off = p.subtract(getPosition());
-                         
-               setOffset(off);
-               
-               c4.setCurrentPressedPoint(p);
-               
-            });
-            
-            c4.setOnMouseDragged(e->{
-                Point2D p = new Point2D(e.getX(), e.getY()); 
-                Point2D p2 = c4.getCurrentPressedPoint();
-                Point2D pc = getPosition();
-                               
-                double newWidth = p.getX() - this.getBounds().getMinX();
-                setWidth(newWidth);
-                
-                double changeY = p2.getY() - p.getY();                
-                double newHeight = getHeight() + changeY;               
-                setHeight(newHeight);
-                
-              
-                double px = pc.getX() + offset.getX(); //ensures position x never changes
-                this.translate(px, p.getY());
-                
-                updateDragHandles(null);
-                c4.setCurrentPressedPoint(p);
-            });
-            
-            c4.setOnMouseMoved(e->{
-                c4.setCursor(Cursor.HAND);
-            });
+            dragHandles.addAll(MDragHandle.getDefaultResizeDragHandles(this));
         }
                 
         return dragHandles;
@@ -342,5 +270,10 @@ public class MCircle implements MambaShape<MEngine> {
         MDragHandle c4 = dragHandles.get(3);        
         c4.setX(getBounds().getMaxX() - 5);
         c4.setY(getBounds().getMinY() - 5);        
+    }
+
+    @Override
+    public Point2D getOffset() {
+        return offset;
     }
 }

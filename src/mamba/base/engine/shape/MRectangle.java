@@ -14,8 +14,6 @@ import javafx.geometry.Point2D;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
 import mamba.base.MambaShape;
-import static mamba.base.MambaShape.ShapeState.SELECT;
-import mamba.base.MambaSupplierVoid;
 import mamba.base.engine.MEngine;
 import mamba.overlayselect.MDragHandle;
 
@@ -257,6 +255,11 @@ public class MRectangle implements MambaShape<MEngine>{
 
     @Override
     public void updateDragHandles(MDragHandle referenceHandle) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public Point2D getOffset() {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 

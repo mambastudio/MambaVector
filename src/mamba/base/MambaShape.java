@@ -32,6 +32,7 @@ public interface MambaShape<Engine2D extends MambaEngine2D> {
     public void translate(double x, double y);
     public Point2D getPosition();
     public void setOffset(Point2D offset);
+    public Point2D getOffset();
         
     public Engine2D getEngine2D();
     public void setEngine(Engine2D engine2D);
@@ -46,6 +47,26 @@ public interface MambaShape<Engine2D extends MambaEngine2D> {
     public boolean contains(Point2D p);    
     public ShapeState getState();
     public void setState(ShapeState shapeState);
+    
+    default double getWidth()
+    {
+        return 0;
+    }
+    
+    default double getHeight()
+    {
+        return 0;
+    }
+    
+    default void setWidth(double width)
+    {
+        
+    }
+    
+    default void setHeight(double height)
+    {
+        
+    }
       
     
     default boolean isDisplay()
