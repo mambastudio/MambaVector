@@ -13,7 +13,6 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.geometry.BoundingBox;
 import javafx.geometry.Point2D;
-import javafx.scene.Cursor;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
 import mamba.base.MambaShape;
@@ -28,10 +27,7 @@ public class MCircle implements MambaShape<MEngine> {
     private GraphicsContext graphicContext;
     
     private ShapeState shapeState = ShapeState.DISPLAY;
-    
-    private final DoubleProperty anchorX = new SimpleDoubleProperty(0);
-    private final DoubleProperty anchorY = new SimpleDoubleProperty(0);
-    
+        
     private final DoubleProperty width;
     private final DoubleProperty height;
     private final ObjectProperty<Color> solidColor;
@@ -68,15 +64,17 @@ public class MCircle implements MambaShape<MEngine> {
         //graphicContext
         graphicContext.save();
         graphicContext.setFill(solidColor.get());
-        graphicContext.fillOval(anchorX.doubleValue() + translateX.doubleValue(), 
-                                anchorY.doubleValue() + translateY.doubleValue(), 
-                                width.doubleValue(), height.doubleValue());
+        graphicContext.fillOval(translateX.doubleValue() + strokeWidth.doubleValue()/2, 
+                                translateY.doubleValue() + strokeWidth.doubleValue()/2, 
+                                width.doubleValue() - strokeWidth.doubleValue(), 
+                                height.doubleValue() - strokeWidth.doubleValue());
         
         graphicContext.setStroke(strokeColor.get());
         graphicContext.setLineWidth(strokeWidth.doubleValue());
-        graphicContext.strokeOval(anchorX.doubleValue() + translateX.doubleValue(), 
-                                  anchorY.doubleValue() + translateY.doubleValue(), 
-                                  width.doubleValue(), height.doubleValue());
+        graphicContext.strokeOval(translateX.doubleValue() + strokeWidth.doubleValue()/2, 
+                                  translateY.doubleValue() + strokeWidth.doubleValue()/2, 
+                                  width.doubleValue()  - strokeWidth.doubleValue(), 
+                                  height.doubleValue() - strokeWidth.doubleValue());
         graphicContext.restore();
     }
 
@@ -216,8 +214,8 @@ public class MCircle implements MambaShape<MEngine> {
 
     @Override
     public Point2D getPosition() {
-        return new Point2D( anchorX.doubleValue() + translateX.doubleValue(), 
-                            anchorY.doubleValue() + translateY.doubleValue());
+        return new Point2D(translateX.doubleValue(), 
+                           translateY.doubleValue());
     }
 
     @Override
@@ -246,10 +244,10 @@ public class MCircle implements MambaShape<MEngine> {
     @Override
     public void updateBounds() {
         boundingBox.set(new BoundingBox(
-                anchorX.doubleValue() + translateX.doubleValue() - strokeWidth.doubleValue()/2, 
-                anchorY.doubleValue() + translateY.doubleValue() - strokeWidth.doubleValue()/2, 
-                width.doubleValue()   + strokeWidth.doubleValue(), 
-                height.doubleValue()  + strokeWidth.doubleValue()));
+                translateX.doubleValue(), 
+                translateY.doubleValue(), 
+                width.doubleValue(), 
+                height.doubleValue()));
     }
 
     //called from resizable canvas
@@ -260,15 +258,15 @@ public class MCircle implements MambaShape<MEngine> {
         c1.setY(getBounds().getMinY() - 5);
         
         MDragHandle c2 = dragHandles.get(1);
-        c2.setX(getBounds().getMaxX() - 5);
-        c2.setY(getBounds().getMaxY() - 5);
+        c2.setX(getBounds().getMaxX());
+        c2.setY(getBounds().getMaxY());
        
         MDragHandle c3 = dragHandles.get(2);
         c3.setX(getBounds().getMinX() - 5);
-        c3.setY(getBounds().getMaxY() - 5);
+        c3.setY(getBounds().getMaxY());
         
         MDragHandle c4 = dragHandles.get(3);        
-        c4.setX(getBounds().getMaxX() - 5);
+        c4.setX(getBounds().getMaxX());
         c4.setY(getBounds().getMinY() - 5);        
     }
 

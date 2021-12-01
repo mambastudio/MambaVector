@@ -7,6 +7,7 @@ package mamba.overlayselect;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.geometry.Bounds;
 import javafx.geometry.Point2D;
 import javafx.scene.Cursor;
 import javafx.scene.paint.Color;
@@ -51,6 +52,12 @@ public class MDragHandle extends Rectangle {
         return dragCursor;
     }
     
+    public Point2D getPosition()
+    {
+        Bounds b = localToParent(getBoundsInLocal());
+        return new Point2D(b.getMinX(), b.getMinY());
+    }
+    
     public static ObservableList<MDragHandle> getDefaultResizeDragHandles(MambaShape shape)
     {        
         ObservableList<MDragHandle> dragHandles = FXCollections.observableArrayList();
@@ -61,24 +68,32 @@ public class MDragHandle extends Rectangle {
         dragHandles.add(c1);
 
         c1.setOnMousePressed(e->{
-           Point2D p = new Point2D(e.getX(), e.getY());                
-
+           Point2D p = new Point2D(e.getX(), e.getY()); 
            Point2D off = p.subtract(shape.getPosition()); //good to put offset in place                         
-           shape.setOffset(off);
-
-           c1.setCurrentPressedPoint(p);               
+           
+           c1.setCurrentPressedPoint(p);   
+           
+           
+           
         });
 
         c1.setOnMouseDragged(e->{
             Point2D p = new Point2D(e.getX(), e.getY()); 
+            
+            Point2D pc1 = c1.getPosition();
+            Point2D pd  = p.subtract(pc1);        
 
-            double newWidth     = shape.getBounds().getMaxX() - p.getX();
-            double newHeight    = shape.getBounds().getMaxY() - p.getY();
+            double newWidth     = shape.getPosition().getX()  + shape.getWidth()  - p.getX();
+            double newHeight    = shape.getPosition().getY()  + shape.getHeight()  - p.getY();
 
-            shape.translate(p.getX() + shape.getOffset().getX(), p.getY() + shape.getOffset().getY());
+            
 
             shape.setWidth(newWidth);
             shape.setHeight(newHeight);
+            
+            shape.translate(
+                    p.getX() + shape.getOffset().getX(), 
+                    p.getY()  + shape.getOffset().getY());
 
             shape.updateDragHandles(null);
             c1.setCurrentPressedPoint(p);               
@@ -179,7 +194,7 @@ public class MDragHandle extends Rectangle {
             shape.setWidth(newWidth);
 
             double changeY = p2.getY() - p.getY();    //always positive if going up, and negative if going down            
-            double newHeight = shape.getHeight() + changeY;               
+            double newHeight = shape.getBounds().getHeight() + changeY;               
             shape.setHeight(newHeight);                
 
             //ensures position x never changes

@@ -28,15 +28,4 @@ public class MSelectionOverlay extends Region{
         setPickOnBounds(false);
         this.getChildren().addAll(shape.getDragHandles());
     }
-    
-
-    // records relative x and y co-ordinates.
-    private class Delta {
-        double x;
-        double y;
-        double minX;
-        double maxX;
-        double minY;
-        double maxY;
-    }
 }
