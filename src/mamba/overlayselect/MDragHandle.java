@@ -14,6 +14,7 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.shape.StrokeType;
 import mamba.base.MambaShape;
+import mamba.util.MBound2;
 
 /**
  *
@@ -69,31 +70,26 @@ public class MDragHandle extends Rectangle {
 
         c1.setOnMousePressed(e->{
            Point2D p = new Point2D(e.getX(), e.getY()); 
-           Point2D off = p.subtract(shape.getPosition()); //good to put offset in place                         
-           
+           shape.setOffset(Point2D.ZERO);    
            c1.setCurrentPressedPoint(p);   
-           
-           
-           
         });
 
         c1.setOnMouseDragged(e->{
-            Point2D p = new Point2D(e.getX(), e.getY()); 
             
-            Point2D pc1 = c1.getPosition();
-            Point2D pd  = p.subtract(pc1);        
-
-            double newWidth     = shape.getPosition().getX()  + shape.getWidth()  - p.getX();
-            double newHeight    = shape.getPosition().getY()  + shape.getHeight()  - p.getY();
-
+            Point2D p = new Point2D(e.getX(), e.getY());
             
-
-            shape.setWidth(newWidth);
-            shape.setHeight(newHeight);
+            MBound2 nbound = new MBound2();
+            MBound2 cbound = new MBound2();
+            
+            cbound.include(shape.getBounds());          //current bounds 
+            nbound.include(p, cbound.getPoint(2));      //new bounds
             
             shape.translate(
-                    p.getX() + shape.getOffset().getX(), 
-                    p.getY()  + shape.getOffset().getY());
+                    p.getX(), 
+                    p.getY());
+
+            shape.setWidth(nbound.getWidth());
+            shape.setHeight(nbound.getHeight());
 
             shape.updateDragHandles(null);
             c1.setCurrentPressedPoint(p);               
@@ -109,28 +105,31 @@ public class MDragHandle extends Rectangle {
         c2.setX(shape.getBounds().getMaxX() - 5);
         c2.setY(shape.getBounds().getMaxY() - 5);
         dragHandles.add(c2);
-
+        
         c2.setOnMousePressed(e->{
-           Point2D p = new Point2D(e.getX(), e.getY());                
-
-           Point2D off = p.subtract(shape.getPosition()); //good to put offset in place                         
-           shape.setOffset(off);
-
-           c2.setCurrentPressedPoint(p);               
+           Point2D p = new Point2D(e.getX(), e.getY()); 
+           shape.setOffset(Point2D.ZERO);    
+           c2.setCurrentPressedPoint(p);   
         });
-
+        
         c2.setOnMouseDragged(e->{
+            
             Point2D p = new Point2D(e.getX(), e.getY());
-
-            double newWidth = p.getX() - shape.getBounds().getMinX();
-            shape.setWidth(newWidth);
-
-            double newHeight = p.getY() - shape.getBounds().getMinY();
-            shape.setHeight(newHeight);
-
+            
+            MBound2 nbound = new MBound2();
+            MBound2 cbound = new MBound2();
+            
+            cbound.include(shape.getBounds());          //current bounds             
+            nbound.include(cbound.getMin(), p);      //new bounds
+            
+            shape.setWidth(nbound.getWidth());
+            shape.setHeight(nbound.getHeight());
+                     
             shape.updateDragHandles(null);
-        });
+            c2.setCurrentPressedPoint(p);               
 
+        });
+        
         c2.setOnMouseMoved(e->{
             c2.setCursor(Cursor.HAND);
         });
@@ -139,34 +138,35 @@ public class MDragHandle extends Rectangle {
         c3.setX(shape.getBounds().getMinX() - 5);
         c3.setY(shape.getBounds().getMaxY() - 5);
         dragHandles.add(c3);
-
+        
         c3.setOnMousePressed(e->{
-           Point2D p = new Point2D(e.getX(), e.getY());                
-
-           Point2D off = p.subtract(shape.getPosition()); //good to put offset in place                         
-           shape.setOffset(off);
-
-           c3.setCurrentPressedPoint(p);               
+           Point2D p = new Point2D(e.getX(), e.getY()); 
+           shape.setOffset(Point2D.ZERO);    
+           c3.setCurrentPressedPoint(p);   
         });
-
+        
         c3.setOnMouseDragged(e->{
-            Point2D p = new Point2D(e.getX(), e.getY()); 
-            Point2D pc = shape.getPosition();
-
-            double newWidth = shape.getBounds().getMaxX() - p.getX(); //new width
-            shape.setWidth(newWidth);                
-
-            double newHeight = p.getY() - pc.getY();                
-            shape.setHeight(newHeight);
-
-            //ensure position y never changes
-            shape.translate(p.getX() + shape.getOffset().getX(), pc.getY() + shape.getOffset().getY());
-
+            
+            Point2D p = new Point2D(e.getX(), e.getY());
+            
+            MBound2 nbound = new MBound2();
+            MBound2 cbound = new MBound2();
+            
+            cbound.include(shape.getBounds());       //current bounds             
+            nbound.include(p, cbound.getPoint(1));      //new bounds
+            
+            shape.translate(
+                    nbound.getMin().getX(), 
+                    nbound.getMin().getY());
+            
+            shape.setWidth(nbound.getWidth());
+            shape.setHeight(nbound.getHeight());
+                     
             shape.updateDragHandles(null);
             c3.setCurrentPressedPoint(p);               
 
         });
-
+        
         c3.setOnMouseMoved(e->{
             c3.setCursor(Cursor.HAND);
         });
@@ -175,34 +175,35 @@ public class MDragHandle extends Rectangle {
         c4.setX(shape.getBounds().getMaxX() - 5);
         c4.setY(shape.getBounds().getMinY() - 5);
         dragHandles.add(c4);
-
+        
         c4.setOnMousePressed(e->{
-           Point2D p = new Point2D(e.getX(), e.getY());                
-
-           Point2D off = p.subtract(shape.getPosition()); //good to put offset in place                         
-           shape.setOffset(off);
-
-           c4.setCurrentPressedPoint(p);               
+           Point2D p = new Point2D(e.getX(), e.getY()); 
+           shape.setOffset(Point2D.ZERO);    
+           c4.setCurrentPressedPoint(p);   
         });
-
+        
         c4.setOnMouseDragged(e->{
-            Point2D p = new Point2D(e.getX(), e.getY()); 
-            Point2D p2 = c4.getCurrentPressedPoint();
-            Point2D pc = shape.getPosition();
-
-            double newWidth = p.getX() - shape.getBounds().getMinX();
-            shape.setWidth(newWidth);
-
-            double changeY = p2.getY() - p.getY();    //always positive if going up, and negative if going down            
-            double newHeight = shape.getBounds().getHeight() + changeY;               
-            shape.setHeight(newHeight);                
-
-            //ensures position x never changes
-            shape.translate(pc.getX() + shape.getOffset().getX(), p.getY() + shape.getOffset().getY());
-
+            
+            Point2D p = new Point2D(e.getX(), e.getY());
+            
+            MBound2 nbound = new MBound2();
+            MBound2 cbound = new MBound2();
+            
+            cbound.include(shape.getBounds());       //current bounds             
+            nbound.include(p, cbound.getPoint(3));      //new bounds
+            
+            shape.translate(
+                    nbound.getMin().getX(), 
+                    nbound.getMin().getY());
+            
+            shape.setWidth(nbound.getWidth());
+            shape.setHeight(nbound.getHeight());
+                     
             shape.updateDragHandles(null);
-            c4.setCurrentPressedPoint(p);
+            c4.setCurrentPressedPoint(p);               
+
         });
+        
         //c4 on mouse moved
         c4.setOnMouseMoved(e->{
             c4.setCursor(Cursor.HAND);
