@@ -61,6 +61,17 @@ public class MBound2 {
         
     }
     
+    public void setBoundingBox(BoundingBox boundingBox)
+    {
+        this.min = new Point2D(boundingBox.getMinX(), boundingBox.getMinY());
+        this.max = new Point2D(boundingBox.getMaxX(), boundingBox.getMaxY());
+    }
+    
+    public BoundingBox getBoundingBox()
+    {
+        return new BoundingBox(getMin().getX(), getMin().getY(), getWidth(), getHeight());
+    }
+    
     public final Point2D getPoint(int i)
     {
         if(i == 0)

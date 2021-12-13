@@ -63,6 +63,7 @@ public class MDragHandle extends Rectangle {
     {        
         ObservableList<MDragHandle> dragHandles = FXCollections.observableArrayList();
         
+        /*
         MDragHandle c1 = new MDragHandle(5, Cursor.DEFAULT);            
         c1.setX(shape.getBounds().getMinX() - 5);
         c1.setY(shape.getBounds().getMinY() - 5);
@@ -84,12 +85,12 @@ public class MDragHandle extends Rectangle {
             cbound.include(shape.getBounds());          //current bounds 
             nbound.include(p, cbound.getPoint(2));      //new bounds
             
-            shape.translate(
+            shape.setPosition(
                     p.getX(), 
                     p.getY());
 
-            shape.setWidth(nbound.getWidth());
-            shape.setHeight(nbound.getHeight());
+           // shape.setWidth(nbound.getWidth());
+           // shape.setHeight(nbound.getHeight());
 
             shape.updateDragHandles(null);
             c1.setCurrentPressedPoint(p);               
@@ -122,8 +123,8 @@ public class MDragHandle extends Rectangle {
             cbound.include(shape.getBounds());          //current bounds             
             nbound.include(cbound.getMin(), p);      //new bounds
             
-            shape.setWidth(nbound.getWidth());
-            shape.setHeight(nbound.getHeight());
+//            shape.setWidth(nbound.getWidth());
+          //  shape.setHeight(nbound.getHeight());
                      
             shape.updateDragHandles(null);
             c2.setCurrentPressedPoint(p);               
@@ -155,12 +156,12 @@ public class MDragHandle extends Rectangle {
             cbound.include(shape.getBounds());       //current bounds             
             nbound.include(p, cbound.getPoint(1));      //new bounds
             
-            shape.translate(
+            shape.setPosition(
                     nbound.getMin().getX(), 
                     nbound.getMin().getY());
             
-            shape.setWidth(nbound.getWidth());
-            shape.setHeight(nbound.getHeight());
+          //  shape.setWidth(nbound.getWidth());
+         //   shape.setHeight(nbound.getHeight());
                      
             shape.updateDragHandles(null);
             c3.setCurrentPressedPoint(p);               
@@ -192,12 +193,12 @@ public class MDragHandle extends Rectangle {
             cbound.include(shape.getBounds());       //current bounds             
             nbound.include(p, cbound.getPoint(3));      //new bounds
             
-            shape.translate(
+            shape.setPosition(
                     nbound.getMin().getX(), 
                     nbound.getMin().getY());
             
-            shape.setWidth(nbound.getWidth());
-            shape.setHeight(nbound.getHeight());
+         //   shape.setWidth(nbound.getWidth());
+        //    shape.setHeight(nbound.getHeight());
                      
             shape.updateDragHandles(null);
             c4.setCurrentPressedPoint(p);               
@@ -208,7 +209,7 @@ public class MDragHandle extends Rectangle {
         c4.setOnMouseMoved(e->{
             c4.setCursor(Cursor.HAND);
         });
-        
+        */
         return dragHandles;
     }
 }

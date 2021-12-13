@@ -12,6 +12,7 @@ import javafx.collections.ObservableList;
 import javafx.geometry.BoundingBox;
 import javafx.geometry.Point2D;
 import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.transform.Transform;
 import static mamba.base.MambaShape.ShapeState.ANIMATION;
 import static mamba.base.MambaShape.ShapeState.DISPLAY;
 import static mamba.base.MambaShape.ShapeState.EXPERT;
@@ -25,14 +26,19 @@ import mamba.overlayselect.MDragHandle;
  */
 public interface MambaShape<Engine2D extends MambaEngine2D> {
     public enum ShapeState{DISPLAY, SELECT, ANIMATION, EXPERT};
-        
-    DoubleProperty widthProperty();
-    DoubleProperty heightProperty();
     
-    public void translate(double x, double y);
-    public Point2D getPosition();
+    public Transform getTransform();
+    public void setTransform(Transform transform);
+        
+    public void translate(Point2D p);
+    public Point2D getTranslate();
+    
     public void setOffset(Point2D offset);
     public Point2D getOffset();
+    default void resetOffset()
+    {
+        setOffset(new Point2D(0, 0));
+    }
         
     public Engine2D getEngine2D();
     public void setEngine(Engine2D engine2D);
@@ -40,35 +46,14 @@ public interface MambaShape<Engine2D extends MambaEngine2D> {
     public GraphicsContext getGraphicsContext();
     public void draw();
         
-    public ObjectProperty<BoundingBox> getBoundsProperty();
     public BoundingBox getBounds();
-    public void updateBounds();
+        
+    //not only by bounds but by specific shape
+    public boolean contains(Point2D p); 
     
-    public boolean contains(Point2D p);    
     public ShapeState getState();
     public void setState(ShapeState shapeState);
-    
-    default double getWidth()
-    {
-        return 0;
-    }
-    
-    default double getHeight()
-    {
-        return 0;
-    }
-    
-    default void setWidth(double width)
-    {
         
-    }
-    
-    default void setHeight(double height)
-    {
-        
-    }
-      
-    
     default boolean isDisplay()
     {
         return getState() == DISPLAY;

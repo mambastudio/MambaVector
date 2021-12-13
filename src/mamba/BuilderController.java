@@ -12,11 +12,9 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.Group;
 import javafx.scene.layout.Pane;
-import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import mamba.base.engine.MEngine;
-import mamba.base.engine.shape.MCircle;
-import mamba.base.engine.shape.MRectangle;
+import mamba.base.engine.shape.MCircle2;
 import mamba.components.BackgroundPane;
 import mamba.components.ResizeableCanvas;
 import mamba.overlayselect.MSelectionModel;
@@ -46,6 +44,8 @@ public class BuilderController implements Initializable {
     @Override
     public void initialize(URL url, ResourceBundle rb) {
         // TODO
+        
+        System.out.println(Double.NEGATIVE_INFINITY + Double.POSITIVE_INFINITY);
         
         baseDrawPanel.getChildren().addAll(backgroundPanel, renderCanvas, selectionLayer);
         
@@ -81,12 +81,12 @@ public class BuilderController implements Initializable {
     
     public void addCircle(ActionEvent e)
     {        
-        engine2D.addShape(new MCircle());        
+        engine2D.addShape(new MCircle2());        
     }
     
     public void addRectangle(ActionEvent e)
     {        
-        engine2D.addShape(new MRectangle());        
+        //engine2D.addShape(new MRectangle());        
     }
     
     public void clearAll(ActionEvent e)

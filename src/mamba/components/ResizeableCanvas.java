@@ -99,7 +99,7 @@ public final class ResizeableCanvas extends Region implements MambaCanvas<MEngin
         {
             if(!engine2D.getSelected().isExpert())
                 engine2D.getSelected().setState(ShapeState.SELECT); //set selection
-            engine2D.getSelected().setOffset(p.subtract(engine2D.getSelected().getPosition()));            
+            engine2D.getSelected().setOffset(p.subtract(engine2D.getSelected().getTranslate()));               
             engine2D.draw();
         }
         else
@@ -120,7 +120,7 @@ public final class ResizeableCanvas extends Region implements MambaCanvas<MEngin
         if(e.isPrimaryButtonDown() && engine2D.isSelected())
         {        
             Point2D p = new Point2D(e.getX(), e.getY());
-            engine2D.getSelected().translate(p.getX(), p.getY());    
+            engine2D.getSelected().translate(p);    
             engine2D.getSelected().updateDragHandles(null);
             Platform.runLater(()->engine2D.draw());
            

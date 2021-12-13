@@ -15,6 +15,8 @@ import javafx.geometry.BoundingBox;
 import javafx.geometry.Point2D;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
+import javafx.scene.transform.Transform;
+import javafx.scene.transform.Translate;
 import mamba.base.MambaShape;
 import mamba.base.engine.MEngine;
 import mamba.overlayselect.MDragHandle;
@@ -27,6 +29,8 @@ public class MCircle implements MambaShape<MEngine> {
     private GraphicsContext graphicContext;
     
     private ShapeState shapeState = ShapeState.DISPLAY;
+    
+    private Transform transform;
         
     private final DoubleProperty width;
     private final DoubleProperty height;
@@ -47,6 +51,7 @@ public class MCircle implements MambaShape<MEngine> {
    
     public MCircle()
     {
+        transform = Translate.translate(0, 0);
         width = new SimpleDoubleProperty(90);
         height = new SimpleDoubleProperty(90);
         solidColor = new SimpleObjectProperty(Color.YELLOW);
@@ -56,6 +61,7 @@ public class MCircle implements MambaShape<MEngine> {
     
     @Override
     public GraphicsContext getGraphicsContext() {
+        
         return graphicContext;
     }
 
@@ -113,22 +119,19 @@ public class MCircle implements MambaShape<MEngine> {
         this.engine2D = engine2D;
     }
     
-    @Override
     public void setWidth(double width)
     {
         this.width.set(width);
         this.updateBounds();
         this.getEngine2D().draw();
         
-    }
-    
-    @Override
+    }    
+   
     public double getWidth()
     {        
         return this.width.doubleValue();
     }
     
-    @Override
     public void setHeight(double height)
     {       
         this.height.set(height);
@@ -137,7 +140,6 @@ public class MCircle implements MambaShape<MEngine> {
         
     }
     
-    @Override
     public double getHeight()
     {
         return this.height.doubleValue();
@@ -155,13 +157,11 @@ public class MCircle implements MambaShape<MEngine> {
     {
         return this.solidColor.get();
     }
-
-    @Override
+   
     public DoubleProperty widthProperty() {
         return width;
     }
-
-    @Override
+    
     public DoubleProperty heightProperty() {
         return height;
     }
@@ -206,14 +206,14 @@ public class MCircle implements MambaShape<MEngine> {
     }
 
     @Override
-    public void translate(double x, double y) {
+    public void setPosition(double x, double y) {
         this.translateX.set(x - offset.getX());
         this.translateY.set(y - offset.getY());        
         this.updateBounds();
     }
 
     @Override
-    public Point2D getPosition() {
+    public Point2D getTranslate() {
         return new Point2D(translateX.doubleValue(), 
                            translateY.doubleValue());
     }
@@ -273,5 +273,15 @@ public class MCircle implements MambaShape<MEngine> {
     @Override
     public Point2D getOffset() {
         return offset;
+    }
+
+    @Override
+    public Transform getTransform() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public void setTransform(Transform transform) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 }
