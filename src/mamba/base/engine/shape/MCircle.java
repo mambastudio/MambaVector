@@ -5,6 +5,8 @@
  */
 package mamba.base.engine.shape;
 
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleDoubleProperty;
@@ -15,98 +17,74 @@ import javafx.geometry.BoundingBox;
 import javafx.geometry.Point2D;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
+import javafx.scene.transform.NonInvertibleTransformException;
 import javafx.scene.transform.Transform;
-import javafx.scene.transform.Translate;
 import mamba.base.MambaShape;
 import mamba.base.engine.MEngine;
 import mamba.overlayselect.MDragHandle;
+import mamba.util.MBound2;
 
 /**
  *
  * @author user
  */
-public class MCircle implements MambaShape<MEngine> {
-    private GraphicsContext graphicContext;
+public class MCircle implements MambaShape<MEngine>{
     
     private ShapeState shapeState = ShapeState.DISPLAY;
     
-    private Transform transform;
-        
-    private final DoubleProperty width;
-    private final DoubleProperty height;
+    private MEngine engine2D;
+    private GraphicsContext graphicContext;
+    
+    private Point2D offset;
+    
+    private final DoubleProperty radius;
     private final ObjectProperty<Color> solidColor;
     private final DoubleProperty strokeWidth;
     private final ObjectProperty<Color> strokeColor;
     
-    private final DoubleProperty translateX = new SimpleDoubleProperty(50);
-    private final DoubleProperty translateY = new SimpleDoubleProperty(50);
+    private Transform transform;
     
-    private final ObjectProperty<BoundingBox> boundingBox = new SimpleObjectProperty();
-    
-    private Point2D offset = new Point2D(0, 0);
-    
-    private MEngine engine2D;
-    
-    ObservableList<MDragHandle> dragHandles = FXCollections.observableArrayList();
-   
     public MCircle()
     {
-        transform = Translate.translate(0, 0);
-        width = new SimpleDoubleProperty(90);
-        height = new SimpleDoubleProperty(90);
+        offset = new Point2D(0, 0);
+        
+        radius = new SimpleDoubleProperty(45);
         solidColor = new SimpleObjectProperty(Color.YELLOW);
         strokeWidth = new SimpleDoubleProperty(0.001);
         strokeColor = new SimpleObjectProperty(Color.BLACK);
-    }
-    
-    @Override
-    public GraphicsContext getGraphicsContext() {
         
-        return graphicContext;
+        transform = Transform.translate(50, 50); 
     }
 
     @Override
-    public void draw() {
-        //graphicContext
-        graphicContext.save();
-        graphicContext.setFill(solidColor.get());
-        graphicContext.fillOval(translateX.doubleValue() + strokeWidth.doubleValue()/2, 
-                                translateY.doubleValue() + strokeWidth.doubleValue()/2, 
-                                width.doubleValue() - strokeWidth.doubleValue(), 
-                                height.doubleValue() - strokeWidth.doubleValue());
-        
-        graphicContext.setStroke(strokeColor.get());
-        graphicContext.setLineWidth(strokeWidth.doubleValue());
-        graphicContext.strokeOval(translateX.doubleValue() + strokeWidth.doubleValue()/2, 
-                                  translateY.doubleValue() + strokeWidth.doubleValue()/2, 
-                                  width.doubleValue()  - strokeWidth.doubleValue(), 
-                                  height.doubleValue() - strokeWidth.doubleValue());
-        graphicContext.restore();
+    public Transform getTransform() {
+        return this.transform;
     }
 
     @Override
-    public BoundingBox getBounds() {
-        return getBoundsProperty().get();
+    public void setTransform(Transform transform) {
+        this.transform = transform;
     }
 
     @Override
-    public boolean contains(Point2D p) {        
-        return getBoundsProperty().get().contains(p);
+    public void translate(Point2D p) {
+        Point2D tp = p.subtract(offset);
+        this.transform = Transform.translate(tp.getX(), tp.getY());
     }
 
     @Override
-    public ShapeState getState() {
-        return shapeState;
+    public Point2D getTranslate() {
+        return this.transform.transform(new Point2D(0, 0));
     }
 
     @Override
-    public void setState(ShapeState shapeState) {
-        this.shapeState = shapeState;
+    public void setOffset(Point2D offset) {
+        this.offset = offset;
     }
-
+   
     @Override
-    public void setGraphicContext(GraphicsContext graphicContext) {
-        this.graphicContext = graphicContext;
+    public Point2D getOffset() {
+        return offset;
     }
 
     @Override
@@ -118,56 +96,85 @@ public class MCircle implements MambaShape<MEngine> {
     public void setEngine(MEngine engine2D) {
         this.engine2D = engine2D;
     }
-    
-    public void setWidth(double width)
-    {
-        this.width.set(width);
-        this.updateBounds();
-        this.getEngine2D().draw();
+
+    @Override
+    public void setGraphicContext(GraphicsContext context) {
+        this.graphicContext = context;
+    }
+
+    @Override
+    public GraphicsContext getGraphicsContext() {
+        return this.graphicContext;
+    }
+
+    @Override
+    public void draw() {
         
-    }    
-   
-    public double getWidth()
-    {        
-        return this.width.doubleValue();
-    }
-    
-    public void setHeight(double height)
-    {       
-        this.height.set(height);
-        this.updateBounds();
-        this.getEngine2D().draw();
+        graphicContext.save();
         
-    }
-    
-    public double getHeight()
-    {
-        return this.height.doubleValue();
-    }
-    
-    public void setSolidColor(Color solidColor)
-    {       
-        this.solidColor.set(solidColor);
-        this.updateBounds();
-        this.getEngine2D().draw();
+        //apply transform first
+        graphicContext.setTransform(
+                transform.getMxx(), transform.getMyx(), transform.getMxy(),
+                transform.getMyy(), transform.getTx(), transform.getTy());
         
+        //draw shape, this is just local coordinates 
+        graphicContext.setFill(solidColor.get());
+        graphicContext.fillOval(
+                -radius.doubleValue() + strokeWidth.doubleValue()/2, 
+                -radius.doubleValue() + strokeWidth.doubleValue()/2, 
+                radius.doubleValue() * 2 - strokeWidth.doubleValue(), 
+                radius.doubleValue() * 2 - strokeWidth.doubleValue());
+        graphicContext.setStroke(strokeColor.get());
+        graphicContext.setLineWidth(strokeWidth.doubleValue());
+        graphicContext.strokeOval(-radius.doubleValue() + strokeWidth.doubleValue()/2, 
+                                  -radius.doubleValue() + strokeWidth.doubleValue()/2, 
+                                  radius.doubleValue()*2  - strokeWidth.doubleValue(), 
+                                  radius.doubleValue()*2 - strokeWidth.doubleValue());
+        
+        graphicContext.restore();
+    }
+
+    @Override
+    public BoundingBox getBounds() {
+        Point2D min = new Point2D(-radius.doubleValue(), -radius.doubleValue());
+        Point2D max = new Point2D(radius.doubleValue(), radius.doubleValue());
+        MBound2 bound = new MBound2();
+        bound.include(min);
+        bound.include(max);       
+        return (BoundingBox) transform.transform(bound.getBoundingBox());
+    }
+
+    @Override
+    public boolean contains(Point2D p) {
+        try {
+            //transform p to local coordinates
+            Point2D invP = transform.inverseTransform(p);
+            Point2D min = new Point2D(-radius.doubleValue(), -radius.doubleValue());
+            Point2D max = new Point2D(radius.doubleValue(), radius.doubleValue());
+            MBound2 bound = new MBound2();
+            bound.include(min);
+            bound.include(max);
+            return bound.contains(invP);
+        } catch (NonInvertibleTransformException ex) {
+            Logger.getLogger(MCircle.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return false;
     }
     
-    public Color getSolidColor()
+    public double getRadius()
     {
-        return this.solidColor.get();
-    }
-   
-    public DoubleProperty widthProperty() {
-        return width;
+        return radius.doubleValue();
     }
     
-    public DoubleProperty heightProperty() {
-        return height;
+    public void setRadius(double radius)
+    {
+        this.radius.set(radius);
+        this.engine2D.draw();
     }
     
-    public ObjectProperty<Color> solidColorProperty(){
-        return solidColor;
+    public DoubleProperty radiusProperty()
+    {
+        return radius;
     }
     
     public double getStrokeWidth()
@@ -178,7 +185,6 @@ public class MCircle implements MambaShape<MEngine> {
     public void setStrokeWidth(double strokeWidth)
     {       
         this.strokeWidth.set(strokeWidth);
-        this.updateBounds();
         this.getEngine2D().draw();
       
     }
@@ -191,7 +197,6 @@ public class MCircle implements MambaShape<MEngine> {
     public void setStrokeColor(Color strokeColor)
     {       
         this.strokeColor.set(strokeColor);
-        this.updateBounds();
         this.getEngine2D().draw();
         
     }
@@ -206,53 +211,33 @@ public class MCircle implements MambaShape<MEngine> {
     }
 
     @Override
-    public void setPosition(double x, double y) {
-        this.translateX.set(x - offset.getX());
-        this.translateY.set(y - offset.getY());        
-        this.updateBounds();
+    public ShapeState getState() {
+        return this.shapeState;
     }
 
     @Override
-    public Point2D getTranslate() {
-        return new Point2D(translateX.doubleValue(), 
-                           translateY.doubleValue());
-    }
-
-    @Override
-    public void setOffset(Point2D offset) {
-        this.offset = offset;
+    public void setState(ShapeState shapeState) {
+        this.shapeState = shapeState;
     }
     
     @Override
     public ObservableList<MDragHandle> getDragHandles()
     {
+        /*
         if(dragHandles.isEmpty())
         {
             dragHandles.addAll(MDragHandle.getDefaultResizeDragHandles(this));
         }
                 
         return dragHandles;
-    }
-    
-    @Override
-    public ObjectProperty<BoundingBox> getBoundsProperty() {
-        if(boundingBox.get() == null)
-            updateBounds();
-        return boundingBox;
+        */
+        return FXCollections.emptyObservableList();
     }
 
-    @Override
-    public void updateBounds() {
-        boundingBox.set(new BoundingBox(
-                translateX.doubleValue(), 
-                translateY.doubleValue(), 
-                width.doubleValue(), 
-                height.doubleValue()));
-    }
-
-    //called from resizable canvas
     @Override
     public void updateDragHandles(MDragHandle referenceHandle) {
+        /*
+        //TODO
         MDragHandle c1 = dragHandles.get(0);
         c1.setX(getBounds().getMinX() - 5);
         c1.setY(getBounds().getMinY() - 5);
@@ -267,21 +252,8 @@ public class MCircle implements MambaShape<MEngine> {
         
         MDragHandle c4 = dragHandles.get(3);        
         c4.setX(getBounds().getMaxX());
-        c4.setY(getBounds().getMinY() - 5);        
+        c4.setY(getBounds().getMinY() - 5);  
+        */
     }
-
-    @Override
-    public Point2D getOffset() {
-        return offset;
-    }
-
-    @Override
-    public Transform getTransform() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
-    public void setTransform(Transform transform) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
+    
 }

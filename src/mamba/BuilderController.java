@@ -14,7 +14,7 @@ import javafx.scene.Group;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import mamba.base.engine.MEngine;
-import mamba.base.engine.shape.MCircle2;
+import mamba.base.engine.shape.MCircle;
 import mamba.components.BackgroundPane;
 import mamba.components.ResizeableCanvas;
 import mamba.overlayselect.MSelectionModel;
@@ -81,7 +81,7 @@ public class BuilderController implements Initializable {
     
     public void addCircle(ActionEvent e)
     {        
-        engine2D.addShape(new MCircle2());        
+        engine2D.addShape(new MCircle());        
     }
     
     public void addRectangle(ActionEvent e)
