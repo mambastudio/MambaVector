@@ -63,6 +63,41 @@ public class MDragHandle extends Rectangle {
     {        
         ObservableList<MDragHandle> dragHandles = FXCollections.observableArrayList();
         
+        MDragHandle c1 = new MDragHandle(5, Cursor.DEFAULT);            
+        c1.setX(shape.getBounds().getMinX() - 5);
+        c1.setY(shape.getBounds().getMinY() - 5);
+        dragHandles.add(c1);
+        
+        c1.setOnMousePressed(e->{
+           Point2D p = new Point2D(e.getX(), e.getY()); 
+           shape.setOffset(Point2D.ZERO);    
+           c1.setCurrentPressedPoint(p);   
+        });
+        
+        c1.setOnMouseDragged(e->{
+            
+            Point2D p = new Point2D(e.getX(), e.getY());
+            
+            MBound2 nbound = new MBound2();
+            MBound2 cbound = new MBound2();
+            
+            cbound.include(shape.getBounds());          //current bounds 
+            nbound.include(p, cbound.getPoint(2));      //new bounds
+            
+            shape.translate(p);                 
+
+           // shape.setWidth(nbound.getWidth());
+           // shape.setHeight(nbound.getHeight());
+
+            shape.updateDragHandles(null);
+            c1.setCurrentPressedPoint(p);               
+
+        });
+
+        c1.setOnMouseMoved(e->{
+            c1.setCursor(Cursor.HAND);
+        });
+        
         /*
         MDragHandle c1 = new MDragHandle(5, Cursor.DEFAULT);            
         c1.setX(shape.getBounds().getMinX() - 5);

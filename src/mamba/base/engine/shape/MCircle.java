@@ -15,6 +15,7 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.geometry.BoundingBox;
 import javafx.geometry.Point2D;
+import javafx.scene.Cursor;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
 import javafx.scene.transform.NonInvertibleTransformException;
@@ -43,6 +44,8 @@ public class MCircle implements MambaShape<MEngine>{
     private final ObjectProperty<Color> strokeColor;
     
     private Transform transform;
+    
+    ObservableList<MDragHandle> dragHandles = FXCollections.observableArrayList();
     
     public MCircle()
     {
@@ -170,6 +173,7 @@ public class MCircle implements MambaShape<MEngine>{
     {
         this.radius.set(radius);
         this.engine2D.draw();
+        updateDragHandles(null);
     }
     
     public DoubleProperty radiusProperty()
@@ -223,28 +227,165 @@ public class MCircle implements MambaShape<MEngine>{
     @Override
     public ObservableList<MDragHandle> getDragHandles()
     {
-        /*
         if(dragHandles.isEmpty())
-        {
-            dragHandles.addAll(MDragHandle.getDefaultResizeDragHandles(this));
+        {       
+            MDragHandle c1 = new MDragHandle(5, Cursor.DEFAULT);            
+            c1.setX(getBounds().getMinX() - 5);
+            c1.setY(getBounds().getMinY() - 5);
+            dragHandles.add(c1);
+
+            c1.setOnMousePressed(e->{
+               Point2D p = new Point2D(e.getX(), e.getY()); 
+               setOffset(Point2D.ZERO);    
+               c1.setCurrentPressedPoint(p);   
+            });
+
+            c1.setOnMouseDragged(e->{
+
+                Point2D p = new Point2D(e.getX(), e.getY());
+
+                MBound2 nbound = new MBound2();
+                MBound2 cbound = new MBound2();
+
+                cbound.include(getBounds());          //current bounds 
+                nbound.include(p, cbound.getPoint(2));      //new bounds
+                double nRadius = nbound.getMaxExtentRadius(); //new radius
+                
+                setRadius(nRadius);              
+                
+                updateDragHandles(null);
+                c1.setCurrentPressedPoint(p);               
+
+            });
+
+            c1.setOnMouseMoved(e->{
+                c1.setCursor(Cursor.HAND);
+            });
+            
+            MDragHandle c2 = new MDragHandle(5, Cursor.DEFAULT);
+            c2.setX(getBounds().getMaxX() - 5);
+            c2.setY(getBounds().getMaxY() - 5);
+            dragHandles.add(c2);
+
+            c2.setOnMousePressed(e->{
+               Point2D p = new Point2D(e.getX(), e.getY()); 
+               setOffset(Point2D.ZERO);    
+               c2.setCurrentPressedPoint(p);   
+            });
+
+            c2.setOnMouseDragged(e->{
+
+                Point2D p = new Point2D(e.getX(), e.getY());
+
+                MBound2 nbound = new MBound2();
+                MBound2 cbound = new MBound2();
+
+                cbound.include(getBounds());          //current bounds 
+                nbound.include(p, cbound.getPoint(0));      //new bounds
+                double nRadius = nbound.getMaxExtentRadius(); //new radius
+               
+                setRadius(nRadius);             
+                
+                updateDragHandles(null);
+                c2.setCurrentPressedPoint(p);               
+
+            });
+
+            c2.setOnMouseMoved(e->{
+                c2.setCursor(Cursor.HAND);
+            });
+            
+            MDragHandle c3 = new MDragHandle(5, Cursor.DEFAULT);
+            c3.setX(getBounds().getMinX() - 5);
+            c3.setY(getBounds().getMaxY() - 5);
+            dragHandles.add(c3);
+
+            c3.setOnMousePressed(e->{
+               Point2D p = new Point2D(e.getX(), e.getY()); 
+               setOffset(Point2D.ZERO);    
+               c3.setCurrentPressedPoint(p);   
+            });
+
+            c3.setOnMouseDragged(e->{
+
+                Point2D p = new Point2D(e.getX(), e.getY());
+
+                MBound2 nbound = new MBound2();
+                MBound2 cbound = new MBound2();
+
+                cbound.include(getBounds());       //current bounds             
+                nbound.include(p, cbound.getPoint(1));      //new bounds
+                double nRadius = nbound.getMaxExtentRadius(); //new radius
+               
+                setRadius(nRadius);
+
+              //  shape.setWidth(nbound.getWidth());
+             //   shape.setHeight(nbound.getHeight());
+
+                updateDragHandles(null);
+                c3.setCurrentPressedPoint(p);               
+
+            });
+
+            c3.setOnMouseMoved(e->{
+                c3.setCursor(Cursor.HAND);
+            });
+
+            MDragHandle c4 = new MDragHandle(5, Cursor.DEFAULT);
+            c4.setX(getBounds().getMaxX() - 5);
+            c4.setY(getBounds().getMinY() - 5);
+            dragHandles.add(c4);
+
+            c4.setOnMousePressed(e->{
+               Point2D p = new Point2D(e.getX(), e.getY()); 
+               setOffset(Point2D.ZERO);    
+               c4.setCurrentPressedPoint(p);   
+            });
+
+            c4.setOnMouseDragged(e->{
+
+                Point2D p = new Point2D(e.getX(), e.getY());
+
+                MBound2 nbound = new MBound2();
+                MBound2 cbound = new MBound2();
+
+                cbound.include(getBounds());       //current bounds             
+                nbound.include(p, cbound.getPoint(3));      //new bounds
+                double nRadius = nbound.getMaxExtentRadius(); //new radius
+               
+                setRadius(nRadius);
+
+             //   shape.setWidth(nbound.getWidth());
+            //    shape.setHeight(nbound.getHeight());
+
+                updateDragHandles(null);
+                c4.setCurrentPressedPoint(p);               
+
+            });
+
+            //c4 on mouse moved
+            c4.setOnMouseMoved(e->{
+                c4.setCursor(Cursor.HAND);
+            });
         }
                 
-        return dragHandles;
-        */
-        return FXCollections.emptyObservableList();
+        return dragHandles;       
+        
     }
 
     @Override
     public void updateDragHandles(MDragHandle referenceHandle) {
-        /*
+        
         //TODO
         MDragHandle c1 = dragHandles.get(0);
         c1.setX(getBounds().getMinX() - 5);
         c1.setY(getBounds().getMinY() - 5);
         
+        
         MDragHandle c2 = dragHandles.get(1);
         c2.setX(getBounds().getMaxX());
         c2.setY(getBounds().getMaxY());
+       
        
         MDragHandle c3 = dragHandles.get(2);
         c3.setX(getBounds().getMinX() - 5);
@@ -253,7 +394,7 @@ public class MCircle implements MambaShape<MEngine>{
         MDragHandle c4 = dragHandles.get(3);        
         c4.setX(getBounds().getMaxX());
         c4.setY(getBounds().getMinY() - 5);  
-        */
+        
     }
     
 }

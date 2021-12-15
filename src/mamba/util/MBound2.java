@@ -61,6 +61,11 @@ public class MBound2 {
         
     }
     
+    public final void include(MBound2 bound)
+    {
+        include(bound.getMin(), bound.getMax());
+    }
+    
     public void setBoundingBox(BoundingBox boundingBox)
     {
         this.min = new Point2D(boundingBox.getMinX(), boundingBox.getMinY());
@@ -108,6 +113,17 @@ public class MBound2 {
     public Point2D getExtents()
     {
         return max.subtract(min);
+    }
+    
+    public double getMaxExtent()
+    {
+        Point2D extents = getExtents();
+        return Math.max(extents.getX(), extents.getY());
+    }
+    
+    public double getMaxExtentRadius()
+    {
+        return getMaxExtent()/2;
     }
     
     public final boolean isEmpty()
