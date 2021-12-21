@@ -3,13 +3,10 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-            <file>file:/C:/Users/jmburu/Documents/GitHub/MambaVector/src/mamba/base/MambaShape.java</file>
-            <file>file:/C:/Users/jmburu/Documents/GitHub/MambaVector/src/mamba/base/MambaCanvas.java</file>
-            <file>file:/C:/Users/jmburu/Documents/GitHub/MambaVector/src/mamba/overlayselect/MDragHandle.java</file>
-            <file>file:/C:/Users/jmburu/Documents/GitHub/MambaVector/src/mamba/overlayselect/MSelectionOverlay.java</file>
+            <file>file:/C:/Users/jmburu/Documents/GitHub/MambaVector/src/mamba/overlayselect/MSelectionModel.java</file>
+            <file>file:/C:/Users/jmburu/Documents/GitHub/MambaVector/src/mamba/base/engine/MEngine.java</file>
+            <file>file:/C:/Users/jmburu/Documents/GitHub/MambaVector/src/mamba/BuilderController.java</file>
             <file>file:/C:/Users/jmburu/Documents/GitHub/MambaVector/src/mamba/components/ResizeableCanvas.java</file>
-            <file>file:/C:/Users/jmburu/Documents/GitHub/MambaVector/src/mamba/util/MBound2.java</file>
-            <file>file:/C:/Users/jmburu/Documents/GitHub/MambaVector/src/mamba/base/engine/shape/MCircle.java</file>
         </group>
     </open-files>
 </project-private>

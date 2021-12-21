@@ -213,6 +213,22 @@ public class MCircle implements MambaShape<MEngine>{
     public ObjectProperty<Color> strokeColorProperty(){
         return strokeColor;
     }
+    
+    public void setSolidColor(Color solidColor)
+    {       
+        this.solidColor.set(solidColor);
+        this.getEngine2D().draw();
+        
+    }
+    
+    public Color getSolidColor()
+    {
+        return this.solidColor.get();
+    }
+    
+    public ObjectProperty<Color> solidColorProperty(){
+        return solidColor;
+    }
 
     @Override
     public ShapeState getState() {
@@ -251,7 +267,7 @@ public class MCircle implements MambaShape<MEngine>{
                 nbound.include(p, cbound.getPoint(2));      //new bounds
                 double nRadius = nbound.getMaxExtentRadius(); //new radius
                 
-                setRadius(nRadius);              
+                setRadius((int)nRadius);  
                 
                 updateDragHandles(null);
                 c1.setCurrentPressedPoint(p);               
@@ -284,7 +300,7 @@ public class MCircle implements MambaShape<MEngine>{
                 nbound.include(p, cbound.getPoint(0));      //new bounds
                 double nRadius = nbound.getMaxExtentRadius(); //new radius
                
-                setRadius(nRadius);             
+                setRadius((int)nRadius);    
                 
                 updateDragHandles(null);
                 c2.setCurrentPressedPoint(p);               
@@ -317,10 +333,7 @@ public class MCircle implements MambaShape<MEngine>{
                 nbound.include(p, cbound.getPoint(1));      //new bounds
                 double nRadius = nbound.getMaxExtentRadius(); //new radius
                
-                setRadius(nRadius);
-
-              //  shape.setWidth(nbound.getWidth());
-             //   shape.setHeight(nbound.getHeight());
+                setRadius((int)nRadius);
 
                 updateDragHandles(null);
                 c3.setCurrentPressedPoint(p);               
@@ -353,10 +366,7 @@ public class MCircle implements MambaShape<MEngine>{
                 nbound.include(p, cbound.getPoint(3));      //new bounds
                 double nRadius = nbound.getMaxExtentRadius(); //new radius
                
-                setRadius(nRadius);
-
-             //   shape.setWidth(nbound.getWidth());
-            //    shape.setHeight(nbound.getHeight());
+                setRadius((int)nRadius);
 
                 updateDragHandles(null);
                 c4.setCurrentPressedPoint(p);               

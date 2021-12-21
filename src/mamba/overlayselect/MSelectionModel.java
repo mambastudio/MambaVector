@@ -5,6 +5,8 @@
  */
 package mamba.overlayselect;
 
+import javafx.beans.property.ObjectProperty;
+import javafx.beans.property.SimpleObjectProperty;
 import javafx.scene.Group;
 import mamba.base.MambaShape;
 
@@ -15,11 +17,12 @@ import mamba.base.MambaShape;
 public class MSelectionModel {
     Group selectionLayer;
     
-    MambaShape shape;
+    ObjectProperty<MambaShape> selectedShapeProperty;
     
     public MSelectionModel(Group layoutBoundsOverlay)
     {
         this.selectionLayer = layoutBoundsOverlay;
+        this.selectedShapeProperty = new SimpleObjectProperty();
     }
     
     public void set(MambaShape shape)
@@ -27,12 +30,12 @@ public class MSelectionModel {
        
         if(shape != null)
         {
-            if(shape == this.shape)
+            if(shape == this.selectedShapeProperty)
                 return;
             MSelectionOverlay selectionOverlay = new MSelectionOverlay(shape);
             selectionLayer.getChildren().clear();
             selectionLayer.getChildren().add(selectionOverlay);
-            this.shape = shape;
+            this.selectedShapeProperty.set(shape);
             
         }
         else
@@ -45,24 +48,24 @@ public class MSelectionModel {
     public void clear() {
 
         selectionLayer.getChildren().clear();
-        shape = null;
+        selectedShapeProperty.set(null);
     }
     
     public boolean isSelected()
     {
-        return shape != null;
+        return selectedShapeProperty.get() != null;
     }
 
     public boolean isEmpty()  {
-        return shape == null;
+        return selectedShapeProperty.get() == null;
     }
 
     public boolean contains(MambaShape shape) {
-        return this.shape == shape;
+        return this.selectedShapeProperty.get() == shape;
     }
     
     public MambaShape getSelected()
     {
-        return shape;
+        return selectedShapeProperty.get();
     }
 }

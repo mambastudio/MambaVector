@@ -20,6 +20,8 @@ public class MDefaultDisplayNameFactory implements Function<String, String> {
                 return "Width";
             case "height":
                 return "Height";
+            case "radius":
+                return "Radius";
             case "arcWidth":
                 return "Arc width";
             case "arcHeight":

@@ -43,10 +43,8 @@ public class BuilderController implements Initializable {
     
     @Override
     public void initialize(URL url, ResourceBundle rb) {
-        // TODO
-        
-        System.out.println(Double.NEGATIVE_INFINITY + Double.POSITIVE_INFINITY);
-        
+        // TODO    
+                
         baseDrawPanel.getChildren().addAll(backgroundPanel, renderCanvas, selectionLayer);
         
         //ensure they grow according to base draw panel
@@ -58,25 +56,8 @@ public class BuilderController implements Initializable {
         renderCanvas.setEngine2D(engine2D);
         renderCanvas.setPropertyDisplayPanel(propertyPanel);
         
-        engine2D.setSelectionModel(new MSelectionModel(selectionLayer));
-              
-        /*
-        engine2D.selectedObjectProperty().addListener((o, ov, nv)->{
-            
-            if(nv == null)
-                propertyPanel.getChildren().clear();
-            else
-            {
-                propertyPanel.getChildren().clear();
-                ObservableList<MBeanPropertyItem> properties = MBeanPropertyUtility.getProperties(nv);
-                MBeanPropertySheet propertySheet = new MBeanPropertySheet();
-                propertySheet.setFactory(new MDefaultEditorFactory());
-                propertySheet.init(properties);
-                propertyPanel.getChildren().add(propertySheet);
-                
-            }
-        });
-        */
+        engine2D.setSelectionModel(new MSelectionModel(selectionLayer));              
+        
     }    
     
     public void addCircle(ActionEvent e)
