@@ -17,6 +17,7 @@ import javafx.geometry.BoundingBox;
 import javafx.geometry.Point2D;
 import javafx.scene.Cursor;
 import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.effect.DropShadow;
 import javafx.scene.paint.Color;
 import javafx.scene.transform.NonInvertibleTransformException;
 import javafx.scene.transform.Transform;
@@ -43,6 +44,8 @@ public class MCircle implements MambaShape<MEngine>{
     private final DoubleProperty strokeWidth;
     private final ObjectProperty<Color> strokeColor;
     
+    private final DropShadow dropShadow = new DropShadow();
+    
     private Transform transform;
     
     ObservableList<MDragHandle> dragHandles = FXCollections.observableArrayList();
@@ -57,6 +60,11 @@ public class MCircle implements MambaShape<MEngine>{
         strokeColor = new SimpleObjectProperty(Color.BLACK);
         
         transform = Transform.translate(50, 50); 
+        
+        dropShadow.setRadius(5.0);
+        dropShadow.setOffsetX(3.0);
+        dropShadow.setOffsetY(3.0);
+        dropShadow.setColor(Color.color(0.4, 0.5, 0.5));
     }
 
     @Override
@@ -133,8 +141,9 @@ public class MCircle implements MambaShape<MEngine>{
                                   -radius.doubleValue() + strokeWidth.doubleValue()/2, 
                                   radius.doubleValue()*2  - strokeWidth.doubleValue(), 
                                   radius.doubleValue()*2 - strokeWidth.doubleValue());
+        graphicContext.applyEffect(dropShadow);
         
-        graphicContext.restore();
+        graphicContext.restore(); //reset transforms and any other configurations
     }
 
     @Override

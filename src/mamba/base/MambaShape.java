@@ -5,13 +5,12 @@
  */
 package mamba.base;
 
-import javafx.beans.property.DoubleProperty;
-import javafx.beans.property.ObjectProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.geometry.BoundingBox;
 import javafx.geometry.Point2D;
 import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.effect.Effect;
 import javafx.scene.transform.Transform;
 import static mamba.base.MambaShape.ShapeState.ANIMATION;
 import static mamba.base.MambaShape.ShapeState.DISPLAY;
@@ -85,5 +84,15 @@ public interface MambaShape<Engine2D extends MambaEngine2D> {
     }
     
     public void updateDragHandles(MDragHandle referenceHandle);
+    
+    default Effect getEffect()
+    {
+        return null;
+    }
+    
+    default void setEffect(Effect effect)
+    {
+        
+    }
     
 }
