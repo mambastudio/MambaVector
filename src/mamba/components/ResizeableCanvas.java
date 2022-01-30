@@ -35,6 +35,7 @@ public final class ResizeableCanvas extends Region implements MambaCanvas<MEngin
     private long lastClickTime = 0;
       
     private VBox propertyDisplayPanel = null;
+    private VBox effectPropertyDisplayPanel = null;
                
     public ResizeableCanvas(double width, double height) 
     {
@@ -143,6 +144,25 @@ public final class ResizeableCanvas extends Region implements MambaCanvas<MEngin
         }
         else
             propertyDisplayPanel.getChildren().clear();
+        initEffectPropertySheet(shape);
+    }
+    
+    public void initEffectPropertySheet(MambaShape shape)
+    {
+        
+        if(shape != null && shape.getState() != DISPLAY)
+        {
+            effectPropertyDisplayPanel.getChildren().clear();
+            ObservableList<MBeanPropertyItem> properties = MBeanPropertyUtility.getProperties(shape.getEffect());
+            MBeanPropertySheet propertySheet = new MBeanPropertySheet();
+            propertySheet.setFactory(new MDefaultEditorFactory());
+            
+            propertySheet.init(properties);
+            effectPropertyDisplayPanel.getChildren().add(propertySheet);
+            
+        }
+        else
+            effectPropertyDisplayPanel.getChildren().clear();
     }
         
     private boolean isDoubleClick(long intervalRangeMsec)
@@ -161,5 +181,8 @@ public final class ResizeableCanvas extends Region implements MambaCanvas<MEngin
         this.propertyDisplayPanel = propertyDisplayPanel;
     }
 
- 
+    public void setEffectPropertyDisplayPanel(VBox effectPropertyDisplayPanel)
+    {
+        this.effectPropertyDisplayPanel = effectPropertyDisplayPanel;
+    }
 }

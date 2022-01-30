@@ -17,6 +17,8 @@ import javafx.geometry.BoundingBox;
 import javafx.geometry.Point2D;
 import javafx.scene.Cursor;
 import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.effect.DropShadow;
+import javafx.scene.effect.Effect;
 import javafx.scene.paint.Color;
 import javafx.scene.transform.NonInvertibleTransformException;
 import javafx.scene.transform.Transform;
@@ -43,6 +45,8 @@ public class MCircle implements MambaShape<MEngine>{
     private final DoubleProperty strokeWidth;
     private final ObjectProperty<Color> strokeColor;
     
+    private Effect dropShadow = new DropShadow();
+    
     private Transform transform;
     
     ObservableList<MDragHandle> dragHandles = FXCollections.observableArrayList();
@@ -57,6 +61,8 @@ public class MCircle implements MambaShape<MEngine>{
         strokeColor = new SimpleObjectProperty(Color.BLACK);
         
         transform = Transform.translate(50, 50); 
+        
+        
     }
 
     @Override
@@ -115,6 +121,8 @@ public class MCircle implements MambaShape<MEngine>{
         
         graphicContext.save();
         
+        
+        
         //apply transform first
         graphicContext.setTransform(
                 transform.getMxx(), transform.getMyx(), transform.getMxy(),
@@ -122,11 +130,13 @@ public class MCircle implements MambaShape<MEngine>{
         
         //draw shape, this is just local coordinates 
         graphicContext.setFill(solidColor.get());
+        graphicContext.setEffect(dropShadow);
         graphicContext.fillOval(
                 -radius.doubleValue() + strokeWidth.doubleValue()/2, 
                 -radius.doubleValue() + strokeWidth.doubleValue()/2, 
                 radius.doubleValue() * 2 - strokeWidth.doubleValue(), 
                 radius.doubleValue() * 2 - strokeWidth.doubleValue());
+        graphicContext.setEffect(null);
         graphicContext.setStroke(strokeColor.get());
         graphicContext.setLineWidth(strokeWidth.doubleValue());
         graphicContext.strokeOval(-radius.doubleValue() + strokeWidth.doubleValue()/2, 
@@ -134,7 +144,9 @@ public class MCircle implements MambaShape<MEngine>{
                                   radius.doubleValue()*2  - strokeWidth.doubleValue(), 
                                   radius.doubleValue()*2 - strokeWidth.doubleValue());
         
-        graphicContext.restore();
+        
+        
+        graphicContext.restore(); //reset transforms and any other configurations
     }
 
     @Override
@@ -405,6 +417,18 @@ public class MCircle implements MambaShape<MEngine>{
         c4.setX(getBounds().getMaxX());
         c4.setY(getBounds().getMinY() - 5);  
         
+    }
+    
+    @Override
+    public Effect getEffect()
+    {
+        return dropShadow;
+    }
+    
+    @Override
+    public void setEffect(Effect effect)
+    {
+        this.dropShadow = effect;
     }
     
 }

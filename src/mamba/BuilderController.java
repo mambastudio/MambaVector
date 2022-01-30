@@ -34,6 +34,8 @@ public class BuilderController implements Initializable {
     Pane baseDrawPanel;
     @FXML
     VBox propertyPanel;
+    @FXML
+    VBox effectPropertyDisplayPanel;
     
     private final BackgroundPane backgroundPanel = new BackgroundPane();
     private final ResizeableCanvas renderCanvas = new ResizeableCanvas(500, 500);
@@ -55,6 +57,7 @@ public class BuilderController implements Initializable {
         
         renderCanvas.setEngine2D(engine2D);
         renderCanvas.setPropertyDisplayPanel(propertyPanel);
+        renderCanvas.setEffectPropertyDisplayPanel(effectPropertyDisplayPanel);
         
         engine2D.setSelectionModel(new MSelectionModel(selectionLayer));              
         
@@ -74,6 +77,7 @@ public class BuilderController implements Initializable {
     {
         engine2D.removeAll();
         propertyPanel.getChildren().clear();
+        effectPropertyDisplayPanel.getChildren().clear();
     }
     
 }

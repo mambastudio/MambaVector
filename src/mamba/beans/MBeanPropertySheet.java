@@ -80,17 +80,20 @@ public class MBeanPropertySheet<P extends MBeanPropertyItem, E extends MInterfac
                 // setup property editor
                 Node editor = getEditor(item);
                 
-                if (editor instanceof Region) {
-                    ((Region)editor).setMinWidth(MIN_COLUMN_WIDTH);
-                    ((Region)editor).setMaxWidth(Double.MAX_VALUE);
+                if(editor != null)
+                {
+                    if (editor instanceof Region) {
+                        ((Region)editor).setMinWidth(MIN_COLUMN_WIDTH);
+                        ((Region)editor).setMaxWidth(Double.MAX_VALUE);
+                    }
+                    label.setLabelFor(editor);               
+                    add(editor, 1, row);
+                    GridPane.setHgrow(editor, Priority.ALWAYS);
+
+                    //TODO add support for recursive properties                
+                   
                 }
-                label.setLabelFor(editor);
-                add(editor, 1, row);
-                GridPane.setHgrow(editor, Priority.ALWAYS);
-                
-                //TODO add support for recursive properties
-                
-                row++;
+                 row++;
             }            
         }
     }
