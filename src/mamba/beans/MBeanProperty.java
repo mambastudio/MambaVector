@@ -11,6 +11,7 @@ import java.util.Optional;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javafx.beans.value.ObservableValue;
+import mamba.base.MambaEngine2D;
 import mamba.beans.light.MPropertyDescriptor;
 
 /**
@@ -25,8 +26,9 @@ public final class MBeanProperty implements MBeanPropertyItem{
     private final Method readMethod;
     private boolean editable = true;
     private Optional<ObservableValue<? extends Object>> observableValue = Optional.empty();
+    private final MambaEngine2D engine;
     
-    public MBeanProperty(final Object bean, final MPropertyDescriptor propertyDescriptor)
+    public MBeanProperty(final Object bean, final MPropertyDescriptor propertyDescriptor, MambaEngine2D engine)
     {
         this.bean = bean;
         this.beanPropertyDescriptor = propertyDescriptor;
@@ -36,6 +38,7 @@ public final class MBeanProperty implements MBeanPropertyItem{
         }
 
         this.findObservableValue();
+        this.engine = engine;
     }
     
     @Override
@@ -44,6 +47,7 @@ public final class MBeanProperty implements MBeanPropertyItem{
         if ( writeMethod != null ) {
             try {
                 writeMethod.invoke(this.bean, value);
+                engine.draw();
             } catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {                
                 Logger.getLogger(MBeanProperty.class.getName()).log(Level.SEVERE, null, e);
             }

@@ -9,6 +9,7 @@ import java.util.function.Function;
 import java.util.function.Predicate;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import mamba.base.MambaEngine2D;
 import mamba.beans.light.MBeanInfo;
 import mamba.beans.light.MIntrospectionException;
 import mamba.beans.light.MIntrospector;
@@ -20,12 +21,12 @@ import mamba.beans.light.MPropertyDescriptor;
  */
 public class MBeanPropertyUtility {
     
-    public static ObservableList<MBeanPropertyItem> getProperties(final Object bean)
+    public static ObservableList<MBeanPropertyItem> getProperties(final Object bean, MambaEngine2D engine)
     {
-        return getProperties(bean, (p)->{return p;});
+        return getProperties(bean, (p)->{return p;}, engine);
     }
     
-    public static ObservableList<MBeanPropertyItem> getProperties(final Object bean, final Function<String, String> displayNameCall)
+    public static ObservableList<MBeanPropertyItem> getProperties(final Object bean, final Function<String, String> displayNameCall, MambaEngine2D engine)
     {
        // return getProperties(bean, (p)->{return true;});
         ObservableList<MBeanPropertyItem> list = FXCollections.observableArrayList();
@@ -37,7 +38,7 @@ public class MBeanPropertyUtility {
                 p.setDisplayName(displayName);
                 
                 //init bean property
-                MBeanProperty property = new MBeanProperty(bean, p);
+                MBeanProperty property = new MBeanProperty(bean, p, engine);
                 if(property.isObservable() && property.isEditable())
                 {                            
                     list.add(property);

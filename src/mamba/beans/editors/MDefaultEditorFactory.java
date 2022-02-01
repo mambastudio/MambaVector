@@ -11,6 +11,8 @@ import java.math.BigInteger;
 import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.Optional;
+import javafx.scene.effect.BlurType;
+import javafx.scene.effect.Effect;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
 import javafx.util.Callback;
@@ -28,10 +30,13 @@ public class MDefaultEditorFactory implements Callback<MBeanPropertyItem, MInter
         
          
         if (isNumber(type))
-            return MEditors.createNumericEditor(item);
-        
+            return MEditors.createNumericEditor(item);        
         else if(type == Color.class)
-            return MEditors.createColorEditor(item);
+            return MEditors.createColorEditor(item);        
+        else if(Enum.class.isAssignableFrom(type))        
+            return MEditors.createEnumEditor(item);       
+        else if(Effect.class.isAssignableFrom(type))        
+            return MEditors.createEffectEditor(item);      
       
         
         return null; 

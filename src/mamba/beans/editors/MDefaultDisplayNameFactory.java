@@ -32,6 +32,18 @@ public class MDefaultDisplayNameFactory implements Function<String, String> {
                 return "Stroke color";
             case "strokeWidth":
                 return "Stroke width";
+            case "spread":
+                return "Spread";
+            case "offsetX":
+                return "Offset X";
+            case "offsetY":
+                return "Offset Y";
+            case "input":
+                return "Input";
+            case "color":
+                return "Color";
+            case "blurType":
+                return "Blur type";
             default:
                 return t;
         }

@@ -184,7 +184,7 @@ public class MCircle implements MambaShape<MEngine>{
     public void setRadius(double radius)
     {
         this.radius.set(radius);
-        this.engine2D.draw();
+        
         updateDragHandles(null);
     }
     
@@ -201,7 +201,7 @@ public class MCircle implements MambaShape<MEngine>{
     public void setStrokeWidth(double strokeWidth)
     {       
         this.strokeWidth.set(strokeWidth);
-        this.getEngine2D().draw();
+        
       
     }
     
@@ -228,8 +228,7 @@ public class MCircle implements MambaShape<MEngine>{
     
     public void setSolidColor(Color solidColor)
     {       
-        this.solidColor.set(solidColor);
-        this.getEngine2D().draw();
+        this.solidColor.set(solidColor);        
         
     }
     
@@ -282,7 +281,9 @@ public class MCircle implements MambaShape<MEngine>{
                 setRadius((int)nRadius);  
                 
                 updateDragHandles(null);
-                c1.setCurrentPressedPoint(p);               
+                c1.setCurrentPressedPoint(p);
+                
+                engine2D.draw();
 
             });
 
@@ -315,8 +316,9 @@ public class MCircle implements MambaShape<MEngine>{
                 setRadius((int)nRadius);    
                 
                 updateDragHandles(null);
-                c2.setCurrentPressedPoint(p);               
-
+                c2.setCurrentPressedPoint(p);        
+                
+                engine2D.draw();
             });
 
             c2.setOnMouseMoved(e->{
@@ -350,6 +352,7 @@ public class MCircle implements MambaShape<MEngine>{
                 updateDragHandles(null);
                 c3.setCurrentPressedPoint(p);               
 
+                engine2D.draw();
             });
 
             c3.setOnMouseMoved(e->{
@@ -383,6 +386,7 @@ public class MCircle implements MambaShape<MEngine>{
                 updateDragHandles(null);
                 c4.setCurrentPressedPoint(p);               
 
+                engine2D.draw();
             });
 
             //c4 on mouse moved

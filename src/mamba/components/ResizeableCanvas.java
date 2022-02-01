@@ -136,7 +136,7 @@ public final class ResizeableCanvas extends Region implements MambaCanvas<MEngin
         if(shape != null && shape.getState() != DISPLAY)
         {
             propertyDisplayPanel.getChildren().clear();
-            ObservableList<MBeanPropertyItem> properties = MBeanPropertyUtility.getProperties(shape, new MDefaultDisplayNameFactory());
+            ObservableList<MBeanPropertyItem> properties = MBeanPropertyUtility.getProperties(shape, new MDefaultDisplayNameFactory(), engine2D);
             MBeanPropertySheet propertySheet = new MBeanPropertySheet();
             propertySheet.setFactory(new MDefaultEditorFactory());
             propertySheet.init(properties);
@@ -153,7 +153,7 @@ public final class ResizeableCanvas extends Region implements MambaCanvas<MEngin
         if(shape != null && shape.getState() != DISPLAY)
         {
             effectPropertyDisplayPanel.getChildren().clear();
-            ObservableList<MBeanPropertyItem> properties = MBeanPropertyUtility.getProperties(shape.getEffect());
+            ObservableList<MBeanPropertyItem> properties = MBeanPropertyUtility.getProperties(shape.getEffect(), new MDefaultDisplayNameFactory(), engine2D);
             MBeanPropertySheet propertySheet = new MBeanPropertySheet();
             propertySheet.setFactory(new MDefaultEditorFactory());
             
