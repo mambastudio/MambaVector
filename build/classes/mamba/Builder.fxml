@@ -70,7 +70,15 @@
                   <Pane fx:id="baseDrawPanel" prefHeight="509.0" prefWidth="706.0" />
                   <SplitPane dividerPositions="0.5" orientation="VERTICAL" prefHeight="200.0" prefWidth="160.0">
                     <items>
-                        <VBox fx:id="propertyPanel" prefHeight="200.0" prefWidth="100.0" />
+                        <TabPane>
+                           <tabs>
+                              <Tab closable="false" text="Properties">
+                                 <content>
+                                    <VBox fx:id="propertyPanel" prefHeight="200.0" prefWidth="100.0" />
+                                 </content>
+                              </Tab>
+                           </tabs>
+                        </TabPane>
                         <TabPane tabClosingPolicy="UNAVAILABLE">
                            <tabs>
                               <Tab text="Effects">
@@ -80,7 +88,8 @@
                                           <HBox alignment="CENTER_LEFT" maxHeight="-Infinity" maxWidth="-Infinity" prefHeight="10.0" prefWidth="333.0" spacing="5.0" VBox.vgrow="ALWAYS">
                                              <children>
                                                 <Label text="Type" />
-                                                <ComboBox maxWidth="1.7976931348623157E308" prefWidth="150.0" />
+                                                <ComboBox maxWidth="1.7976931348623157E308" prefWidth="150.0" promptText="NULL" />
+                                                <Button mnemonicParsing="false" text="R" />
                                              </children>
                                              <padding>
                                                 <Insets bottom="3.0" left="3.0" right="3.0" top="3.0" />

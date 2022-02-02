@@ -8,11 +8,9 @@ package mamba.beans.editors;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.geometry.Insets;
 import javafx.scene.control.Button;
 import javafx.scene.control.ColorPicker;
 import javafx.scene.control.ComboBox;
-import javafx.scene.control.ListCell;
 import javafx.scene.effect.Blend;
 import javafx.scene.effect.Bloom;
 import javafx.scene.effect.BoxBlur;
@@ -107,6 +105,7 @@ public class MEditors {
         
         ComboBox<Effect> comboBox = new ComboBox(effectValueList);
         comboBox.setMaxWidth(Double.MAX_VALUE);
+        comboBox.setPromptText("NULL");
         comboBox.setConverter(new StringConverter<Effect>(){
             @Override
             public String toString(Effect t) {
