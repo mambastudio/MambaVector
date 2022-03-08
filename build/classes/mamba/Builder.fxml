@@ -12,7 +12,6 @@
 <?import javafx.scene.control.Tab?>
 <?import javafx.scene.control.TabPane?>
 <?import javafx.scene.control.ToolBar?>
-<?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.Pane?>
@@ -79,9 +78,21 @@
                                  </content>
                               </Tab>
                               <Tab closable="false" text="Color">
-                                <content>
-                                  <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" />
-                                </content>
+                                 <content>
+                                    <VBox prefHeight="200.0" prefWidth="100.0" spacing="3.0">
+                                       <children>
+                                          <HBox alignment="CENTER_LEFT" spacing="5.0">
+                                             <children>
+                                                <Label text="Style" />
+                                                <ComboBox fx:id="paintTypeComboBox" prefHeight="31.0" prefWidth="208.0" />
+                                             </children>
+                                          </HBox>
+                                       </children>
+                                       <padding>
+                                          <Insets left="3.0" top="3.0" />
+                                       </padding>
+                                    </VBox>
+                                 </content>
                               </Tab>
                            </tabs>
                         </TabPane>

@@ -24,6 +24,12 @@ import javafx.scene.effect.MotionBlur;
 import javafx.scene.effect.Reflection;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
+import javafx.scene.paint.Color;
+import javafx.scene.paint.CycleMethod;
+import javafx.scene.paint.LinearGradient;
+import javafx.scene.paint.Paint;
+import javafx.scene.paint.RadialGradient;
+import javafx.scene.paint.Stop;
 import javafx.util.StringConverter;
 import mamba.base.engine.MEngine;
 import mamba.base.engine.shape.MCircle;
@@ -53,6 +59,9 @@ public class BuilderController implements Initializable {
     ComboBox<Effect> effectTypeComboBox;
     @FXML
     Button effectButtonRemove;
+    
+    @FXML
+    ComboBox<Paint> paintTypeComboBox;
     
     private final BackgroundPane backgroundPanel = new BackgroundPane();
     private final ResizeableCanvas renderCanvas = new ResizeableCanvas(500, 500);
@@ -97,6 +106,28 @@ public class BuilderController implements Initializable {
         effectButtonRemove.setOnAction(e->{
             effectTypeComboBox.setValue(null);           
         });
+        
+        
+        ObservableList<Paint> paintTypeList = FXCollections.observableArrayList();  
+        paintTypeList.add(Color.BLACK);
+        paintTypeList.add(new LinearGradient(0,  0,   1,   0, true, CycleMethod.NO_CYCLE, new Stop[] { new Stop(0, Color.BLACK), new Stop(1, Color.RED)}));
+        paintTypeList.add(new RadialGradient(0, .1, 100, 100,   20, false, CycleMethod.NO_CYCLE, new Stop(0, Color.RED), new Stop(1, Color.BLACK)));
+        paintTypeComboBox.setConverter(new StringConverter<Paint>(){
+            @Override
+            public String toString(Paint t) {
+                if(t != null)
+                    return t.getClass().getSimpleName();
+                else
+                    return "NULL";
+            }
+
+            @Override
+            public Paint fromString(String string) {
+                return null;
+            }            
+        });
+        paintTypeComboBox.setItems(paintTypeList);
+        paintTypeComboBox.getSelectionModel().select(0);
         
     }    
     
