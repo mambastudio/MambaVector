@@ -44,6 +44,14 @@ public class MDefaultDisplayNameFactory implements Function<String, String> {
                 return "Color";
             case "blurType":
                 return "Blur type";
+            case "topOffset":
+                return "Top offset";
+            case "topOpacity":
+                return "Top opacity";
+            case "bottomOpacity":
+                return "Bottom opacity";
+                case "fraction":
+                return "Fraction";
             default:
                 return t;
         }

@@ -7,12 +7,24 @@ package mamba;
 
 import java.net.URL;
 import java.util.ResourceBundle;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.Group;
+import javafx.scene.control.Button;
+import javafx.scene.control.ComboBox;
+import javafx.scene.effect.Blend;
+import javafx.scene.effect.Bloom;
+import javafx.scene.effect.BoxBlur;
+import javafx.scene.effect.DropShadow;
+import javafx.scene.effect.Effect;
+import javafx.scene.effect.MotionBlur;
+import javafx.scene.effect.Reflection;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
+import javafx.util.StringConverter;
 import mamba.base.engine.MEngine;
 import mamba.base.engine.shape.MCircle;
 import mamba.components.BackgroundPane;
@@ -34,8 +46,13 @@ public class BuilderController implements Initializable {
     Pane baseDrawPanel;
     @FXML
     VBox propertyPanel;
+    
     @FXML
     VBox effectPropertyDisplayPanel;
+    @FXML
+    ComboBox<Effect> effectTypeComboBox;
+    @FXML
+    Button effectButtonRemove;
     
     private final BackgroundPane backgroundPanel = new BackgroundPane();
     private final ResizeableCanvas renderCanvas = new ResizeableCanvas(500, 500);
@@ -58,8 +75,28 @@ public class BuilderController implements Initializable {
         renderCanvas.setEngine2D(engine2D);
         renderCanvas.setPropertyDisplayPanel(propertyPanel);
         renderCanvas.setEffectPropertyDisplayPanel(effectPropertyDisplayPanel);
+        renderCanvas.setEffectTypeComboBox(effectTypeComboBox);        
+        effectTypeComboBox.setConverter(new StringConverter<Effect>(){
+            @Override
+            public String toString(Effect t) {
+                if(t != null)
+                    return t.getClass().getSimpleName();
+                else
+                    return "NULL";
+            }
+
+            @Override
+            public Effect fromString(String string) {
+                return null;
+            }
+            
+        });
         
-        engine2D.setSelectionModel(new MSelectionModel(selectionLayer));              
+        engine2D.setSelectionModel(new MSelectionModel(selectionLayer));       
+        
+        effectButtonRemove.setOnAction(e->{
+            effectTypeComboBox.setValue(null);           
+        });
         
     }    
     

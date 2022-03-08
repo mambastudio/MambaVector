@@ -12,6 +12,7 @@
 <?import javafx.scene.control.Tab?>
 <?import javafx.scene.control.TabPane?>
 <?import javafx.scene.control.ToolBar?>
+<?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.Pane?>
@@ -70,12 +71,17 @@
                   <Pane fx:id="baseDrawPanel" prefHeight="509.0" prefWidth="706.0" />
                   <SplitPane dividerPositions="0.5" orientation="VERTICAL" prefHeight="200.0" prefWidth="160.0">
                     <items>
-                        <TabPane>
+                        <TabPane tabMinWidth="70.0">
                            <tabs>
                               <Tab closable="false" text="Properties">
                                  <content>
                                     <VBox fx:id="propertyPanel" prefHeight="200.0" prefWidth="100.0" />
                                  </content>
+                              </Tab>
+                              <Tab closable="false" text="Color">
+                                <content>
+                                  <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" />
+                                </content>
                               </Tab>
                            </tabs>
                         </TabPane>
@@ -88,8 +94,8 @@
                                           <HBox alignment="CENTER_LEFT" maxHeight="-Infinity" maxWidth="-Infinity" prefHeight="10.0" prefWidth="333.0" spacing="5.0" VBox.vgrow="ALWAYS">
                                              <children>
                                                 <Label text="Type" />
-                                                <ComboBox maxWidth="1.7976931348623157E308" prefWidth="150.0" promptText="NULL" />
-                                                <Button mnemonicParsing="false" text="R" />
+                                                <ComboBox fx:id="effectTypeComboBox" maxWidth="1.7976931348623157E308" prefWidth="150.0" promptText="NULL" />
+                                                <Button fx:id="effectButtonRemove" mnemonicParsing="false" text="R" />
                                              </children>
                                              <padding>
                                                 <Insets bottom="3.0" left="3.0" right="3.0" top="3.0" />

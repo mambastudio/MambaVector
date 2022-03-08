@@ -6,10 +6,24 @@
 package mamba.components;
 
 import javafx.application.Platform;
+import javafx.beans.value.ChangeListener;
+import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.geometry.Point2D;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.control.ComboBox;
+import javafx.scene.effect.Blend;
+import javafx.scene.effect.Bloom;
+import javafx.scene.effect.BoxBlur;
+import javafx.scene.effect.ColorAdjust;
+import javafx.scene.effect.DisplacementMap;
+import javafx.scene.effect.DropShadow;
+import javafx.scene.effect.Effect;
+import javafx.scene.effect.InnerShadow;
+import javafx.scene.effect.MotionBlur;
+import javafx.scene.effect.PerspectiveTransform;
+import javafx.scene.effect.Reflection;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
@@ -35,7 +49,13 @@ public final class ResizeableCanvas extends Region implements MambaCanvas<MEngin
     private long lastClickTime = 0;
       
     private VBox propertyDisplayPanel = null;
+    
     private VBox effectPropertyDisplayPanel = null;
+    private ComboBox<Effect> effectTypeComboBox = null;
+    private ChangeListener<Effect> effectTypeComboBoxListener = null;
+    
+       
+        
                
     public ResizeableCanvas(double width, double height) 
     {
@@ -55,10 +75,27 @@ public final class ResizeableCanvas extends Region implements MambaCanvas<MEngin
             engine2D.draw();
         });
         
+        //effect combobox for shape
+        effectTypeComboBoxListener = (o, ov, nv)-> setShapeEffect(nv);       
+        
         this.setOnMouseClicked(this::mouseClicked);
         this.setOnMouseDragged(this::mouseDragged);
         this.setOnMousePressed(this::mousePressed);
         this.setOnMouseReleased(this::mouseReleased);
+    }
+    
+    private void setShapeEffect(Effect effect)
+    {
+        if(engine2D.isSelected())
+        {
+            engine2D.getSelected().setEffect(effect);
+            initEffectPropertySheet(engine2D.getSelected());
+            engine2D.draw();
+        }
+        else
+        {
+            initEffectPropertySheet(null);
+        }
     }
     
     public GraphicsContext getGraphicsContext2D() {
@@ -107,10 +144,14 @@ public final class ResizeableCanvas extends Region implements MambaCanvas<MEngin
             engine2D.draw();
         
         //property of new selected shape
-        if(engine2D.isSelected())
-            initPropertySheet(engine2D.getSelected());
-        else
-            initPropertySheet(null);
+        if(engine2D.isSelected()){
+            initPropertySheet(engine2D.getSelected());                
+            initEffectList(engine2D.getSelected().getEffect()); //init fresh combobox effect list
+        }
+        else{
+            initPropertySheet(null);           
+            initEffectList(null); //init fresh combobox effect list
+        }
     }
     
     public void mouseReleased(MouseEvent e)
@@ -143,26 +184,33 @@ public final class ResizeableCanvas extends Region implements MambaCanvas<MEngin
             propertyDisplayPanel.getChildren().add(propertySheet);
         }
         else
+        {
             propertyDisplayPanel.getChildren().clear();
-        initEffectPropertySheet(shape);
+            effectTypeComboBox.setValue(null);
+        }        
     }
     
     public void initEffectPropertySheet(MambaShape shape)
     {
-        
+       
         if(shape != null && shape.getState() != DISPLAY)
-        {
+        {                        
             effectPropertyDisplayPanel.getChildren().clear();
-            ObservableList<MBeanPropertyItem> properties = MBeanPropertyUtility.getProperties(shape.getEffect(), new MDefaultDisplayNameFactory(), engine2D);
-            MBeanPropertySheet propertySheet = new MBeanPropertySheet();
-            propertySheet.setFactory(new MDefaultEditorFactory());
-            
-            propertySheet.init(properties);
-            effectPropertyDisplayPanel.getChildren().add(propertySheet);
-            
+            if(shape.getEffect() != null)
+            {
+                ObservableList<MBeanPropertyItem> properties = MBeanPropertyUtility.getProperties(shape.getEffect(), new MDefaultDisplayNameFactory(), engine2D);
+                MBeanPropertySheet propertySheet = new MBeanPropertySheet();
+                propertySheet.setFactory(new MDefaultEditorFactory());
+
+                propertySheet.init(properties);
+                effectPropertyDisplayPanel.getChildren().add(propertySheet);
+            }            
         }
         else
+        {
             effectPropertyDisplayPanel.getChildren().clear();
+        }
+        
     }
         
     private boolean isDoubleClick(long intervalRangeMsec)
@@ -184,5 +232,65 @@ public final class ResizeableCanvas extends Region implements MambaCanvas<MEngin
     public void setEffectPropertyDisplayPanel(VBox effectPropertyDisplayPanel)
     {
         this.effectPropertyDisplayPanel = effectPropertyDisplayPanel;
+    }
+    
+    public void setEffectTypeComboBox(ComboBox<Effect> effectTypeComboBox)
+    {
+        //in case we add same listener
+        if(this.effectTypeComboBox != null)
+            detachEffectComboBoxListener();
+        
+        this.effectTypeComboBox = effectTypeComboBox;       
+        attachEffectComboBoxListener();
+        initEffectList(null);
+    }
+    
+    private void detachEffectComboBoxListener()
+    {
+        this.effectTypeComboBox.valueProperty().removeListener(effectTypeComboBoxListener);
+    }
+    
+    private void attachEffectComboBoxListener()
+    {
+        this.effectTypeComboBox.valueProperty().addListener(effectTypeComboBoxListener);
+    }
+    
+    private void initEffectList(Effect defaultEffect)
+    {
+        ObservableList<Effect> effectValueList = FXCollections.observableArrayList();     
+        effectValueList.removeAll(effectValueList);
+        effectValueList.add(new DropShadow());
+        effectValueList.add(new BoxBlur());
+        effectValueList.add(new Reflection());
+        effectValueList.add(new Blend());
+        effectValueList.add(new Bloom());
+        effectValueList.add(new MotionBlur());
+        effectValueList.add(new InnerShadow());
+        effectValueList.add(new ColorAdjust());
+        effectValueList.add(new DisplacementMap());
+        
+        if(defaultEffect != null)
+        {            
+            int i = 0;
+            for(Effect effect: effectValueList)
+            {
+                if(effect.getClass().equals(defaultEffect.getClass()))
+                    effectValueList.set(i, defaultEffect);
+                i++;
+            }            
+        }
+        
+        effectTypeComboBox.setItems(effectValueList);
+        
+        if(defaultEffect != null)
+        {
+            int i = 0;
+            for(Effect effect: effectValueList)
+            {
+                if(effect.getClass().equals(defaultEffect.getClass()))
+                    effectTypeComboBox.getSelectionModel().select(i);
+                i++;
+            }
+        }
     }
 }

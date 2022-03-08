@@ -45,7 +45,7 @@ public class MCircle implements MambaShape<MEngine>{
     private final DoubleProperty strokeWidth;
     private final ObjectProperty<Color> strokeColor;
     
-    private Effect dropShadow = new DropShadow();
+    private Effect dropShadow = null;
     
     private Transform transform;
     
