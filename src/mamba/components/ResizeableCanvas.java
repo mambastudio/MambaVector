@@ -20,6 +20,7 @@ import javafx.scene.effect.ColorAdjust;
 import javafx.scene.effect.DisplacementMap;
 import javafx.scene.effect.DropShadow;
 import javafx.scene.effect.Effect;
+import javafx.scene.effect.Glow;
 import javafx.scene.effect.InnerShadow;
 import javafx.scene.effect.MotionBlur;
 import javafx.scene.effect.PerspectiveTransform;
@@ -267,6 +268,7 @@ public final class ResizeableCanvas extends Region implements MambaCanvas<MEngin
         effectValueList.add(new MotionBlur());
         effectValueList.add(new InnerShadow());
         effectValueList.add(new ColorAdjust());
+        effectValueList.add(new Glow());
         effectValueList.add(new DisplacementMap());
         
         if(defaultEffect != null)

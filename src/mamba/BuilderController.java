@@ -15,13 +15,7 @@ import javafx.fxml.Initializable;
 import javafx.scene.Group;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
-import javafx.scene.effect.Blend;
-import javafx.scene.effect.Bloom;
-import javafx.scene.effect.BoxBlur;
-import javafx.scene.effect.DropShadow;
 import javafx.scene.effect.Effect;
-import javafx.scene.effect.MotionBlur;
-import javafx.scene.effect.Reflection;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
@@ -33,6 +27,7 @@ import javafx.scene.paint.Stop;
 import javafx.util.StringConverter;
 import mamba.base.engine.MEngine;
 import mamba.base.engine.shape.MCircle;
+import mamba.base.engine.shape.MRectangle;
 import mamba.components.BackgroundPane;
 import mamba.components.ResizeableCanvas;
 import mamba.overlayselect.MSelectionModel;
@@ -138,7 +133,7 @@ public class BuilderController implements Initializable {
     
     public void addRectangle(ActionEvent e)
     {        
-        //engine2D.addShape(new MRectangle());        
+        engine2D.addShape(new MRectangle());        
     }
     
     public void clearAll(ActionEvent e)

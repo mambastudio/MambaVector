@@ -17,7 +17,6 @@ import javafx.geometry.BoundingBox;
 import javafx.geometry.Point2D;
 import javafx.scene.Cursor;
 import javafx.scene.canvas.GraphicsContext;
-import javafx.scene.effect.DropShadow;
 import javafx.scene.effect.Effect;
 import javafx.scene.paint.Color;
 import javafx.scene.transform.NonInvertibleTransformException;
@@ -45,7 +44,7 @@ public class MCircle implements MambaShape<MEngine>{
     private final DoubleProperty strokeWidth;
     private final ObjectProperty<Color> strokeColor;
     
-    private Effect dropShadow = null;
+    private Effect effect = null;
     
     private Transform transform;
     
@@ -120,9 +119,6 @@ public class MCircle implements MambaShape<MEngine>{
     public void draw() {
         
         graphicContext.save();
-        
-        
-        
         //apply transform first
         graphicContext.setTransform(
                 transform.getMxx(), transform.getMyx(), transform.getMxy(),
@@ -130,7 +126,7 @@ public class MCircle implements MambaShape<MEngine>{
         
         //draw shape, this is just local coordinates 
         graphicContext.setFill(solidColor.get());
-        graphicContext.setEffect(dropShadow);
+        graphicContext.setEffect(effect);
         graphicContext.fillOval(
                 -radius.doubleValue() + strokeWidth.doubleValue()/2, 
                 -radius.doubleValue() + strokeWidth.doubleValue()/2, 
@@ -143,8 +139,6 @@ public class MCircle implements MambaShape<MEngine>{
                                   -radius.doubleValue() + strokeWidth.doubleValue()/2, 
                                   radius.doubleValue()*2  - strokeWidth.doubleValue(), 
                                   radius.doubleValue()*2 - strokeWidth.doubleValue());
-        
-        
         
         graphicContext.restore(); //reset transforms and any other configurations
     }
@@ -251,6 +245,17 @@ public class MCircle implements MambaShape<MEngine>{
         this.shapeState = shapeState;
     }
     
+    /*
+        - when mouse pressed
+            - set current pressed point //not of any use here
+        - when mouse dragging
+            - get current bounds
+            - calculate new bounds based on new drag position and current bounds
+            - modify shape based on new bounds/or user defined modification
+            - updated drag nodes based on new bounds
+            - draw shape
+    */
+    
     @Override
     public ObservableList<MDragHandle> getDragHandles()
     {
@@ -264,7 +269,6 @@ public class MCircle implements MambaShape<MEngine>{
             c1.setOnMousePressed(e->{
                Point2D p = new Point2D(e.getX(), e.getY()); 
                setOffset(Point2D.ZERO);    
-               c1.setCurrentPressedPoint(p);   
             });
 
             c1.setOnMouseDragged(e->{
@@ -280,9 +284,7 @@ public class MCircle implements MambaShape<MEngine>{
                 
                 setRadius((int)nRadius);  
                 
-                updateDragHandles(null);
-                c1.setCurrentPressedPoint(p);
-                
+                updateDragHandles(null);                
                 engine2D.draw();
 
             });
@@ -298,8 +300,7 @@ public class MCircle implements MambaShape<MEngine>{
 
             c2.setOnMousePressed(e->{
                Point2D p = new Point2D(e.getX(), e.getY()); 
-               setOffset(Point2D.ZERO);    
-               c2.setCurrentPressedPoint(p);   
+               setOffset(Point2D.ZERO);     
             });
 
             c2.setOnMouseDragged(e->{
@@ -315,8 +316,7 @@ public class MCircle implements MambaShape<MEngine>{
                
                 setRadius((int)nRadius);    
                 
-                updateDragHandles(null);
-                c2.setCurrentPressedPoint(p);        
+                updateDragHandles(null);       
                 
                 engine2D.draw();
             });
@@ -333,7 +333,6 @@ public class MCircle implements MambaShape<MEngine>{
             c3.setOnMousePressed(e->{
                Point2D p = new Point2D(e.getX(), e.getY()); 
                setOffset(Point2D.ZERO);    
-               c3.setCurrentPressedPoint(p);   
             });
 
             c3.setOnMouseDragged(e->{
@@ -349,8 +348,7 @@ public class MCircle implements MambaShape<MEngine>{
                
                 setRadius((int)nRadius);
 
-                updateDragHandles(null);
-                c3.setCurrentPressedPoint(p);               
+                updateDragHandles(null);            
 
                 engine2D.draw();
             });
@@ -367,7 +365,6 @@ public class MCircle implements MambaShape<MEngine>{
             c4.setOnMousePressed(e->{
                Point2D p = new Point2D(e.getX(), e.getY()); 
                setOffset(Point2D.ZERO);    
-               c4.setCurrentPressedPoint(p);   
             });
 
             c4.setOnMouseDragged(e->{
@@ -383,8 +380,7 @@ public class MCircle implements MambaShape<MEngine>{
                
                 setRadius((int)nRadius);
 
-                updateDragHandles(null);
-                c4.setCurrentPressedPoint(p);               
+                updateDragHandles(null);             
 
                 engine2D.draw();
             });
@@ -426,13 +422,13 @@ public class MCircle implements MambaShape<MEngine>{
     @Override
     public Effect getEffect()
     {
-        return dropShadow;
+        return effect;
     }
     
     @Override
     public void setEffect(Effect effect)
     {
-        this.dropShadow = effect;
+        this.effect = effect;
     }
     
 }
