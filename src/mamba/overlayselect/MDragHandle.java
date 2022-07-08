@@ -5,16 +5,12 @@
  */
 package mamba.overlayselect;
 
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
 import javafx.geometry.Bounds;
 import javafx.geometry.Point2D;
 import javafx.scene.Cursor;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.shape.StrokeType;
-import mamba.base.MambaShape;
-import mamba.util.MBound2;
 
 /**
  *
@@ -22,6 +18,9 @@ import mamba.util.MBound2;
  */
 public class MDragHandle extends Rectangle {
     Cursor dragCursor;
+    
+    double offsetX, offsetY;
+    double offset_percX, offset_percY; //(0 - 1 range), store current state if possible but not usually assured this is current - just use offsetX
     
     public MDragHandle(double size, Cursor dragCursor) {
 
@@ -36,6 +35,19 @@ public class MDragHandle extends Rectangle {
         this.setStrokeType(StrokeType.OUTSIDE);      
     }
     
+    public MDragHandle(double size, Color fill, Cursor dragCursor) {
+
+        this.dragCursor = dragCursor;
+
+        setWidth(size);
+        setHeight(size);
+        
+        this.setFill(fill);
+        this.setStroke(Color.BLACK);
+        this.setStrokeWidth(1);
+        this.setStrokeType(StrokeType.OUTSIDE);      
+    }
+    
     public Cursor getDragCursor() {
         return dragCursor;
     }
@@ -45,4 +57,42 @@ public class MDragHandle extends Rectangle {
         Bounds b = localToParent(getBoundsInLocal());
         return new Point2D(b.getMinX(), b.getMinY());
     }    
+    
+    public double getOffsetX()
+    {
+        return offsetX;
+    }
+    
+    public void setOffsetX(double offsetX)
+    {
+        this.offsetX = offsetX;
+    }
+    
+    public void setOffsetX(double offsetX, double widthBound)
+    {
+        this.offsetX = offsetX;
+        this.offset_percX = offsetX/widthBound;
+    }
+    
+    public double getOffsetPercentX()
+    {
+        return offset_percX;
+    }
+    
+    public double getOffsetY()
+    {
+        return offsetY;
+    }
+    
+    public void setOffsetY(double offsetY)
+    {
+        this.offsetY = offsetY;
+    }
+    
+    public void setOffsetY(double offsetY, double height)
+    {
+        this.offsetY = offsetY;
+        this.offset_percY = offsetY/height;
+    }
+    
 }

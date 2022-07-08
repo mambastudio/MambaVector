@@ -15,6 +15,7 @@ import javafx.fxml.Initializable;
 import javafx.scene.Group;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
+import javafx.scene.control.TreeView;
 import javafx.scene.effect.Effect;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
@@ -25,6 +26,7 @@ import javafx.scene.paint.Paint;
 import javafx.scene.paint.RadialGradient;
 import javafx.scene.paint.Stop;
 import javafx.util.StringConverter;
+import mamba.base.MambaShape;
 import mamba.base.engine.MEngine;
 import mamba.base.engine.shape.MCircle;
 import mamba.base.engine.shape.MRectangle;
@@ -57,6 +59,8 @@ public class BuilderController implements Initializable {
     
     @FXML
     ComboBox<Paint> paintTypeComboBox;
+    @FXML
+    TreeView<MambaShape> layerTreeView;
     
     private final BackgroundPane backgroundPanel = new BackgroundPane();
     private final ResizeableCanvas renderCanvas = new ResizeableCanvas(500, 500);
@@ -128,12 +132,14 @@ public class BuilderController implements Initializable {
     
     public void addCircle(ActionEvent e)
     {        
-        engine2D.addShape(new MCircle());        
+        engine2D.addShape(new MCircle());   
+        //buildTreeItems(layerTreeView, engine2D.getShapes());
     }
     
     public void addRectangle(ActionEvent e)
     {        
-        engine2D.addShape(new MRectangle());        
+        engine2D.addShape(new MRectangle());   
+        //buildTreeItems(layerTreeView, engine2D.getShapes());
     }
     
     public void clearAll(ActionEvent e)
@@ -141,6 +147,7 @@ public class BuilderController implements Initializable {
         engine2D.removeAll();
         propertyPanel.getChildren().clear();
         effectPropertyDisplayPanel.getChildren().clear();
+        //buildTreeItems(layerTreeView, engine2D.getShapes());
     }
     
 }

@@ -12,6 +12,7 @@
 <?import javafx.scene.control.Tab?>
 <?import javafx.scene.control.TabPane?>
 <?import javafx.scene.control.ToolBar?>
+<?import javafx.scene.control.TreeView?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.Pane?>
@@ -98,6 +99,11 @@
                         </TabPane>
                         <TabPane tabClosingPolicy="UNAVAILABLE">
                            <tabs>
+                              <Tab text="Layers">
+                                 <content>
+                                    <TreeView fx:id="layerTreeView" prefHeight="200.0" prefWidth="200.0" />
+                                 </content>
+                              </Tab>
                               <Tab text="Effects">
                                  <content>
                                     <VBox>

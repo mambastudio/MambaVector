@@ -5,11 +5,11 @@
  */
 package mamba.base;
 
-import javafx.beans.property.ObjectProperty;
-import javafx.beans.value.ObservableValue;
+import java.util.List;
 import javafx.geometry.Point2D;
 import javafx.scene.canvas.GraphicsContext;
 import mamba.overlayselect.MSelectionModel;
+import mamba.util.MIntersection;
 
 /**
  *
@@ -29,6 +29,16 @@ public interface MambaEngine2D<MShape extends MambaShape> {
     public MShape getSelected();
     public MShape hitSelect(Point2D p);
     public void setSelected(MShape shape);
+    default boolean intersect(Point2D p, MIntersection isect)
+    {
+        return getRoot().intersect(p, isect);
+    }
     
     public void setSelectionModel(MSelectionModel selectionModel);
+    
+    public List<MShape> getShapes();
+    
+    public MShape getRoot();
+    
+    
 }

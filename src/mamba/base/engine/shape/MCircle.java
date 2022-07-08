@@ -11,6 +11,8 @@ import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleDoubleProperty;
 import javafx.beans.property.SimpleObjectProperty;
+import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.property.StringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.geometry.BoundingBox;
@@ -48,7 +50,11 @@ public class MCircle implements MambaShape<MEngine>{
     
     private Transform transform;
     
+    private final StringProperty nameProperty;
+    
     ObservableList<MDragHandle> dragHandles = FXCollections.observableArrayList();
+    
+    private final ObservableList<MambaShape<MEngine>> children = FXCollections.emptyObservableList();
     
     public MCircle()
     {
@@ -61,7 +67,7 @@ public class MCircle implements MambaShape<MEngine>{
         
         transform = Transform.translate(50, 50); 
         
-        
+        nameProperty = new SimpleStringProperty("Circle");
     }
 
     @Override
@@ -430,5 +436,26 @@ public class MCircle implements MambaShape<MEngine>{
     {
         this.effect = effect;
     }
+
+    @Override
+    public StringProperty getNameProperty() {
+        return nameProperty;
+    }
+
+    @Override
+    public String getName() {
+        return nameProperty.get();
+    }
+
+    @Override
+    public ShapeType getType() {
+        return ShapeType.SHAPE;
+    }
+
+    @Override
+    public ObservableList<MambaShape<MEngine>> getChildren() {
+        return children;
+    }
+
     
 }

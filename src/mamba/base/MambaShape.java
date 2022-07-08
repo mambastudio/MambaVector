@@ -5,6 +5,7 @@
  */
 package mamba.base;
 
+import javafx.beans.property.StringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.geometry.BoundingBox;
@@ -17,14 +18,17 @@ import static mamba.base.MambaShape.ShapeState.DISPLAY;
 import static mamba.base.MambaShape.ShapeState.EXPERT;
 import static mamba.base.MambaShape.ShapeState.SELECT;
 import mamba.overlayselect.MDragHandle;
+import mamba.util.MIntersection;
 
 /**
  *
  * @author user
  * @param <Engine2D>
  */
-public interface MambaShape<Engine2D extends MambaEngine2D> {
+public interface MambaShape<Engine2D extends MambaEngine2D> extends MambaHierarchyData {
     public enum ShapeState{DISPLAY, SELECT, ANIMATION, EXPERT};
+    public enum ShapeType{CONTAINER, SHAPE, SHAPE_POLY};
+    
     
     public Transform getTransform();
     public void setTransform(Transform transform);
@@ -34,9 +38,23 @@ public interface MambaShape<Engine2D extends MambaEngine2D> {
     
     public void setOffset(Point2D offset);
     public Point2D getOffset();
+    
     default void resetOffset()
     {
         setOffset(new Point2D(0, 0));
+    }
+    
+    public ShapeType getType();
+    
+    
+    default boolean addShape(MambaShape shape)
+    {
+        return false;
+    }
+    
+    default ObservableList<MambaShape> getShapeList()
+    {
+        return FXCollections.emptyObservableList();
     }
         
     public Engine2D getEngine2D();
@@ -49,6 +67,16 @@ public interface MambaShape<Engine2D extends MambaEngine2D> {
         
     //not only by bounds but by specific shape
     public boolean contains(Point2D p); 
+    
+    default boolean intersect(Point2D p, MIntersection isect)
+    {
+        if(contains(p))
+        {
+            isect.shape = this;
+            return true;
+        }
+        return false;
+    }
     
     public ShapeState getState();
     public void setState(ShapeState shapeState);
@@ -95,4 +123,6 @@ public interface MambaShape<Engine2D extends MambaEngine2D> {
         
     }
     
+    public StringProperty getNameProperty();
+    public String getName();    
 }

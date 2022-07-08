@@ -11,6 +11,8 @@ import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleDoubleProperty;
 import javafx.beans.property.SimpleObjectProperty;
+import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.property.StringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.geometry.BoundingBox;
@@ -55,6 +57,10 @@ public class MRectangle implements MambaShape<MEngine>{
     
     ObservableList<MDragHandle> dragHandles = FXCollections.observableArrayList();
     
+    private final ObservableList<MambaShape<MEngine>> children = FXCollections.emptyObservableList();
+    
+    private final StringProperty nameProperty;
+    
     public MRectangle()
     {
         offset = new Point2D(0, 0);
@@ -71,7 +77,7 @@ public class MRectangle implements MambaShape<MEngine>{
         
         transform = Transform.translate(50, 50); 
         
-        
+        nameProperty = new SimpleStringProperty();
     }
     
     @Override
@@ -224,6 +230,52 @@ public class MRectangle implements MambaShape<MEngine>{
         return height;
     }
     
+    public void setSolidColor(Color solidColor)
+    {       
+        this.solidColor.set(solidColor);        
+        
+    }
+    
+    public Color getSolidColor()
+    {
+        return this.solidColor.get();
+    }
+    
+    public ObjectProperty<Color> solidColorProperty(){
+        return solidColor;
+    }
+    
+    public double getStrokeWidth()
+    {        
+        return this.strokeWidth.doubleValue();
+    }
+    
+    public void setStrokeWidth(double strokeWidth)
+    {       
+        this.strokeWidth.set(strokeWidth);
+    }
+    
+    public DoubleProperty strokeWidthProperty()
+    {
+        return strokeWidth;
+    }
+    
+    public void setStrokeColor(Color strokeColor)
+    {       
+        this.strokeColor.set(strokeColor);
+        this.getEngine2D().draw();
+        
+    }
+    
+    public Color getStrokeColor()
+    {
+        return this.strokeColor.get();
+    }
+    
+    public ObjectProperty<Color> strokeColorProperty(){
+        return strokeColor;
+    }
+    
     @Override
     public Effect getEffect()
     {
@@ -242,13 +294,11 @@ public class MRectangle implements MambaShape<MEngine>{
         //TODO
         MDragHandle c1 = dragHandles.get(0);
         c1.setX(getBounds().getMinX() - 5);
-        c1.setY(getBounds().getMinY() - 5);
-        
+        c1.setY(getBounds().getMinY() - 5);        
         
         MDragHandle c2 = dragHandles.get(1);
         c2.setX(getBounds().getMaxX());
-        c2.setY(getBounds().getMaxY());
-       
+        c2.setY(getBounds().getMaxY());       
        
         MDragHandle c3 = dragHandles.get(2);
         c3.setX(getBounds().getMinX() - 5);
@@ -256,7 +306,16 @@ public class MRectangle implements MambaShape<MEngine>{
         
         MDragHandle c4 = dragHandles.get(3);        
         c4.setX(getBounds().getMaxX());
-        c4.setY(getBounds().getMinY() - 5);  
+        c4.setY(getBounds().getMinY() - 5);
+        
+        MDragHandle c5 = dragHandles.get(4);         
+        double c5_new_offset_x  = c5.getOffsetPercentX() * getBounds().getWidth();  
+        
+        arcWidth.set(Math.abs(c5_new_offset_x));
+        arcHeight.set(Math.abs(c5_new_offset_x));
+        
+        c5.setX(getBounds().getMaxX() + c5_new_offset_x);
+        c5.setY(getBounds().getMinY() + this.getHeight()/2 - 2.5);
     }
     
      @Override
@@ -401,9 +460,62 @@ public class MRectangle implements MambaShape<MEngine>{
             c4.setOnMouseMoved(e->{
                 c4.setCursor(Cursor.HAND);
             });
+            
+            MDragHandle c5 = new MDragHandle(5, Color.CHARTREUSE, Cursor.DEFAULT);            
+            c5.setX(this.getBounds().getMaxX() - 5);
+            c5.setY(this.getBounds().getMinY() + this.getWidth()/2 - 5);
+            dragHandles.add(c5);
+            
+            c5.setOnMousePressed(e->{
+               Point2D p = new Point2D(e.getX(), e.getY()); 
+               setOffset(Point2D.ZERO);    
+            });
+            
+            c5.setOnMouseDragged(e->{
+                Point2D p = new Point2D(e.getX(), e.getY());           
+                
+                double offsetX = p.getX() - this.getBounds().getMaxX();  
+                double limitX  = this.getBounds().getWidth()/2;
+                
+                if(Math.abs(offsetX) < limitX)               
+                    c5.setOffsetX(offsetX, this.getBounds().getWidth());
+                else
+                    c5.setOffsetX(Math.copySign(limitX, offsetX), this.getBounds().getWidth());
+                
+                updateDragHandles(null);             
+
+                engine2D.draw();
+            });
+
+            //c5 on mouse moved
+            c5.setOnMouseMoved(e->{
+                c5.setCursor(Cursor.HAND);
+            });
         }
+        
+        
                 
         return dragHandles;       
         
+    }
+
+    @Override
+    public StringProperty getNameProperty() {
+        return nameProperty;
+    }
+
+    @Override
+    public String getName() {
+        return nameProperty.get();
+    }
+
+    @Override
+    public ShapeType getType() {
+        return ShapeType.SHAPE;
+    }
+    
+    @Override
+    public ObservableList<MambaShape<MEngine>> getChildren() {
+        return children;
     }
 }

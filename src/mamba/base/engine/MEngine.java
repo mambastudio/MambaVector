@@ -11,6 +11,7 @@ import javafx.geometry.Point2D;
 import javafx.scene.canvas.GraphicsContext;
 import mamba.base.MambaEngine2D;
 import mamba.base.MambaShape;
+import mamba.base.engine.shape.MRoot;
 import mamba.overlayselect.MSelectionModel;
 
 /**
@@ -22,11 +23,13 @@ public class MEngine implements MambaEngine2D {
     private final List<MambaShape> listShapes;
     
     MSelectionModel selectionModel = null;
+    MambaShape rootShape = null;
     
     public MEngine()
     {
         graphicContext = null;
-        listShapes = new ArrayList<>();        
+        listShapes = new ArrayList<>();   
+        rootShape = new MRoot();
     }
 
     @Override
@@ -105,6 +108,16 @@ public class MEngine implements MambaEngine2D {
     @Override
     public void setSelectionModel(MSelectionModel selectionModel) {
         this.selectionModel = selectionModel;
+    }
+
+    @Override
+    public List getShapes() {
+        return listShapes;
+    }
+
+    @Override
+    public MambaShape getRoot() {
+        return rootShape;
     }
 
     
