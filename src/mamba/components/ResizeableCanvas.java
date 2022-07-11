@@ -28,6 +28,7 @@ import javafx.scene.effect.Reflection;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
+import mamba.BuilderController;
 import mamba.base.MambaCanvas;
 import mamba.base.MambaShape;
 import mamba.base.MambaShape.ShapeState;
@@ -38,6 +39,7 @@ import mamba.beans.MBeanPropertySheet;
 import mamba.beans.MBeanPropertyUtility;
 import mamba.beans.editors.MDefaultDisplayNameFactory;
 import mamba.beans.editors.MDefaultEditorFactory;
+import mamba.util.MambaUtility;
 
 /**
  *
@@ -55,11 +57,13 @@ public final class ResizeableCanvas extends Region implements MambaCanvas<MEngin
     private ComboBox<Effect> effectTypeComboBox = null;
     private ChangeListener<Effect> effectTypeComboBoxListener = null;
     
-       
+    private final BuilderController controller;   
         
                
-    public ResizeableCanvas(double width, double height) 
+    public ResizeableCanvas(BuilderController controller, double width, double height) 
     {
+        this.controller = controller;
+        
         //set the width and height of this and the canvas as the same
         setWidth(width);
         setHeight(height);
@@ -153,6 +157,8 @@ public final class ResizeableCanvas extends Region implements MambaCanvas<MEngin
             initPropertySheet(null);           
             initEffectList(null); //init fresh combobox effect list
         }
+        
+        controller.selectLayerTreeView(engine2D.getSelected());
     }
     
     public void mouseReleased(MouseEvent e)
@@ -169,6 +175,45 @@ public final class ResizeableCanvas extends Region implements MambaCanvas<MEngin
             engine2D.getSelected().updateDragHandles(null);
             Platform.runLater(()->engine2D.draw());
            
+        }
+        
+    }
+    
+    public void select(MambaShape shape)
+    {
+        //is shape in engine
+        if(MambaUtility.searchMambaShape(engine2D.getRoot(), shape) == null)
+            return;
+        
+        //remove selection drawing first
+        MambaShape previousSelected = engine2D.getSelected();        
+        if(previousSelected != null && !previousSelected.isExpert()){
+            previousSelected.setState(ShapeState.DISPLAY);
+            engine2D.draw();
+        }
+        
+        //new selection
+        engine2D.setSelected(shape);
+        
+        //init new shape for dragging and init select state
+        if(engine2D.isSelected())
+        {
+            if(!engine2D.getSelected().isExpert())
+                engine2D.getSelected().setState(ShapeState.SELECT); //set selection
+            //engine2D.getSelected().setOffset(p.subtract(engine2D.getSelected().getTranslate()));               
+            engine2D.draw();
+        }
+        else
+            engine2D.draw();
+        
+        //property of new selected shape
+        if(engine2D.isSelected()){
+            initPropertySheet(engine2D.getSelected());                
+            initEffectList(engine2D.getSelected().getEffect()); //init fresh combobox effect list
+        }
+        else{
+            initPropertySheet(null);           
+            initEffectList(null); //init fresh combobox effect list
         }
         
     }

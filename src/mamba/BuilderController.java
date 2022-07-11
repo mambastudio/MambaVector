@@ -15,6 +15,7 @@ import javafx.fxml.Initializable;
 import javafx.scene.Group;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
+import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeView;
 import javafx.scene.effect.Effect;
 import javafx.scene.layout.Pane;
@@ -33,6 +34,8 @@ import mamba.base.engine.shape.MRectangle;
 import mamba.components.BackgroundPane;
 import mamba.components.ResizeableCanvas;
 import mamba.overlayselect.MSelectionModel;
+import mamba.treeview.RecursiveTreeItem;
+import mamba.util.MambaUtility;
 
 /**
  * FXML Controller class
@@ -63,7 +66,7 @@ public class BuilderController implements Initializable {
     TreeView<MambaShape> layerTreeView;
     
     private final BackgroundPane backgroundPanel = new BackgroundPane();
-    private final ResizeableCanvas renderCanvas = new ResizeableCanvas(500, 500);
+    private ResizeableCanvas renderCanvas;
     private final Group selectionLayer = new Group();
     private final MEngine engine2D = new MEngine();
     
@@ -71,7 +74,8 @@ public class BuilderController implements Initializable {
     @Override
     public void initialize(URL url, ResourceBundle rb) {
         // TODO    
-                
+        renderCanvas = new ResizeableCanvas(this, 500, 500);  
+        
         baseDrawPanel.getChildren().addAll(backgroundPanel, renderCanvas, selectionLayer);
         
         //ensure they grow according to base draw panel
@@ -128,6 +132,21 @@ public class BuilderController implements Initializable {
         paintTypeComboBox.setItems(paintTypeList);
         paintTypeComboBox.getSelectionModel().select(0);
         
+        TreeItem<MambaShape> rootItem = new RecursiveTreeItem<>(
+                engine2D.getRoot(),
+                engine2D.getRoot()::getDisplay,
+                engine2D.getRoot()::get);
+        layerTreeView.setRoot(rootItem);
+        layerTreeView.setShowRoot(false);
+        
+        layerTreeView.getSelectionModel().selectedItemProperty().addListener((o, ov, nv)->{
+            TreeItem<MambaShape> selected = nv;
+            
+            if(selected != null && selected.getParent() != null)
+            {
+                renderCanvas.select(selected.getValue());
+            }
+        });
     }    
     
     public void addCircle(ActionEvent e)
@@ -148,6 +167,12 @@ public class BuilderController implements Initializable {
         propertyPanel.getChildren().clear();
         effectPropertyDisplayPanel.getChildren().clear();
         //buildTreeItems(layerTreeView, engine2D.getShapes());
+    }
+    
+    public void selectLayerTreeView(MambaShape shape)
+    {
+        TreeItem item = MambaUtility.searchTreeItem(layerTreeView.getRoot(), shape);
+        layerTreeView.getSelectionModel().select(item);
     }
     
 }

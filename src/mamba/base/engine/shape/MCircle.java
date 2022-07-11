@@ -457,5 +457,9 @@ public class MCircle implements MambaShape<MEngine>{
         return children;
     }
 
-    
+    @Override
+    public String toString()
+    {
+        return "Circle";
+    }
 }

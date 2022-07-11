@@ -14,10 +14,10 @@ import javafx.geometry.Point2D;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.transform.Transform;
 import mamba.base.MambaShape;
-import static mamba.base.MambaShape.ShapeState.DISPLAY;
 import mamba.base.engine.MEngine;
 import mamba.overlayselect.MDragHandle;
 import mamba.util.MIntersection;
+import static mamba.util.Reversed.reversed;
 
 /**
  *
@@ -96,7 +96,8 @@ public class MRoot implements MambaShape<MEngine>{
 
     @Override
     public void draw() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        for(MambaShape shape : children)
+            shape.draw();
     }
 
     @Override
@@ -111,7 +112,7 @@ public class MRoot implements MambaShape<MEngine>{
 
     @Override
     public ShapeState getState() {
-        return DISPLAY;
+        return shapeState;
     }
 
     @Override
@@ -142,12 +143,24 @@ public class MRoot implements MambaShape<MEngine>{
     @Override
     public boolean intersect(Point2D p, MIntersection isect)
     {
-        for(MambaShape shape : children)
-            if(shape.contains(p)) //return first hit
-            {
-                isect.shape = shape;
+        for(MambaShape shape : reversed(children))
+            if(shape.intersect(p, isect)) //return first hit
+            {                
                 return true;
             }
         return false;
+    }
+    
+    @Override
+    public boolean addShape(MambaShape shape)
+    {
+        getChildren().add(shape);
+        return false;
+    }
+    
+    @Override
+    public String toString()
+    {
+        return "Root";
     }
 }

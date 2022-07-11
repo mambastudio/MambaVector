@@ -12,6 +12,10 @@ import javafx.geometry.BoundingBox;
 import javafx.geometry.Point2D;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.effect.Effect;
+import javafx.scene.paint.Color;
+import javafx.scene.shape.Circle;
+import javafx.scene.shape.Rectangle;
+import javafx.scene.shape.Shape;
 import javafx.scene.transform.Transform;
 import static mamba.base.MambaShape.ShapeState.ANIMATION;
 import static mamba.base.MambaShape.ShapeState.DISPLAY;
@@ -25,7 +29,7 @@ import mamba.util.MIntersection;
  * @author user
  * @param <Engine2D>
  */
-public interface MambaShape<Engine2D extends MambaEngine2D> extends MambaHierarchyData {
+public interface MambaShape<Engine2D extends MambaEngine2D> extends MambaHierarchyData<MambaShape<Engine2D>> {
     public enum ShapeState{DISPLAY, SELECT, ANIMATION, EXPERT};
     public enum ShapeType{CONTAINER, SHAPE, SHAPE_POLY};
     
@@ -125,4 +129,13 @@ public interface MambaShape<Engine2D extends MambaEngine2D> extends MambaHierarc
     
     public StringProperty getNameProperty();
     public String getName();    
+    
+    default Shape getDisplay(MambaShape shape)
+    {        
+        Rectangle rectangle = new Rectangle(10, 10);
+        rectangle.setFill(Color.BLUEVIOLET);
+        return rectangle;        
+    }
+    
+    
 }

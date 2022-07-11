@@ -5,7 +5,6 @@
  */
 package mamba.base.engine;
 
-import java.util.ArrayList;
 import java.util.List;
 import javafx.geometry.Point2D;
 import javafx.scene.canvas.GraphicsContext;
@@ -13,22 +12,20 @@ import mamba.base.MambaEngine2D;
 import mamba.base.MambaShape;
 import mamba.base.engine.shape.MRoot;
 import mamba.overlayselect.MSelectionModel;
+import mamba.util.MIntersection;
 
 /**
  *
  * @author user
  */
 public class MEngine implements MambaEngine2D {
-    private GraphicsContext graphicContext;
-    private final List<MambaShape> listShapes;
-    
+    private GraphicsContext graphicContext;        
     MSelectionModel selectionModel = null;
     MambaShape rootShape = null;
     
     public MEngine()
     {
         graphicContext = null;
-        listShapes = new ArrayList<>();   
         rootShape = new MRoot();
     }
 
@@ -44,16 +41,13 @@ public class MEngine implements MambaEngine2D {
 
     @Override
     public void draw() {
-        graphicContext.clearRect(0, 0, Float.MAX_VALUE, Float.MAX_VALUE);
-                
-        listShapes.forEach(shape -> {
-            shape.draw();
-        });        
+        graphicContext.clearRect(0, 0, Float.MAX_VALUE, Float.MAX_VALUE);                
+        rootShape.draw();
     }
 
     @Override
     public void addShape(MambaShape shape) {
-        listShapes.add(shape);
+        rootShape.addShape(shape);
         shape.setGraphicContext(graphicContext);
         shape.setEngine(this);
         draw();
@@ -61,30 +55,26 @@ public class MEngine implements MambaEngine2D {
 
     @Override
     public void removeAll() {
-        listShapes.clear();
+        rootShape.clear();
         selectionModel.clear();
         draw();
     }
 
     @Override
     public void remove(MambaShape shape) {
-        listShapes.remove(shape);            
-        draw();
+        throw new UnsupportedOperationException("remove method not implemented yet");
     }
 
         
     @Override
     public MambaShape hitSelect(Point2D p) {  
                
-        for(int i = listShapes.size()-1; i>-1; i--)
+        MIntersection isect = new MIntersection();
+        if(rootShape.intersect(p, isect))
         {
-            if(listShapes.get(i).contains(p))
-            {
-                
-                MambaShape shape = listShapes.get(i);
-                selectionModel.set(shape);               
-                return shape;
-            }
+            MambaShape shape = isect.shape;
+            selectionModel.set(shape);               
+            return shape;
         }
         this.selectionModel.clear();
         return null;
@@ -112,7 +102,7 @@ public class MEngine implements MambaEngine2D {
 
     @Override
     public List getShapes() {
-        return listShapes;
+        throw new UnsupportedOperationException("Not supported yet");
     }
 
     @Override

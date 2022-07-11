@@ -518,4 +518,10 @@ public class MRectangle implements MambaShape<MEngine>{
     public ObservableList<MambaShape<MEngine>> getChildren() {
         return children;
     }
+    
+    @Override
+    public String toString()
+    {
+        return "Rectangle";
+    }
 }

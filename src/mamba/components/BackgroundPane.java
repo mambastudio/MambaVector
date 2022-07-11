@@ -54,8 +54,4 @@ public class BackgroundPane extends Pane {
         }
     }
     
-    public void clear()
-    {
-        
-    }
 }
