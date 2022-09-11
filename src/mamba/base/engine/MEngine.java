@@ -21,7 +21,7 @@ import mamba.util.MIntersection;
 public class MEngine implements MambaEngine2D {
     private GraphicsContext graphicContext;        
     MSelectionModel selectionModel = null;
-    MambaShape rootShape = null;
+    MRoot rootShape = null;
     
     public MEngine()
     {
@@ -64,7 +64,27 @@ public class MEngine implements MambaEngine2D {
     public void remove(MambaShape shape) {
         throw new UnsupportedOperationException("remove method not implemented yet");
     }
+    
+    
+    @Override
+    public void addShape(List shapes) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
 
+    @Override
+    public void setAll(List shapes) {
+        rootShape.clear();
+        selectionModel.clear();
+        
+        List<MambaShape> listShapes = (List<MambaShape>)shapes;
+        for(MambaShape shape : listShapes)
+        {
+            shape.setGraphicContext(graphicContext);
+            shape.setEngine(this);
+            rootShape.addShape(shape);
+        }
+        draw();
+    }
         
     @Override
     public MambaShape hitSelect(Point2D p) {  

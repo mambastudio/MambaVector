@@ -8,13 +8,8 @@ package mamba.beans.editors;
 import mamba.beans.editors.base.MInterfacePropertyEditor;
 import java.math.BigDecimal;
 import java.math.BigInteger;
-import java.time.LocalDate;
-import java.util.Arrays;
-import java.util.Optional;
-import javafx.scene.effect.BlurType;
 import javafx.scene.effect.Effect;
 import javafx.scene.paint.Color;
-import javafx.scene.paint.Paint;
 import javafx.util.Callback;
 import mamba.beans.MBeanPropertyItem;
 

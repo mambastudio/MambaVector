@@ -41,7 +41,7 @@ public class MCircle implements MambaShape<MEngine>{
     
     private Point2D offset;
     
-    private final DoubleProperty radius;
+    private DoubleProperty radius = new SimpleDoubleProperty();
     private final ObjectProperty<Color> solidColor;
     private final DoubleProperty strokeWidth;
     private final ObjectProperty<Color> strokeColor;
@@ -138,7 +138,7 @@ public class MCircle implements MambaShape<MEngine>{
                 -radius.doubleValue() + strokeWidth.doubleValue()/2, 
                 radius.doubleValue() * 2 - strokeWidth.doubleValue(), 
                 radius.doubleValue() * 2 - strokeWidth.doubleValue());
-        graphicContext.setEffect(null);
+        
         graphicContext.setStroke(strokeColor.get());
         graphicContext.setLineWidth(strokeWidth.doubleValue());
         graphicContext.strokeOval(-radius.doubleValue() + strokeWidth.doubleValue()/2, 
@@ -146,6 +146,7 @@ public class MCircle implements MambaShape<MEngine>{
                                   radius.doubleValue()*2  - strokeWidth.doubleValue(), 
                                   radius.doubleValue()*2 - strokeWidth.doubleValue());
         
+        graphicContext.setEffect(null);
         graphicContext.restore(); //reset transforms and any other configurations
     }
 

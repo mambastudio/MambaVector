@@ -32,7 +32,7 @@ import mamba.util.MBound2;
  *
  * @author jmburu
  */
-public class MRectangle implements MambaShape<MEngine>{
+public final class MRectangle implements MambaShape<MEngine>{
 
     private ShapeState shapeState = ShapeState.DISPLAY;
     
@@ -78,6 +78,41 @@ public class MRectangle implements MambaShape<MEngine>{
         transform = Transform.translate(50, 50); 
         
         nameProperty = new SimpleStringProperty();
+    }
+    
+    public MRectangle(
+            double x,
+            double y,
+            double width, 
+            double height,
+            double rx, 
+            double ry
+    )
+    {
+        this();
+        this.translate(new Point2D(x, y));
+        this.width.set(width);
+        this.height.set(height);
+        this.arcWidth.set(rx);
+        this.arcHeight.set(ry);
+    }
+    
+    public MRectangle(
+            double x,
+            double y,
+            double width, 
+            double height,
+            double rx, 
+            double ry,
+            Color fill,
+            Color stroke,
+            double stroke_width
+    )
+    {
+        this(x, y, width, height, rx, ry);
+        this.solidColor.set(fill);
+        this.strokeColor.set(stroke);
+        this.strokeWidth.set(stroke_width);
     }
     
     @Override
@@ -141,9 +176,7 @@ public class MRectangle implements MambaShape<MEngine>{
         
         //draw shape, this is just local coordinates 
         graphicContext.setFill(solidColor.get());
-        graphicContext.setEffect(effect);        
-        graphicContext.setStroke(strokeColor.get());
-        graphicContext.setLineWidth(strokeWidth.doubleValue());
+        graphicContext.setEffect(effect);                
         graphicContext.fillRoundRect(
                 -width.doubleValue()/2  + strokeWidth.doubleValue()/2, 
                 -height.doubleValue()/2  + strokeWidth.doubleValue()/2, 
@@ -151,11 +184,19 @@ public class MRectangle implements MambaShape<MEngine>{
                 height.doubleValue() - strokeWidth.doubleValue(), 
                 arcWidth.doubleValue(), 
                 arcHeight.doubleValue());
-        
-        graphicContext.setEffect(null);
+                
         graphicContext.setStroke(strokeColor.get());
         graphicContext.setLineWidth(strokeWidth.doubleValue());
+        graphicContext.strokeRoundRect(-width.doubleValue()/2  + strokeWidth.doubleValue()/2, 
+                -height.doubleValue()/2  + strokeWidth.doubleValue()/2, 
+                width.doubleValue()  - strokeWidth.doubleValue(), 
+                height.doubleValue() - strokeWidth.doubleValue(), 
+                arcWidth.doubleValue(), 
+                arcHeight.doubleValue());
         
+        
+        
+        graphicContext.setEffect(null);
         graphicContext.restore(); //reset transforms and any other configurations
     }
 

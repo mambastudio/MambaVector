@@ -27,10 +27,12 @@
                <children>
                   <Button minWidth="30.0" mnemonicParsing="false" onAction="#addCircle" text="C" />
                   <Button minWidth="30.0" mnemonicParsing="false" onAction="#addRectangle" text="R" />
+                  <Button minWidth="30.0" mnemonicParsing="false" text="E" />
                   <Button minWidth="30.0" mnemonicParsing="false" text="L" />
+                  <Button minWidth="30.0" mnemonicParsing="false" text="P" />
                </children>
                <padding>
-                  <Insets left="1.0" right="1.0" top="1.0" />
+                  <Insets left="1.0" right="1.0" />
                </padding>
             </VBox>
          </left>
@@ -53,16 +55,20 @@
                   </MenuBar>
                   <ToolBar minHeight="-Infinity" minWidth="-Infinity" prefHeight="32.0" prefWidth="800.0">
                      <items>
+                        <Button mnemonicParsing="false" onAction="#open" text="Open" />
                         <Button mnemonicParsing="false" onAction="#clearAll" text="CA" />
                      </items>
                      <padding>
-                        <Insets bottom="2.0" left="1.0" top="2.0" />
+                        <Insets bottom="1.0" left="1.0" top="2.0" />
                      </padding>
                      <VBox.margin>
                         <Insets />
                      </VBox.margin>
                   </ToolBar>
                </children>
+               <padding>
+                  <Insets bottom="1.0" />
+               </padding>
             </VBox>
          </top>
          <center>

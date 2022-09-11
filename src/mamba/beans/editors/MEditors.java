@@ -48,7 +48,8 @@ public class MEditors {
                     }
                     
                     @Override
-                    public void initEditorValue() {                        
+                    public void initEditorValue() {        
+                        
                         getEditor().setText(this.getPropertyValue().toString());                        
                     }
                 };

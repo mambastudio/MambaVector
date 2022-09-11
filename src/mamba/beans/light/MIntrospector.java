@@ -163,7 +163,7 @@ public class MIntrospector {
                 }
 
                 Class<?> resultType = m.getReturnType();
-                if (resultType == Void.class) {
+                if (resultType == void.class) {
                     continue;
                 }
 
@@ -177,6 +177,7 @@ public class MIntrospector {
                         name = decapitalize(name.substring(3));
                         _prop(props, name).setReadMethod(m);
                     }
+                    
                 } else if (name.startsWith("is")) {
                     if (resultType == void.class) {
                         continue;
@@ -185,7 +186,9 @@ public class MIntrospector {
                     if (name.length() > 2) {
                         name = decapitalize(name.substring(2));
                         _prop(props, name).setReadMethod(m);
+                        
                     }
+                    
                 }
             } else if (argTypes.length == 1) {
                 if (!Modifier.isPublic(flags)) {

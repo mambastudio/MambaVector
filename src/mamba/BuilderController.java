@@ -5,6 +5,7 @@
  */
 package mamba;
 
+import java.io.File;
 import java.net.URL;
 import java.util.ResourceBundle;
 import javafx.collections.FXCollections;
@@ -26,11 +27,14 @@ import javafx.scene.paint.LinearGradient;
 import javafx.scene.paint.Paint;
 import javafx.scene.paint.RadialGradient;
 import javafx.scene.paint.Stop;
+import javafx.stage.FileChooser;
 import javafx.util.StringConverter;
 import mamba.base.MambaShape;
 import mamba.base.engine.MEngine;
 import mamba.base.engine.shape.MCircle;
 import mamba.base.engine.shape.MRectangle;
+import mamba.base.parser.svg.SVGDocument;
+import mamba.base.parser.svg.SVGParser;
 import mamba.components.BackgroundPane;
 import mamba.components.ResizeableCanvas;
 import mamba.overlayselect.MSelectionModel;
@@ -69,6 +73,8 @@ public class BuilderController implements Initializable {
     private ResizeableCanvas renderCanvas;
     private final Group selectionLayer = new Group();
     private final MEngine engine2D = new MEngine();
+    
+    private final FileChooser fileChooser = new FileChooser();
     
     
     @Override
@@ -147,6 +153,10 @@ public class BuilderController implements Initializable {
                 renderCanvas.select(selected.getValue());
             }
         });
+        
+        fileChooser.getExtensionFilters().addAll(
+                new FileChooser.ExtensionFilter("SVG files", "*.svg")
+        );
     }    
     
     public void addCircle(ActionEvent e)
@@ -173,6 +183,18 @@ public class BuilderController implements Initializable {
     {
         TreeItem item = MambaUtility.searchTreeItem(layerTreeView.getRoot(), shape);
         layerTreeView.getSelectionModel().select(item);
+    }
+    
+    public void open(ActionEvent e)
+    {
+        File svgFile = fileChooser.showOpenDialog(renderCanvas.getScene().getWindow());
+        if(svgFile != null)
+        {
+            SVGParser parser = new SVGParser(svgFile);
+            SVGDocument svg = parser.parseSVG();
+            engine2D.setAll(svg.elements);
+            
+        }
     }
     
 }

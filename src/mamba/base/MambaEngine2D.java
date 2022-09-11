@@ -26,6 +26,9 @@ public interface MambaEngine2D<MShape extends MambaShape> {
     public void removeAll();
     public void remove(MShape shape);
     
+    public void addShape(List<MShape> shapes);
+    public void setAll(List<MShape> shapes);
+    
     public MShape getSelected();
     public MShape hitSelect(Point2D p);
     public void setSelected(MShape shape);

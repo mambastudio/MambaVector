@@ -5,6 +5,7 @@
  */
 package mamba.base.engine.shape;
 
+import java.util.List;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 import javafx.collections.FXCollections;
@@ -154,8 +155,12 @@ public class MRoot implements MambaShape<MEngine>{
     @Override
     public boolean addShape(MambaShape shape)
     {
-        getChildren().add(shape);
-        return false;
+        return getChildren().add(shape);        
+    }
+    
+    public boolean addShape(List<MambaShape> shapes)
+    {
+        return getChildren().addAll(shapes);
     }
     
     @Override
