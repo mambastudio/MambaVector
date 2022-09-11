@@ -75,7 +75,8 @@ public final class MRectangle implements MambaShape<MEngine>{
         strokeWidth = new SimpleDoubleProperty(0.001);
         strokeColor = new SimpleObjectProperty(Color.BLACK);
         
-        transform = Transform.translate(50, 50); 
+        //to be at positon (0, 0), Transform.translate(width.get()/2, height.get()/2), since origin is at the middle
+        transform = Transform.translate(width.get()/2, height.get()/2); //
         
         nameProperty = new SimpleStringProperty();
     }
@@ -90,7 +91,7 @@ public final class MRectangle implements MambaShape<MEngine>{
     )
     {
         this();
-        this.translate(new Point2D(x, y));
+        this.translate(new Point2D(x + width/2, y + height/2));
         this.width.set(width);
         this.height.set(height);
         this.arcWidth.set(rx);
@@ -333,30 +334,31 @@ public final class MRectangle implements MambaShape<MEngine>{
     @Override
     public void updateDragHandles(MDragHandle referenceHandle) {
         //TODO
-        MDragHandle c1 = dragHandles.get(0);
-        c1.setX(getBounds().getMinX() - 5);
-        c1.setY(getBounds().getMinY() - 5);        
+        MDragHandle c1 = dragHandles.get(0);    //top left
+        c1.setPositionX(getBounds().getMinX());
+        c1.setPositionY(getBounds().getMinY());        
         
-        MDragHandle c2 = dragHandles.get(1);
-        c2.setX(getBounds().getMaxX());
-        c2.setY(getBounds().getMaxY());       
+        MDragHandle c2 = dragHandles.get(1);    //bottom right
+        c2.setPositionX(getBounds().getMaxX());
+        c2.setPositionY(getBounds().getMaxY());       
        
-        MDragHandle c3 = dragHandles.get(2);
-        c3.setX(getBounds().getMinX() - 5);
-        c3.setY(getBounds().getMaxY());
+        MDragHandle c3 = dragHandles.get(2);    //bottom left
+        c3.setPositionX(getBounds().getMinX());
+        c3.setPositionY(getBounds().getMaxY());
         
-        MDragHandle c4 = dragHandles.get(3);        
-        c4.setX(getBounds().getMaxX());
-        c4.setY(getBounds().getMinY() - 5);
+        MDragHandle c4 = dragHandles.get(3);    //top right  
+        c4.setPositionX(getBounds().getMaxX());
+        c4.setPositionY(getBounds().getMinY());
         
         MDragHandle c5 = dragHandles.get(4);         
-        double c5_new_offset_x  = c5.getOffsetPercentX() * getBounds().getWidth();  
+        double c5_new_offset_x  = c5.getOffsetPercentX() * getBounds().getWidth();  //offset from right boundary
         
+        //apply arc size
         arcWidth.set(Math.abs(c5_new_offset_x));
         arcHeight.set(Math.abs(c5_new_offset_x));
         
-        c5.setX(getBounds().getMaxX() + c5_new_offset_x);
-        c5.setY(getBounds().getMinY() + this.getHeight()/2 - 2.5);
+        c5.setPositionX(getBounds().getMaxX() + c5_new_offset_x); //variable along x-axis
+        c5.setPositionY(getBounds().getMinY() + this.getHeight()/2); //never changes along y-axis in terms of proportion
     }
     
      @Override
@@ -364,15 +366,10 @@ public final class MRectangle implements MambaShape<MEngine>{
     {
         if(dragHandles.isEmpty())
         {       
-            MDragHandle c1 = new MDragHandle(5, Cursor.DEFAULT);            
-            c1.setX(getBounds().getMinX() - 5);
-            c1.setY(getBounds().getMinY() - 5);
+            MDragHandle c1 = new MDragHandle(5, Cursor.DEFAULT);       //top left     
+            c1.setPositionX(getBounds().getMinX());
+            c1.setPositionY(getBounds().getMinY());
             dragHandles.add(c1);
-
-            c1.setOnMousePressed(e->{
-               Point2D p = new Point2D(e.getX(), e.getY()); 
-               setOffset(Point2D.ZERO);    
-            });
 
             c1.setOnMouseDragged(e->{
 
@@ -386,7 +383,7 @@ public final class MRectangle implements MambaShape<MEngine>{
                 double nWidth = nbound.getWidth(); //new height
                 double nHeight = nbound.getHeight(); //new height
                 
-                setWidth((int)nWidth);  
+                setWidth((int)nWidth);  //int cast is to avoid blurry antialiasing
                 setHeight((int)nHeight); 
                 
                 updateDragHandles(null);                
@@ -398,18 +395,12 @@ public final class MRectangle implements MambaShape<MEngine>{
                 c1.setCursor(Cursor.HAND);
             });
             
-            MDragHandle c2 = new MDragHandle(5, Cursor.DEFAULT);
-            c2.setX(getBounds().getMaxX() - 5);
-            c2.setY(getBounds().getMaxY() - 5);
+            MDragHandle c2 = new MDragHandle(5, Cursor.DEFAULT); //bottom right
+            c2.setPositionX(getBounds().getMaxX());
+            c2.setPositionY(getBounds().getMaxY());
             dragHandles.add(c2);
 
-            c2.setOnMousePressed(e->{
-               Point2D p = new Point2D(e.getX(), e.getY()); 
-               setOffset(Point2D.ZERO);     
-            });
-
             c2.setOnMouseDragged(e->{
-
                 Point2D p = new Point2D(e.getX(), e.getY());
 
                 MBound2 nbound = new MBound2();
@@ -433,9 +424,9 @@ public final class MRectangle implements MambaShape<MEngine>{
                 c2.setCursor(Cursor.HAND);
             });
             
-            MDragHandle c3 = new MDragHandle(5, Cursor.DEFAULT);
-            c3.setX(getBounds().getMinX() - 5);
-            c3.setY(getBounds().getMaxY() - 5);
+            MDragHandle c3 = new MDragHandle(5, Cursor.DEFAULT); //bottom left
+            c3.setPositionX(getBounds().getMinX());
+            c3.setPositionY(getBounds().getMaxY());
             dragHandles.add(c3);
 
             c3.setOnMousePressed(e->{
@@ -463,19 +454,14 @@ public final class MRectangle implements MambaShape<MEngine>{
                 engine2D.draw();
             });
 
-            c3.setOnMouseMoved(e->{
+            c3.setOnMouseMoved(e->{                             
                 c3.setCursor(Cursor.HAND);
             });
 
-            MDragHandle c4 = new MDragHandle(5, Cursor.DEFAULT);
-            c4.setX(getBounds().getMaxX() - 5);
-            c4.setY(getBounds().getMinY() - 5);
+            MDragHandle c4 = new MDragHandle(5, Cursor.DEFAULT);  //top right
+            c4.setPositionX(getBounds().getMaxX());
+            c4.setPositionY(getBounds().getMinY());
             dragHandles.add(c4);
-
-            c4.setOnMousePressed(e->{
-               Point2D p = new Point2D(e.getX(), e.getY()); 
-               setOffset(Point2D.ZERO);    
-            });
 
             c4.setOnMouseDragged(e->{
 
@@ -502,26 +488,27 @@ public final class MRectangle implements MambaShape<MEngine>{
                 c4.setCursor(Cursor.HAND);
             });
             
+            //not that rounded corners or arcs are edited as equal size, whic needs to be independent arc width and arc heigh editing
+            //TODO
             MDragHandle c5 = new MDragHandle(5, Color.CHARTREUSE, Cursor.DEFAULT);            
-            c5.setX(this.getBounds().getMaxX() - 5);
-            c5.setY(this.getBounds().getMinY() + this.getWidth()/2 - 5);
+            c5.setPositionX(this.getBounds().getMaxX() + arcWidth.doubleValue());
+            c5.setPositionY(this.getBounds().getMinY() + this.getHeight()/2);
+            
+            c5.setOffsetX(arcWidth.doubleValue(), this.getBounds().getWidth());
+            
             dragHandles.add(c5);
             
-            c5.setOnMousePressed(e->{
-               Point2D p = new Point2D(e.getX(), e.getY()); 
-               setOffset(Point2D.ZERO);    
-            });
-            
+            //for arc size calculations
             c5.setOnMouseDragged(e->{
                 Point2D p = new Point2D(e.getX(), e.getY());           
                 
-                double offsetX = p.getX() - this.getBounds().getMaxX();  
-                double limitX  = this.getBounds().getWidth()/2;
+                double offsetXFromRightBoundary = p.getX() - this.getBounds().getMaxX();  //positive or negative size depending on relative position
+                double limitXFromRightBoundary  = this.getBounds().getWidth()/2; //limit, which is 1/2 width of the rectangle
                 
-                if(Math.abs(offsetX) < limitX)               
-                    c5.setOffsetX(offsetX, this.getBounds().getWidth());
+                if(Math.abs(offsetXFromRightBoundary) < limitXFromRightBoundary) //notice we use abs(...)              
+                    c5.setOffsetX(offsetXFromRightBoundary, this.getBounds().getWidth()); //set offset and xOffset percentage along x-axis
                 else
-                    c5.setOffsetX(Math.copySign(limitX, offsetX), this.getBounds().getWidth());
+                    c5.setOffsetX(Math.copySign(limitXFromRightBoundary, offsetXFromRightBoundary), this.getBounds().getWidth()); //shouldn't be greater than absolute limit
                 
                 updateDragHandles(null);             
 
@@ -534,10 +521,7 @@ public final class MRectangle implements MambaShape<MEngine>{
             });
         }
         
-        
-                
-        return dragHandles;       
-        
+        return dragHandles;               
     }
 
     @Override

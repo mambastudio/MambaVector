@@ -38,12 +38,14 @@ public class SVGHandler extends DefaultHandler{
         }
         else if(RECT.compare(qName))
         {
-            double x, y, width, height, rx = 0, ry = 0, stroke_width = 0;
+            double x = 0, y = 0, width, height, rx = 0, ry = 0, stroke_width = 0;
             Color fill = null, stroke = null;
             
             
-            x = Double.valueOf(attr.getValue("x"));
-            y = Double.valueOf(attr.getValue("y"));
+            if(attr.getIndex("x") != -1)
+                x = Double.valueOf(attr.getValue("x"));
+            if(attr.getIndex("y") != -1)
+                y = Double.valueOf(attr.getValue("y"));
             width = Double.valueOf(attr.getValue("width"));
             height = Double.valueOf(attr.getValue("height"));
             
@@ -68,8 +70,6 @@ public class SVGHandler extends DefaultHandler{
                 else if(cssAttrList.contains("stroke-width"))
                     stroke_width = Double.valueOf(cssAttrList.get(cssAttrList.indexOf("stroke-width")+1));
             }   
-            
-            
             MRectangle rectangle = new MRectangle(x, y, width, height, rx, ry, fill, stroke, stroke_width);
             document.addShape(rectangle);
         }

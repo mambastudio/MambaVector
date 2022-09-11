@@ -18,11 +18,6 @@ public class MSelectionOverlay extends Region{
     boolean dragHandlesVisible = true;
     final MambaShape monitoredShape;
     
-    double diameter = 6;
-    double radius = diameter / 2.0;
-    Rectangle selectionRectangle = new Rectangle();
-        
-    
     public MSelectionOverlay(MambaShape shape) {
         this.monitoredShape = shape;       
         setPickOnBounds(false);

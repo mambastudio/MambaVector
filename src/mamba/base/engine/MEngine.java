@@ -10,7 +10,7 @@ import javafx.geometry.Point2D;
 import javafx.scene.canvas.GraphicsContext;
 import mamba.base.MambaEngine2D;
 import mamba.base.MambaShape;
-import mamba.base.engine.shape.MRoot;
+import mamba.base.engine.shape.groups.MRoot;
 import mamba.overlayselect.MSelectionModel;
 import mamba.util.MIntersection;
 

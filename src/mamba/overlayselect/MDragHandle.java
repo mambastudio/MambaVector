@@ -19,6 +19,12 @@ import javafx.scene.shape.StrokeType;
 public class MDragHandle extends Rectangle {
     Cursor dragCursor;
     
+    /**
+     * Offset coordinates below are not used directly for position (use getPosition instead).
+     * This is used in some calculation for editing purpose and hence have no meaning across all shapes.
+     * For example, the rectangle use these coordinate but not circle.
+     * 
+    **/
     double offsetX, offsetY;
     double offset_percX, offset_percY; //(0 - 1 range), store current state if possible but not usually assured this is current - just use offsetX
     
@@ -54,18 +60,21 @@ public class MDragHandle extends Rectangle {
     
     public Point2D getPosition()
     {
-        Bounds b = localToParent(getBoundsInLocal());
-        return new Point2D(b.getMinX(), b.getMinY());
+        double x = getX() + getWidth()/2;
+        double y = getY() + getHeight()/2;        
+        return new Point2D(x, y);
     }    
     
-    public double getOffsetX()
+    public void setPositionX(double x)
     {
-        return offsetX;
+        double width = this.getWidth();
+        this.setX((int)(x - width/2)); //int cast is to avoid blur filter for antialiasing during drawing
     }
     
-    public void setOffsetX(double offsetX)
+    public void setPositionY(double y)
     {
-        this.offsetX = offsetX;
+        double height = this.getHeight();
+        this.setY((int)(y - height/2));
     }
     
     public void setOffsetX(double offsetX, double widthBound)
@@ -79,20 +88,14 @@ public class MDragHandle extends Rectangle {
         return offset_percX;
     }
     
-    public double getOffsetY()
-    {
-        return offsetY;
-    }
-    
-    public void setOffsetY(double offsetY)
+    public void setOffsetY(double offsetY, double heightBound)
     {
         this.offsetY = offsetY;
+        this.offset_percY = offsetY/heightBound;
     }
     
-    public void setOffsetY(double offsetY, double height)
+    public double getOffsetPercentY()
     {
-        this.offsetY = offsetY;
-        this.offset_percY = offsetY/height;
+        return offset_percY;
     }
-    
 }
