@@ -3,19 +3,8 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-            <file>file:/C:/Users/jmburu/Documents/GitHub/MambaVector/src/mamba/base/parser/svg/SVGDocument.java</file>
-            <file>file:/C:/Users/jmburu/Documents/GitHub/MambaVector/src/mamba/base/engine/shape/MRoot.java</file>
-            <file>file:/C:/Users/jmburu/Documents/GitHub/MambaVector/src/mamba/base/parser/svg/SVGList.java</file>
-            <file>file:/C:/Users/jmburu/Documents/GitHub/MambaVector/test/sax/Test2Handler.java</file>
             <file>file:/C:/Users/jmburu/Documents/GitHub/MambaVector/src/mamba/base/engine/shape/MRectangle.java</file>
-            <file>file:/C:/Users/jmburu/Documents/GitHub/MambaVector/src/mamba/base/parser/svg/SVGParser.java</file>
-            <file>file:/C:/Users/jmburu/Documents/GitHub/MambaVector/src/mamba/overlayselect/MDragHandle.java</file>
-            <file>file:/C:/Users/jmburu/Documents/GitHub/MambaVector/src/mamba/BuilderController.java</file>
-            <file>file:/C:/Users/jmburu/Documents/GitHub/MambaVector/test/sax/Test2SVG.svg</file>
-            <file>file:/C:/Users/jmburu/Documents/GitHub/MambaVector/src/mamba/base/parser/svg/SVGShapeType.java</file>
-            <file>file:/C:/Users/jmburu/Documents/GitHub/MambaVector/src/mamba/base/MambaEngine2D.java</file>
-            <file>file:/C:/Users/jmburu/Documents/GitHub/MambaVector/src/mamba/base/engine/MEngine.java</file>
-            <file>file:/C:/Users/jmburu/Documents/GitHub/MambaVector/src/mamba/base/parser/svg/SVGHandler.java</file>
+            <file>file:/C:/Users/jmburu/Documents/GitHub/MambaVector/src/mamba/base/engine/shape/MEllipse.java</file>
         </group>
     </open-files>
 </project-private>
