@@ -5,6 +5,8 @@
  */
 package mamba.base.engine.shape;
 
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleDoubleProperty;
@@ -15,13 +17,16 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.geometry.BoundingBox;
 import javafx.geometry.Point2D;
+import javafx.scene.Cursor;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.effect.Effect;
 import javafx.scene.paint.Color;
+import javafx.scene.transform.NonInvertibleTransformException;
 import javafx.scene.transform.Transform;
 import mamba.base.MambaShape;
 import mamba.base.engine.MEngine;
 import mamba.overlayselect.MDragHandle;
+import mamba.util.MBound2;
 
 /**
  *
@@ -54,7 +59,7 @@ public class MEllipse implements MambaShape<MEngine>{
     private Transform transform;    
     private Effect effect;
     
-    private ObservableList<MDragHandle> dragHandles = FXCollections.observableArrayList();
+    private final ObservableList<MDragHandle> dragHandles = FXCollections.observableArrayList();
     
     private final ObservableList<MambaShape<MEngine>> children = FXCollections.emptyObservableList();
     
@@ -67,118 +72,337 @@ public class MEllipse implements MambaShape<MEngine>{
         centerX = new SimpleDoubleProperty(0);
         centerY = new SimpleDoubleProperty(0);
         
-        radiusX = new SimpleDoubleProperty(20);
-        radiusY = new SimpleDoubleProperty(20);
+        radiusX = new SimpleDoubleProperty(25);
+        radiusY = new SimpleDoubleProperty(15);
         
         fillColor = new SimpleObjectProperty(Color.YELLOW);
         
         strokeWidth = new SimpleDoubleProperty(0.001);
         strokeColor = new SimpleObjectProperty(Color.BLACK);
         
-        //to be at positon (0, 0), Transform.translate(width.get()/2, height.get()/2), since origin is at the middle
-        transform = Transform.translate(radiusX.get()/2, radiusY.get()/2); //
+        //to be at positon (0, 0)
+        transform = Transform.translate(radiusX.get(), radiusY.get()); //
         
-        nameProperty = new SimpleStringProperty();
+        nameProperty = new SimpleStringProperty("Ellipse");
+    }
+    
+    public void setFillColor(Color fillColor)
+    {       
+        this.fillColor.set(fillColor);               
+    }
+    
+    public Color getFillColor()
+    {
+        return this.fillColor.get();
+    }
+    
+    public ObjectProperty<Color> fillColorProperty()
+    {
+        return fillColor;
     }
 
     @Override
     public Transform getTransform() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return transform;
     }
 
     @Override
     public void setTransform(Transform transform) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        this.transform = transform;
     }
 
     @Override
     public void translate(Point2D p) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        Point2D tp = p.subtract(offset);
+        this.transform = Transform.translate(tp.getX(), tp.getY());
     }
 
     @Override
     public Point2D getTranslate() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return this.transform.transform(new Point2D(0, 0));
     }
 
     @Override
     public void setOffset(Point2D offset) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        this.offset = offset;
     }
 
     @Override
     public Point2D getOffset() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return offset;
     }
 
     @Override
     public ShapeType getType() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return ShapeType.SHAPE;
     }
 
     @Override
     public MEngine getEngine2D() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return engine2D;
     }
 
     @Override
     public void setEngine(MEngine engine2D) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        this.engine2D = engine2D;
     }
 
     @Override
     public void setGraphicContext(GraphicsContext context) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        this.graphicContext = context;
     }
 
     @Override
     public GraphicsContext getGraphicsContext() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return this.graphicContext;
     }
 
     @Override
     public void draw() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        graphicContext.save();
+        //apply transform first
+        graphicContext.setTransform(
+                transform.getMxx(), transform.getMyx(), transform.getMxy(),
+                transform.getMyy(), transform.getTx(), transform.getTy());
+        
+        //draw shape, this is just local coordinates 
+        graphicContext.setFill(fillColor.get());
+        graphicContext.setEffect(effect);             
+        graphicContext.fillOval(
+                centerX.doubleValue() - radiusX.doubleValue(), 
+                centerY.doubleValue() - radiusY.doubleValue(), 
+                radiusX.doubleValue() * 2, radiusY.doubleValue() * 2);
+        
+        graphicContext.setStroke(strokeColor.get());
+        graphicContext.setLineWidth(strokeWidth.doubleValue());
+        graphicContext.strokeOval(
+                centerX.doubleValue() - radiusX.doubleValue(), 
+                centerY.doubleValue() - radiusY.doubleValue(), 
+                radiusX.doubleValue() * 2, radiusY.doubleValue() * 2);
+        
+        graphicContext.setEffect(null);
+        graphicContext.restore(); //reset transforms and any other configurations
     }
 
     @Override
     public BoundingBox getBounds() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        Point2D min = new Point2D(centerX.doubleValue() - radiusX.doubleValue(), centerY.doubleValue() - radiusY.doubleValue());
+        Point2D max = new Point2D(centerX.doubleValue() + radiusX.doubleValue(), centerY.doubleValue() + radiusY.doubleValue());
+        MBound2 bound = new MBound2();
+        bound.include(min);
+        bound.include(max);   
+        return (BoundingBox) transform.transform(bound.getBoundingBox());
     }
 
     @Override
     public boolean contains(Point2D p) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        try {
+            //transform p to local coordinates
+            Point2D invP = transform.inverseTransform(p);
+            Point2D min = new Point2D(centerX.doubleValue() - radiusX.doubleValue(), centerY.doubleValue() - radiusY.doubleValue());
+            Point2D max = new Point2D(centerX.doubleValue() + radiusX.doubleValue(), centerY.doubleValue() + radiusY.doubleValue());
+            MBound2 bound = new MBound2();
+            bound.include(min);
+            bound.include(max);       
+            return bound.contains(invP);
+        } catch (NonInvertibleTransformException ex) {
+            Logger.getLogger(MEllipse.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return false;
     }
 
     @Override
     public ShapeState getState() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return shapeState;
     }
 
     @Override
     public void setState(ShapeState shapeState) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        this.shapeState = shapeState;
     }
 
     @Override
     public void updateDragHandles(MDragHandle referenceHandle) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        
+        MDragHandle c1 = dragHandles.get(0);    //top left
+        c1.setPositionX(getBounds().getMinX());
+        c1.setPositionY(getBounds().getMinY());        
+        
+        MDragHandle c2 = dragHandles.get(1);    //bottom right
+        c2.setPositionX(getBounds().getMaxX());
+        c2.setPositionY(getBounds().getMaxY());       
+       
+        MDragHandle c3 = dragHandles.get(2);    //bottom left
+        c3.setPositionX(getBounds().getMinX());
+        c3.setPositionY(getBounds().getMaxY());
+        
+        MDragHandle c4 = dragHandles.get(3);    //top right  
+        c4.setPositionX(getBounds().getMaxX());
+        c4.setPositionY(getBounds().getMinY());
+    }
+    
+     @Override
+    public ObservableList<MDragHandle> getDragHandles()
+    {
+        if(dragHandles.isEmpty())
+        {
+            MDragHandle c1 = new MDragHandle(5, Cursor.DEFAULT);       //top left     
+            c1.setPositionX(getBounds().getMinX());
+            c1.setPositionY(getBounds().getMinY());
+            dragHandles.add(c1);
+
+            c1.setOnMouseDragged(e->{
+
+                Point2D p = new Point2D(e.getX(), e.getY());
+
+                MBound2 nbound = new MBound2();
+                MBound2 cbound = new MBound2();
+
+                cbound.include(getBounds());          //current bounds 
+                nbound.include(p, cbound.getPoint(2));      //new bounds
+                double nRadiusX = nbound.getWidth()/2; //new height
+                double nRadiusY = nbound.getHeight()/2; //new height
+                
+                radiusX.set((int)nRadiusX);  //int cast is to avoid blurry antialiasing
+                radiusY.set((int)nRadiusY); 
+                
+                updateDragHandles(null);                
+                engine2D.draw();
+
+            });
+
+            c1.setOnMouseMoved(e->{
+                c1.setCursor(Cursor.HAND);
+            });
+            
+            MDragHandle c2 = new MDragHandle(5, Cursor.DEFAULT); //bottom right
+            c2.setPositionX(getBounds().getMaxX());
+            c2.setPositionY(getBounds().getMaxY());
+            dragHandles.add(c2);
+
+            c2.setOnMouseDragged(e->{
+                Point2D p = new Point2D(e.getX(), e.getY());
+
+                MBound2 nbound = new MBound2();
+                MBound2 cbound = new MBound2();
+
+                cbound.include(getBounds());          //current bounds 
+                nbound.include(p, cbound.getPoint(0));      //new bounds
+                double nRadiusX = nbound.getWidth()/2; //new height
+                double nRadiusY = nbound.getHeight()/2; //new height
+                
+                radiusX.set((int)nRadiusX);  //int cast is to avoid blurry antialiasing
+                radiusY.set((int)nRadiusY); 
+                                
+                updateDragHandles(null);       
+                
+                engine2D.draw();
+            });
+
+            c2.setOnMouseMoved(e->{
+                c2.setCursor(Cursor.HAND);
+            });
+            
+            MDragHandle c3 = new MDragHandle(5, Cursor.DEFAULT); //bottom left
+            c3.setPositionX(getBounds().getMinX());
+            c3.setPositionY(getBounds().getMaxY());
+            dragHandles.add(c3);
+
+            c3.setOnMousePressed(e->{
+               Point2D p = new Point2D(e.getX(), e.getY()); 
+               setOffset(Point2D.ZERO);    
+            });
+
+            c3.setOnMouseDragged(e->{
+
+                Point2D p = new Point2D(e.getX(), e.getY());
+
+                MBound2 nbound = new MBound2();
+                MBound2 cbound = new MBound2();
+
+                cbound.include(getBounds());       //current bounds             
+                nbound.include(p, cbound.getPoint(1));      //new bounds
+                double nRadiusX = nbound.getWidth()/2; //new height
+                double nRadiusY = nbound.getHeight()/2; //new height
+                
+                radiusX.set((int)nRadiusX);  //int cast is to avoid blurry antialiasing
+                radiusY.set((int)nRadiusY); 
+
+                updateDragHandles(null);            
+
+                engine2D.draw();
+            });
+
+            c3.setOnMouseMoved(e->{                             
+                c3.setCursor(Cursor.HAND);
+            });
+
+            MDragHandle c4 = new MDragHandle(5, Cursor.DEFAULT);  //top right
+            c4.setPositionX(getBounds().getMaxX());
+            c4.setPositionY(getBounds().getMinY());
+            dragHandles.add(c4);
+
+            c4.setOnMouseDragged(e->{
+
+                Point2D p = new Point2D(e.getX(), e.getY());
+
+                MBound2 nbound = new MBound2();
+                MBound2 cbound = new MBound2();
+
+                cbound.include(getBounds());       //current bounds             
+                nbound.include(p, cbound.getPoint(3));      //new bounds
+                double nRadiusX = nbound.getWidth()/2; //new height
+                double nRadiusY = nbound.getHeight()/2; //new height
+                
+                radiusX.set((int)nRadiusX);  //int cast is to avoid blurry antialiasing
+                radiusY.set((int)nRadiusY); 
+
+                updateDragHandles(null);             
+
+                engine2D.draw();
+            });
+
+            //c4 on mouse moved
+            c4.setOnMouseMoved(e->{
+                c4.setCursor(Cursor.HAND);
+            });
+        }
+        return dragHandles;
     }
 
     @Override
     public StringProperty getNameProperty() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return nameProperty;
     }
 
     @Override
     public String getName() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return nameProperty.get();
     }
 
     @Override
     public ObservableList<MambaShape<MEngine>> getChildren() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return children;
     }
     
+    @Override
+    public Effect getEffect()
+    {
+        return effect;
+    }
+    
+    @Override
+    public void setEffect(Effect effect)
+    {
+        this.effect = effect;
+    }
+    
+    @Override
+    public String toString()
+    {
+        if(getName() == null || getName().isEmpty())
+            return "Ellipse";
+        else
+            return getName();
+    }
 }

@@ -32,6 +32,8 @@ import javafx.util.StringConverter;
 import mamba.base.MambaShape;
 import mamba.base.engine.MEngine;
 import mamba.base.engine.shape.MCircle;
+import mamba.base.engine.shape.MEllipse;
+import mamba.base.engine.shape.MLine;
 import mamba.base.engine.shape.MRectangle;
 import mamba.base.parser.svg.SVGDocument;
 import mamba.base.parser.svg.SVGParser;
@@ -168,6 +170,18 @@ public class BuilderController implements Initializable {
     public void addRectangle(ActionEvent e)
     {        
         engine2D.addShape(new MRectangle());   
+        //buildTreeItems(layerTreeView, engine2D.getShapes());
+    }
+    
+    public void addEllipse(ActionEvent e)
+    {        
+        engine2D.addShape(new MEllipse());   
+        //buildTreeItems(layerTreeView, engine2D.getShapes());
+    }
+    
+    public void addLine(ActionEvent e)
+    {        
+        engine2D.addShape(new MLine());   
         //buildTreeItems(layerTreeView, engine2D.getShapes());
     }
     

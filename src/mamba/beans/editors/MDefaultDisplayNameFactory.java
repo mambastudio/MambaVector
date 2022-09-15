@@ -50,8 +50,10 @@ public class MDefaultDisplayNameFactory implements Function<String, String> {
                 return "Top opacity";
             case "bottomOpacity":
                 return "Bottom opacity";
-                case "fraction":
+            case "fraction":
                 return "Fraction";
+            case "fillColor":
+                return "Fill color";
             default:
                 return t;
         }

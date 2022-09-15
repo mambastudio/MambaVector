@@ -27,9 +27,11 @@
                <children>
                   <Button minWidth="30.0" mnemonicParsing="false" onAction="#addCircle" text="C" />
                   <Button minWidth="30.0" mnemonicParsing="false" onAction="#addRectangle" text="R" />
-                  <Button minWidth="30.0" mnemonicParsing="false" text="E" />
-                  <Button minWidth="30.0" mnemonicParsing="false" text="L" />
+                  <Button minWidth="30.0" mnemonicParsing="false" onAction="#addEllipse" text="E" />
+                  <Button minWidth="30.0" mnemonicParsing="false" onAction="#addLine" text="L" />
                   <Button minWidth="30.0" mnemonicParsing="false" text="P" />
+                  <Separator prefHeight="4.0" prefWidth="0.0" />
+                  <Button minWidth="30.0" mnemonicParsing="false" text="D" />
                </children>
                <padding>
                   <Insets left="1.0" right="1.0" />
@@ -43,6 +45,7 @@
                     <menus>
                       <Menu mnemonicParsing="false" text="File">
                         <items>
+                              <MenuItem mnemonicParsing="false" onAction="#open" text="Open" />
                           <MenuItem mnemonicParsing="false" text="Close" />
                         </items>
                       </Menu>
@@ -55,8 +58,12 @@
                   </MenuBar>
                   <ToolBar minHeight="-Infinity" minWidth="-Infinity" prefHeight="32.0" prefWidth="800.0">
                      <items>
-                        <Button mnemonicParsing="false" onAction="#open" text="Open" />
                         <Button mnemonicParsing="false" onAction="#clearAll" text="CA" />
+                        <Separator orientation="VERTICAL" prefHeight="12.0" prefWidth="5.0" />
+                        <Button mnemonicParsing="false" text="TB" />
+                        <Button mnemonicParsing="false" text="TF" />
+                        <Button mnemonicParsing="false" text="SU" />
+                        <Button mnemonicParsing="false" text="SD" />
                      </items>
                      <padding>
                         <Insets bottom="1.0" left="1.0" top="2.0" />

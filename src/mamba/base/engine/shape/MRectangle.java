@@ -65,8 +65,8 @@ public final class MRectangle implements MambaShape<MEngine>{
     {
         offset = new Point2D(0, 0);
         
-        width = new SimpleDoubleProperty(45);
-        height = new SimpleDoubleProperty(45);
+        width = new SimpleDoubleProperty(50);
+        height = new SimpleDoubleProperty(50);
         
         arcWidth = new SimpleDoubleProperty(0);
         arcHeight = new SimpleDoubleProperty(0);
