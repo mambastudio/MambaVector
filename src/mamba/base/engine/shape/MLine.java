@@ -41,7 +41,7 @@ public class MLine implements MambaShape<MEngine>{
     
     private Point2D offset;
     
-    //line end points
+    //line end points always in local coordinates
     private Point2D p1;   
     private Point2D p2;
     
@@ -184,16 +184,12 @@ public class MLine implements MambaShape<MEngine>{
     public void updateDragHandles(MDragHandle referenceHandle) {
         
         MDragHandle c1 = dragHandles.get(0);   
-        c1.setPositionX(p1.getX());
-        c1.setPositionY(p1.getY());    
-        c1.getTransforms().setAll(transform);
-        
-        System.out.println(p1);
-        
+        c1.setPositionX(getGlobalP1().getX());
+        c1.setPositionY(getGlobalP1().getY());    
+              
         MDragHandle c2 = dragHandles.get(1);    
-        c2.setPositionX(p2.getX());
-        c2.setPositionY(p2.getY());     
-        c2.getTransforms().setAll(transform);
+        c2.setPositionX(getGlobalP2().getX());
+        c2.setPositionY(getGlobalP2().getY());     
     }
     
      @Override
@@ -202,15 +198,13 @@ public class MLine implements MambaShape<MEngine>{
         if(dragHandles.isEmpty())
         {
             MDragHandle c1 = new MDragHandle(5, Cursor.DEFAULT);       
-            c1.setPositionX(p1.getX());
-            c1.setPositionY(p1.getY());
-            c1.getTransforms().setAll(transform);
+            c1.setPositionX(getGlobalP1().getX());
+            c1.setPositionY(getGlobalP1().getY());           
             dragHandles.add(c1);
             
             c1.setOnMouseDragged(e->{
-                Point2D p = new Point2D(e.getX(), e.getY());
-                System.out.println("mouse- " +p);
-                p1 = p;
+                Point2D p = new Point2D(e.getX(), e.getY());                
+                p1 = this.pointInvTransform(p);   //transform to local coordinates
                 updateDragHandles(null);                
                 engine2D.draw();
             });
@@ -220,14 +214,13 @@ public class MLine implements MambaShape<MEngine>{
             });
             
             MDragHandle c2 = new MDragHandle(5, Cursor.DEFAULT);       
-            c2.setPositionX(p2.getX());
-            c2.setPositionY(p2.getY());
-            c2.getTransforms().setAll(transform);
+            c2.setPositionX(getGlobalP2().getX());
+            c2.setPositionY(getGlobalP2().getY());            
             dragHandles.add(c2);
             
             c2.setOnMouseDragged(e->{
                 Point2D p = new Point2D(e.getX(), e.getY());
-                p2 = p;
+                p2 = this.pointInvTransform(p); //transform to local coordinates
                 updateDragHandles(null);                
                 engine2D.draw();
             });
@@ -240,14 +233,30 @@ public class MLine implements MambaShape<MEngine>{
         return dragHandles;
     }
     
-    private Point2D getPositionP1()
+    private Point2D pointTransform(Point2D point)
     {
+        return transform.transform(point);
+    }
+    
+    private Point2D pointInvTransform(Point2D point)
+    {
+        try {
+            return transform.inverseTransform(point);
+        } catch (NonInvertibleTransformException ex) {
+            Logger.getLogger(MLine.class.getName()).log(Level.SEVERE, null, ex);
+        }
         return null;
     }
     
-    private Point2D getPositionP2()
+    
+    private Point2D getGlobalP1()
     {
-        return null;
+        return pointTransform(p1);
+    }
+    
+    private Point2D getGlobalP2()
+    {
+        return pointTransform(p2);
     }
 
     @Override
