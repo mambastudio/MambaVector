@@ -27,6 +27,7 @@ import mamba.base.MambaShape;
 import mamba.base.engine.MEngine;
 import mamba.overlayselect.MDragHandle;
 import mamba.util.MBound2;
+import mamba.util.MIntersection;
 
 /**
  *
@@ -161,6 +162,11 @@ public class MLine implements MambaShape<MEngine>{
             //transform p to local coordinates
             Point2D invP = transform.inverseTransform(p);            
             MBound2 bound = new MBound2();
+            
+            //expand a bit to maximum 5 on x and y in order to have minimum bound that is not less than 5
+            //future plans is to implement oriented bounding box
+            bound.include(new Point2D(p1.getX()-5, p1.getY()-5), new Point2D(p1.getX() + 5, p1.getY() + 5));
+            bound.include(new Point2D(p2.getX()-5, p2.getY()-5), new Point2D(p2.getX() + 5, p2.getY() + 5));
             bound.include(p1);
             bound.include(p2);       
             return bound.contains(invP);
@@ -231,6 +237,28 @@ public class MLine implements MambaShape<MEngine>{
         }
         
         return dragHandles;
+    }
+    
+    @Override
+    public boolean intersect(Point2D p, MIntersection isect)
+    {        
+        boolean boundIntersect = MambaShape.super.intersect(p, isect);
+        
+        //https://en.wikipedia.org/wiki/Distance_from_a_point_to_a_line#Line_defined_by_two_points
+        if(boundIntersect)
+        {
+            Point2D p0 = pointInvTransform(p); //to local coordinates
+            double lengthLine = p1.distance(p2);
+            double numerator = (p2.getX()-p1.getX())*(p1.getY()-p0.getY()) - 
+                    (p1.getX()-p0.getX())*(p2.getY()-p1.getY());
+            numerator = Math.abs(numerator);
+            
+            double distance = numerator/lengthLine;
+            if(distance < 5)
+                return true;            
+        }
+        
+        return false;
     }
     
     private Point2D pointTransform(Point2D point)

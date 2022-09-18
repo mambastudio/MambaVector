@@ -72,7 +72,7 @@ public interface MambaShape<Engine2D extends MambaEngine2D> extends MambaHierarc
     //not only by bounds but by specific shape
     public boolean contains(Point2D p); 
     
-    default boolean intersect(Point2D p, MIntersection isect)
+    public default boolean intersect(Point2D p, MIntersection isect)
     {
         if(contains(p))
         {
