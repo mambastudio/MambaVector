@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import glyphreader.jfx.PhosphorIcon?>
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.ComboBox?>
@@ -24,17 +25,66 @@
    <children>
       <BorderPane prefHeight="200.0" prefWidth="200.0">
          <left>
-            <VBox prefHeight="400.0" spacing="2.0" BorderPane.alignment="CENTER">
+            <VBox alignment="TOP_CENTER" prefHeight="807.0" prefWidth="36.0" spacing="4.0" style="-fx-border-style: hidden solid hidden hidden; -fx-border-color: lightgray;" BorderPane.alignment="TOP_CENTER">
                <children>
-                  <Button minWidth="30.0" mnemonicParsing="false" onAction="#addCircle" text="C" />
-                  <Button minWidth="30.0" mnemonicParsing="false" onAction="#addRectangle" text="R" />
-                  <Button minWidth="30.0" mnemonicParsing="false" onAction="#addEllipse" text="E" />
-                  <Button minWidth="30.0" mnemonicParsing="false" onAction="#addLine" text="L" />
-                  <Button minWidth="30.0" mnemonicParsing="false" text="P" />
+                  <Button minWidth="30.0" mnemonicParsing="false" onAction="#addCircle" prefHeight="2.0" prefWidth="30.0">
+                     <graphic>
+                        <PhosphorIcon glyphName="circle" />
+                     </graphic></Button>
+                  <Button minWidth="30.0" mnemonicParsing="false" onAction="#addRectangle" prefHeight="8.0" prefWidth="30.0">
+                     <graphic>
+                        <PhosphorIcon glyphName="rectangle" />
+                     </graphic></Button>
+                  <Button minWidth="30.0" mnemonicParsing="false" onAction="#addEllipse" prefHeight="11.0" prefWidth="30.0">
+                     <graphic>
+                        <PhosphorIcon glyphName="dots-three-circle" />
+                     </graphic></Button>
+                  <Button minWidth="30.0" mnemonicParsing="false" onAction="#addLine" prefHeight="11.0" prefWidth="30.0">
+                     <graphic>
+                        <PhosphorIcon glyphName="line-segment" />
+                     </graphic></Button>
+                  <Button minWidth="30.0" mnemonicParsing="false" prefHeight="10.0" prefWidth="30.0">
+                     <graphic>
+                        <PhosphorIcon glyphName="polygon" />
+                     </graphic></Button>
+                  <Button minWidth="30.0" mnemonicParsing="false" prefHeight="10.0" prefWidth="30.0">
+                     <graphic>
+                        <PhosphorIcon glyphName="bezier-curve" />
+                     </graphic>
+                  </Button>
+                  <Button minWidth="30.0" mnemonicParsing="false" prefHeight="10.0" prefWidth="30.0">
+                     <graphic>
+                        <PhosphorIcon glyphName="path" />
+                     </graphic>
+                  </Button>
+                  <Button minWidth="30.0" mnemonicParsing="false" prefHeight="10.0" prefWidth="30.0">
+                     <graphic>
+                        <PhosphorIcon glyphName="image" />
+                     </graphic>
+                  </Button>
+                  <Separator prefHeight="0.0" prefWidth="30.0" />
+                  <ToggleButton minWidth="30.0" mnemonicParsing="false" prefHeight="30.0" prefWidth="10.0">
+                     <graphic>
+                        <PhosphorIcon glyphName="pen-nib" />
+                     </graphic>
+                  </ToggleButton>
+                  <ToggleButton minWidth="30.0" mnemonicParsing="false" prefHeight="30.0" prefWidth="10.0">
+                     <graphic>
+                        <PhosphorIcon glyphName="eraser" />
+                     </graphic>
+                  </ToggleButton>
+                  <Button minWidth="30.0" mnemonicParsing="false" prefHeight="10.0" prefWidth="30.0">
+                     <graphic>
+                        <PhosphorIcon glyphName="copy-simple" />
+                     </graphic>
+                  </Button>
                </children>
                <padding>
-                  <Insets left="1.0" right="1.0" />
+                  <Insets left="1.0" right="1.0" top="3.0" />
                </padding>
+               <BorderPane.margin>
+                  <Insets />
+               </BorderPane.margin>
             </VBox>
          </left>
          <top>
@@ -55,17 +105,49 @@
                       </Menu>
                     </menus>
                   </MenuBar>
-                  <ToolBar minHeight="-Infinity" minWidth="-Infinity" prefHeight="32.0" prefWidth="800.0">
+                  <ToolBar minHeight="-Infinity" minWidth="-Infinity" prefHeight="39.0" prefWidth="1271.0">
                      <items>
-                        <Button mnemonicParsing="false" onAction="#clearAll" text="CA" />
-                        <Button minWidth="30.0" mnemonicParsing="false" text="D" />
+                        <Button mnemonicParsing="false">
+                           <graphic>
+                              <PhosphorIcon glyphName="file" />
+                           </graphic>
+                        </Button>
+                        <Button mnemonicParsing="false" onAction="#clearAll">
+                           <graphic>
+                              <PhosphorIcon glyphName="trash" />
+                           </graphic></Button>
+                        <Button minWidth="30.0" mnemonicParsing="false">
+                           <graphic>
+                              <PhosphorIcon glyphName="trash-simple" />
+                           </graphic></Button>
                         <Separator orientation="VERTICAL" prefHeight="12.0" prefWidth="5.0" />
-                        <Button mnemonicParsing="false" text="TB" />
-                        <Button mnemonicParsing="false" text="TF" />
-                        <Button mnemonicParsing="false" text="SU" />
-                        <Button mnemonicParsing="false" text="SD" />
+                        <Button mnemonicParsing="false">
+                           <graphic>
+                              <PhosphorIcon glyphName="selection-background" />
+                           </graphic></Button>
+                        <Button mnemonicParsing="false">
+                           <graphic>
+                              <PhosphorIcon glyphName="selection-foreground" />
+                           </graphic></Button>
+                        <Button mnemonicParsing="false">
+                           <graphic>
+                              <PhosphorIcon glyphName="arrow-line-up" />
+                           </graphic></Button>
+                        <Button mnemonicParsing="false">
+                           <graphic>
+                              <PhosphorIcon glyphName="arrow-line-down" />
+                           </graphic></Button>
+                        <Button mnemonicParsing="false">
+                           <graphic>
+                              <PhosphorIcon glyphName="arrows-in" />
+                           </graphic>
+                        </Button>
+                        <Button mnemonicParsing="false">
+                           <graphic>
+                              <PhosphorIcon glyphName="arrows-out" />
+                           </graphic>
+                        </Button>
                         <Separator orientation="VERTICAL" prefHeight="200.0" />
-                        <ToggleButton minWidth="30.0" mnemonicParsing="false" text="C" />
                      </items>
                      <padding>
                         <Insets bottom="1.0" left="1.0" top="2.0" />
@@ -75,13 +157,10 @@
                      </VBox.margin>
                   </ToolBar>
                </children>
-               <padding>
-                  <Insets bottom="1.0" />
-               </padding>
             </VBox>
          </top>
          <center>
-            <SplitPane dividerPositions="0.7275666936135813" prefHeight="200.0" prefWidth="200.0" BorderPane.alignment="CENTER">
+            <SplitPane dividerPositions="0.7275666936135813" prefHeight="200.0" prefWidth="200.0" style="-fx-box-border: transparent;" BorderPane.alignment="CENTER">
                <items>
                   <Pane fx:id="baseDrawPanel" prefHeight="509.0" prefWidth="706.0" />
                   <SplitPane dividerPositions="0.5" orientation="VERTICAL" prefHeight="200.0" prefWidth="160.0">
