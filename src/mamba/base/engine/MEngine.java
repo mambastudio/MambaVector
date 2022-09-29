@@ -130,5 +130,42 @@ public class MEngine implements MambaEngine2D {
         return rootShape;
     }
 
+    public MambaShape transferSelectionToBack()
+    {
+        if(selectionModel.isSelected())
+        {
+            //FIXME (does not include inner nodes)
+            MambaShape selected = selectionModel.getSelected();
+            selectionModel.clear();
+            rootShape.getChildren().remove(selected);
+            rootShape.getChildren().add(0, selected);            
+            draw();
+            return selected;
+        }
+        return null;
+    }
     
+    public MambaShape transferSelectionToFront()
+    {
+        if(selectionModel.isSelected())
+        {
+            //FIXME (does not include inner nodes)
+            MambaShape selected = selectionModel.getSelected();
+            selectionModel.clear();
+            rootShape.getChildren().remove(selected);
+            rootShape.addShape(selected);                      
+            draw();
+            return selected;
+        }
+        return null;
+    }
+    
+    public void deleteSelected()
+    {
+        if(selectionModel.isSelected())
+        {
+            rootShape.getChildren().remove(selectionModel.getSelected());
+            selectionModel.clear();
+        }
+    }
 }

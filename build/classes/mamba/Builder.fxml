@@ -117,16 +117,16 @@
                            <graphic>
                               <MaterialsIcon glyphName="clear_all" />
                            </graphic></Button>
-                        <Button mnemonicParsing="false">
+                        <Button mnemonicParsing="false" onAction="#deleteSelected">
                            <graphic>
                               <PhosphorIcon glyphName="trash" />
                            </graphic></Button>
                         <Separator orientation="VERTICAL" prefHeight="12.0" prefWidth="5.0" />
-                        <Button mnemonicParsing="false">
+                        <Button mnemonicParsing="false" onAction="#transferSelectedToFront">
                            <graphic>
                               <PhosphorIcon glyphName="selection-background" />
                            </graphic></Button>
-                        <Button mnemonicParsing="false">
+                        <Button mnemonicParsing="false" onAction="#transferSelectedToBack">
                            <graphic>
                               <PhosphorIcon glyphName="selection-foreground" />
                            </graphic></Button>

@@ -211,4 +211,18 @@ public class BuilderController implements Initializable {
         }
     }
     
+    public void transferSelectedToBack(ActionEvent e)
+    {
+        this.selectLayerTreeView(engine2D.transferSelectionToBack());
+    }
+    
+    public void transferSelectedToFront(ActionEvent e)
+    {
+        this.selectLayerTreeView(engine2D.transferSelectionToFront());
+    }
+    
+    public void deleteSelected(ActionEvent e)
+    {
+        engine2D.deleteSelected();
+    }
 }
