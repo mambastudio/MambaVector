@@ -74,6 +74,21 @@ public class MLine implements MambaShape<MEngine>{
         
         nameProperty = new SimpleStringProperty("Line");
     }
+    
+    public void setStrokeColor(Color strokeColor)
+    {
+        this.strokeColor.set(strokeColor);
+    }
+    
+    public Color getStrokeColor()
+    {
+        return this.strokeColor.get();
+    }
+    
+    public ObjectProperty<Color> strokeColorProperty()
+    {
+        return this.strokeColor;
+    }
 
     @Override
     public Transform getTransform() {
