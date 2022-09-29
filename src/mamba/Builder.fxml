@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import glyphreader.jfx.MaterialsIcon?>
 <?import glyphreader.jfx.PhosphorIcon?>
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
@@ -37,7 +38,7 @@
                      </graphic></Button>
                   <Button minWidth="30.0" mnemonicParsing="false" onAction="#addEllipse" prefHeight="11.0" prefWidth="30.0">
                      <graphic>
-                        <PhosphorIcon glyphName="dots-three-circle" />
+                        <PhosphorIcon glyphName="circle" glyphSize="22.0" scaleY="0.7" />
                      </graphic></Button>
                   <Button minWidth="30.0" mnemonicParsing="false" onAction="#addLine" prefHeight="11.0" prefWidth="30.0">
                      <graphic>
@@ -109,16 +110,16 @@
                      <items>
                         <Button mnemonicParsing="false">
                            <graphic>
-                              <PhosphorIcon glyphName="file" />
+                              <MaterialsIcon glyphName="save" />
                            </graphic>
                         </Button>
-                        <Button mnemonicParsing="false" onAction="#clearAll">
+                        <Button minWidth="30.0" mnemonicParsing="false" onAction="#clearAll">
+                           <graphic>
+                              <MaterialsIcon glyphName="clear_all" />
+                           </graphic></Button>
+                        <Button mnemonicParsing="false">
                            <graphic>
                               <PhosphorIcon glyphName="trash" />
-                           </graphic></Button>
-                        <Button minWidth="30.0" mnemonicParsing="false">
-                           <graphic>
-                              <PhosphorIcon glyphName="trash-simple" />
                            </graphic></Button>
                         <Separator orientation="VERTICAL" prefHeight="12.0" prefWidth="5.0" />
                         <Button mnemonicParsing="false">
@@ -131,11 +132,11 @@
                            </graphic></Button>
                         <Button mnemonicParsing="false">
                            <graphic>
-                              <PhosphorIcon glyphName="arrow-line-up" />
+                              <MaterialsIcon glyphName="move_up" />
                            </graphic></Button>
                         <Button mnemonicParsing="false">
                            <graphic>
-                              <PhosphorIcon glyphName="arrow-line-down" />
+                              <MaterialsIcon glyphName="move_down" />
                            </graphic></Button>
                         <Button mnemonicParsing="false">
                            <graphic>

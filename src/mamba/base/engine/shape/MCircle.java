@@ -41,7 +41,7 @@ public class MCircle implements MambaShape<MEngine>{
     
     private Point2D offset;
     
-    private DoubleProperty radius = new SimpleDoubleProperty();
+    private final DoubleProperty radius;
     private final ObjectProperty<Color> solidColor;
     private final DoubleProperty strokeWidth;
     private final ObjectProperty<Color> strokeColor;
