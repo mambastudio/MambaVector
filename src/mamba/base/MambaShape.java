@@ -13,7 +13,6 @@ import javafx.geometry.Point2D;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.effect.Effect;
 import javafx.scene.paint.Color;
-import javafx.scene.shape.Circle;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.shape.Shape;
 import javafx.scene.transform.Transform;
@@ -137,5 +136,8 @@ public interface MambaShape<Engine2D extends MambaEngine2D> extends MambaHierarc
         return rectangle;        
     }
     
-    
+    default MambaShape copy()
+    {
+        return null;
+    }
 }

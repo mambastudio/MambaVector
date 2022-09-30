@@ -61,12 +61,16 @@ public class RecursiveTreeItem<T> extends TreeItem<T> {
         children.addListener((ListChangeListener<T>) change -> {
             while(change.next()){
 
-                if(change.wasAdded()){
-                    change.getAddedSubList().forEach(t-> RecursiveTreeItem.this.getChildren().add(
-                        new RecursiveTreeItem<>(t, this.graphicsFactory, childrenFactory)));
+                if(change.wasAdded()){                    
+                    change.getAddedSubList().forEach(t-> {
+                        //observable list in children of (T value)
+                        int index = change.getList().indexOf(t); 
+                        //this tree item
+                        RecursiveTreeItem.this.getChildren().add(index, new RecursiveTreeItem<>(t, this.graphicsFactory, childrenFactory));
+                    });                   
                 }
 
-                if(change.wasRemoved()){
+                if(change.wasRemoved()){                    
                     change.getRemoved().forEach(t->{
                         final List<TreeItem<T>> itemsToRemove = RecursiveTreeItem.this
                                 .getChildren()
@@ -76,7 +80,7 @@ public class RecursiveTreeItem<T> extends TreeItem<T> {
 
                         RecursiveTreeItem.this.getChildren().removeAll(itemsToRemove);
                     });
-                }
+                }               
             }
         });
     }
