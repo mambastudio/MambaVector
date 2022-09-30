@@ -3,10 +3,12 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-            <file>file:/C:/Users/user/Documents/GitHub/MambaVector/src/mamba/components/ResizeableCanvas.java</file>
-            <file>file:/C:/Users/user/Documents/GitHub/MambaVector/src/mamba/base/engine/MEngine.java</file>
-            <file>file:/C:/Users/user/Documents/GitHub/MambaVector/src/mamba/overlayselect/MSelectionModel.java</file>
-            <file>file:/C:/Users/user/Documents/GitHub/MambaVector/src/mamba/BuilderController.java</file>
+            <file>file:/C:/Users/jmburu/Documents/GitHub/MambaVector/src/mamba/base/engine/shape/MLine.java</file>
+            <file>file:/C:/Users/jmburu/Documents/GitHub/MambaVector/src/mamba/base/MambaShape.java</file>
+            <file>file:/C:/Users/jmburu/Documents/GitHub/MambaVector/src/mamba/base/engine/MEngine.java</file>
+            <file>file:/C:/Users/jmburu/Documents/GitHub/MambaVector/src/mamba/treeview/RecursiveTreeItem.java</file>
+            <file>file:/C:/Users/jmburu/Documents/GitHub/MambaVector/src/mamba/BuilderController.java</file>
+            <file>file:/C:/Users/jmburu/Documents/GitHub/MambaVector/src/mamba/base/engine/shape/groups/MRoot.java</file>
         </group>
     </open-files>
 </project-private>
