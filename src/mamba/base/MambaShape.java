@@ -20,7 +20,8 @@ import static mamba.base.MambaShape.ShapeState.ANIMATION;
 import static mamba.base.MambaShape.ShapeState.DISPLAY;
 import static mamba.base.MambaShape.ShapeState.EXPERT;
 import static mamba.base.MambaShape.ShapeState.SELECT;
-import mamba.overlayselect.MDragHandle;
+import mamba.overlayselect.drag.MDrag;
+import mamba.overlayselect.drag.MDragSquare;
 import mamba.util.MIntersection;
 
 /**
@@ -109,12 +110,12 @@ public interface MambaShape<Engine2D extends MambaEngine2D> extends MambaHierarc
         return null;
     }
     
-    default ObservableList<MDragHandle> getDragHandles()
+    default ObservableList<MDrag> getDragHandles()
     {
         return FXCollections.emptyObservableList();
     }
     
-    public void updateDragHandles(MDragHandle referenceHandle);
+    public void updateDragHandles(MDrag referenceHandle);
     
     default Effect getEffect()
     {

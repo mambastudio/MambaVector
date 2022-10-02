@@ -168,4 +168,9 @@ public class MEngine implements MambaEngine2D {
             selectionModel.clear();
         }
     }
+
+    @Override
+    public MSelectionModel getSelectionModel() {
+        return selectionModel;
+    }
 }

@@ -25,7 +25,8 @@ import javafx.scene.transform.NonInvertibleTransformException;
 import javafx.scene.transform.Transform;
 import mamba.base.MambaShape;
 import mamba.base.engine.MEngine;
-import mamba.overlayselect.MDragHandle;
+import mamba.overlayselect.drag.MDrag;
+import mamba.overlayselect.drag.MDragSquare;
 import mamba.util.MBound2;
 
 /**
@@ -41,10 +42,11 @@ public class MCircle implements MambaShape<MEngine>{
     
     private Point2D offset;
     
-    private final DoubleProperty radius;
+    
     private final ObjectProperty<Color> solidColor;
     private final DoubleProperty strokeWidth;
     private final ObjectProperty<Color> strokeColor;
+    private final DoubleProperty radius;
     
     private Effect effect = null;
     
@@ -52,7 +54,7 @@ public class MCircle implements MambaShape<MEngine>{
     
     private final StringProperty nameProperty;
     
-    ObservableList<MDragHandle> dragHandles = FXCollections.observableArrayList();
+    ObservableList<MDrag> dragHandles = FXCollections.observableArrayList();
     
     private final ObservableList<MambaShape<MEngine>> children = FXCollections.emptyObservableList();
     
@@ -264,13 +266,13 @@ public class MCircle implements MambaShape<MEngine>{
     */
     
     @Override
-    public ObservableList<MDragHandle> getDragHandles()
+    public ObservableList<MDrag> getDragHandles()
     {
         if(dragHandles.isEmpty())
         {       
-            MDragHandle c1 = new MDragHandle(5, Cursor.DEFAULT);            
-            c1.setX(getBounds().getMinX() - 5);
-            c1.setY(getBounds().getMinY() - 5);
+            MDragSquare c1 = new MDragSquare();            
+            c1.setX(getBounds().getMinX());
+            c1.setY(getBounds().getMinY());
             dragHandles.add(c1);
 
             c1.setOnMousePressed(e->{
@@ -300,9 +302,9 @@ public class MCircle implements MambaShape<MEngine>{
                 c1.setCursor(Cursor.HAND);
             });
             
-            MDragHandle c2 = new MDragHandle(5, Cursor.DEFAULT);
-            c2.setX(getBounds().getMaxX() - 5);
-            c2.setY(getBounds().getMaxY() - 5);
+            MDragSquare c2 = new MDragSquare();
+            c2.setX(getBounds().getMaxX());
+            c2.setY(getBounds().getMaxY());
             dragHandles.add(c2);
 
             c2.setOnMousePressed(e->{
@@ -332,9 +334,9 @@ public class MCircle implements MambaShape<MEngine>{
                 c2.setCursor(Cursor.HAND);
             });
             
-            MDragHandle c3 = new MDragHandle(5, Cursor.DEFAULT);
-            c3.setX(getBounds().getMinX() - 5);
-            c3.setY(getBounds().getMaxY() - 5);
+            MDragSquare c3 = new MDragSquare();
+            c3.setX(getBounds().getMinX());
+            c3.setY(getBounds().getMaxY());
             dragHandles.add(c3);
 
             c3.setOnMousePressed(e->{
@@ -364,9 +366,9 @@ public class MCircle implements MambaShape<MEngine>{
                 c3.setCursor(Cursor.HAND);
             });
 
-            MDragHandle c4 = new MDragHandle(5, Cursor.DEFAULT);
-            c4.setX(getBounds().getMaxX() - 5);
-            c4.setY(getBounds().getMinY() - 5);
+            MDragSquare c4 = new MDragSquare();
+            c4.setX(getBounds().getMaxX());
+            c4.setY(getBounds().getMinY());
             dragHandles.add(c4);
 
             c4.setOnMousePressed(e->{
@@ -403,26 +405,26 @@ public class MCircle implements MambaShape<MEngine>{
     }
 
     @Override
-    public void updateDragHandles(MDragHandle referenceHandle) {
+    public void updateDragHandles(MDrag referenceHandle) {
         
         //TODO
-        MDragHandle c1 = dragHandles.get(0);
-        c1.setX(getBounds().getMinX() - 5);
-        c1.setY(getBounds().getMinY() - 5);
+        MDrag c1 = dragHandles.get(0);
+        c1.setX(getBounds().getMinX());
+        c1.setY(getBounds().getMinY());
         
         
-        MDragHandle c2 = dragHandles.get(1);
+        MDrag c2 = dragHandles.get(1);
         c2.setX(getBounds().getMaxX());
         c2.setY(getBounds().getMaxY());
        
        
-        MDragHandle c3 = dragHandles.get(2);
-        c3.setX(getBounds().getMinX() - 5);
+        MDrag c3 = dragHandles.get(2);
+        c3.setX(getBounds().getMinX());
         c3.setY(getBounds().getMaxY());
         
-        MDragHandle c4 = dragHandles.get(3);        
+        MDrag c4 = dragHandles.get(3);        
         c4.setX(getBounds().getMaxX());
-        c4.setY(getBounds().getMinY() - 5);  
+        c4.setY(getBounds().getMinY());  
         
     }
     

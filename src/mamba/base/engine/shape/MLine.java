@@ -21,11 +21,14 @@ import javafx.scene.Cursor;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.effect.Effect;
 import javafx.scene.paint.Color;
+import javafx.scene.shape.StrokeLineCap;
 import javafx.scene.transform.NonInvertibleTransformException;
 import javafx.scene.transform.Transform;
 import mamba.base.MambaShape;
 import mamba.base.engine.MEngine;
-import mamba.overlayselect.MDragHandle;
+import mamba.overlayselect.drag.MDrag;
+import mamba.overlayselect.drag.MDragSquare;
+import mamba.overlayselect.drag.MDragTest;
 import mamba.util.MBound2;
 import mamba.util.MIntersection;
 
@@ -53,7 +56,7 @@ public class MLine implements MambaShape<MEngine>{
     private Transform transform;    
     private Effect effect;
     
-    private final ObservableList<MDragHandle> dragHandles = FXCollections.observableArrayList();
+    private final ObservableList<MDrag> dragHandles = FXCollections.observableArrayList();
     
     private final ObservableList<MambaShape<MEngine>> children = FXCollections.emptyObservableList();
     
@@ -66,7 +69,7 @@ public class MLine implements MambaShape<MEngine>{
         p1 = new Point2D(10, 10);
         p2 = new Point2D(60, 60);
         
-        strokeWidth = new SimpleDoubleProperty(2);
+        strokeWidth = new SimpleDoubleProperty(10);
         strokeColor = new SimpleObjectProperty(Color.BLACK);
         
         //to be at positon (p1, p2)
@@ -154,10 +157,12 @@ public class MLine implements MambaShape<MEngine>{
                 transform.getMxx(), transform.getMyx(), transform.getMxy(),
                 transform.getMyy(), transform.getTx(), transform.getTy());
         
-        //draw shape, this is just local coordinates                 
+        //draw shape, this is just local coordinates         
+        graphicContext.setLineCap(StrokeLineCap.BUTT);        
         graphicContext.setStroke(strokeColor.get());
         graphicContext.setLineWidth(strokeWidth.doubleValue());
         graphicContext.strokeLine(p1.getX(), p1.getY(), p2.getX(), p2.getY());
+        
         
         graphicContext.setEffect(null);
         graphicContext.restore(); //reset transforms and any other configurations
@@ -202,30 +207,31 @@ public class MLine implements MambaShape<MEngine>{
     }
 
     @Override
-    public void updateDragHandles(MDragHandle referenceHandle) {
+    public void updateDragHandles(MDrag referenceHandle) {
         
-        MDragHandle c1 = dragHandles.get(0);   
-        c1.setPositionX(getGlobalP1().getX());
-        c1.setPositionY(getGlobalP1().getY());    
+        MDrag c1 = dragHandles.get(0);   
+        c1.setX(getGlobalP1().getX());
+        c1.setY(getGlobalP1().getY());    
               
-        MDragHandle c2 = dragHandles.get(1);    
-        c2.setPositionX(getGlobalP2().getX());
-        c2.setPositionY(getGlobalP2().getY());     
+        MDrag c2 = dragHandles.get(1);    
+        c2.setX(getGlobalP2().getX());
+        c2.setY(getGlobalP2().getY());     
     }
     
      @Override
-    public ObservableList<MDragHandle> getDragHandles()
+    public ObservableList<MDrag> getDragHandles()
     {
         if(dragHandles.isEmpty())
         {
-            MDragHandle c1 = new MDragHandle(5, Cursor.DEFAULT);       
-            c1.setPositionX(getGlobalP1().getX());
-            c1.setPositionY(getGlobalP1().getY());           
+            MDrag c1 = new MDragSquare(6);       
+            c1.setX(getGlobalP1().getX());
+            c1.setY(getGlobalP1().getY());           
             dragHandles.add(c1);
             
             c1.setOnMouseDragged(e->{
-                Point2D p = new Point2D(e.getX(), e.getY());                
+                Point2D p = new Point2D(e.getX(), e.getY());   //in global coordinates             
                 p1 = this.pointInvTransform(p);   //transform to local coordinates
+                
                 updateDragHandles(null);                
                 engine2D.draw();
             });
@@ -234,9 +240,9 @@ public class MLine implements MambaShape<MEngine>{
                 c1.setCursor(Cursor.HAND);
             });
             
-            MDragHandle c2 = new MDragHandle(5, Cursor.DEFAULT);       
-            c2.setPositionX(getGlobalP2().getX());
-            c2.setPositionY(getGlobalP2().getY());            
+            MDrag c2 = new MDragSquare(6);       
+            c2.setX(getGlobalP2().getX());
+            c2.setY(getGlobalP2().getY());            
             dragHandles.add(c2);
             
             c2.setOnMouseDragged(e->{
@@ -301,6 +307,7 @@ public class MLine implements MambaShape<MEngine>{
     {
         return pointTransform(p2);
     }
+    
 
     @Override
     public StringProperty getNameProperty() {

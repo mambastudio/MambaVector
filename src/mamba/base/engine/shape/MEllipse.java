@@ -25,7 +25,8 @@ import javafx.scene.transform.NonInvertibleTransformException;
 import javafx.scene.transform.Transform;
 import mamba.base.MambaShape;
 import mamba.base.engine.MEngine;
-import mamba.overlayselect.MDragHandle;
+import mamba.overlayselect.drag.MDrag;
+import mamba.overlayselect.drag.MDragSquare;
 import mamba.util.MBound2;
 
 /**
@@ -59,7 +60,7 @@ public class MEllipse implements MambaShape<MEngine>{
     private Transform transform;    
     private Effect effect;
     
-    private final ObservableList<MDragHandle> dragHandles = FXCollections.observableArrayList();
+    private final ObservableList<MDrag> dragHandles = FXCollections.observableArrayList();
     
     private final ObservableList<MambaShape<MEngine>> children = FXCollections.emptyObservableList();
     
@@ -222,33 +223,33 @@ public class MEllipse implements MambaShape<MEngine>{
     }
 
     @Override
-    public void updateDragHandles(MDragHandle referenceHandle) {
+    public void updateDragHandles(MDrag referenceHandle) {
         
-        MDragHandle c1 = dragHandles.get(0);    //top left
-        c1.setPositionX(getBounds().getMinX());
-        c1.setPositionY(getBounds().getMinY());        
+        MDrag c1 = dragHandles.get(0);    //top left
+        c1.setX(getBounds().getMinX());
+        c1.setY(getBounds().getMinY());        
         
-        MDragHandle c2 = dragHandles.get(1);    //bottom right
-        c2.setPositionX(getBounds().getMaxX());
-        c2.setPositionY(getBounds().getMaxY());       
+        MDrag c2 = dragHandles.get(1);    //bottom right
+        c2.setX(getBounds().getMaxX());
+        c2.setY(getBounds().getMaxY());       
        
-        MDragHandle c3 = dragHandles.get(2);    //bottom left
-        c3.setPositionX(getBounds().getMinX());
-        c3.setPositionY(getBounds().getMaxY());
+        MDrag c3 = dragHandles.get(2);    //bottom left
+        c3.setX(getBounds().getMinX());
+        c3.setY(getBounds().getMaxY());
         
-        MDragHandle c4 = dragHandles.get(3);    //top right  
-        c4.setPositionX(getBounds().getMaxX());
-        c4.setPositionY(getBounds().getMinY());
+        MDrag c4 = dragHandles.get(3);    //top right  
+        c4.setX(getBounds().getMaxX());
+        c4.setY(getBounds().getMinY());
     }
     
      @Override
-    public ObservableList<MDragHandle> getDragHandles()
+    public ObservableList<MDrag> getDragHandles()
     {
         if(dragHandles.isEmpty())
         {
-            MDragHandle c1 = new MDragHandle(5, Cursor.DEFAULT);       //top left     
-            c1.setPositionX(getBounds().getMinX());
-            c1.setPositionY(getBounds().getMinY());
+            MDragSquare c1 = new MDragSquare();       //top left     
+            c1.setX(getBounds().getMinX());
+            c1.setY(getBounds().getMinY());
             dragHandles.add(c1);
 
             c1.setOnMouseDragged(e->{
@@ -275,9 +276,9 @@ public class MEllipse implements MambaShape<MEngine>{
                 c1.setCursor(Cursor.HAND);
             });
             
-            MDragHandle c2 = new MDragHandle(5, Cursor.DEFAULT); //bottom right
-            c2.setPositionX(getBounds().getMaxX());
-            c2.setPositionY(getBounds().getMaxY());
+            MDragSquare c2 = new MDragSquare(); //bottom right
+            c2.setX(getBounds().getMaxX());
+            c2.setY(getBounds().getMaxY());
             dragHandles.add(c2);
 
             c2.setOnMouseDragged(e->{
@@ -303,9 +304,9 @@ public class MEllipse implements MambaShape<MEngine>{
                 c2.setCursor(Cursor.HAND);
             });
             
-            MDragHandle c3 = new MDragHandle(5, Cursor.DEFAULT); //bottom left
-            c3.setPositionX(getBounds().getMinX());
-            c3.setPositionY(getBounds().getMaxY());
+            MDragSquare c3 = new MDragSquare(); //bottom left
+            c3.setX(getBounds().getMinX());
+            c3.setY(getBounds().getMaxY());
             dragHandles.add(c3);
 
             c3.setOnMousePressed(e->{
@@ -337,9 +338,9 @@ public class MEllipse implements MambaShape<MEngine>{
                 c3.setCursor(Cursor.HAND);
             });
 
-            MDragHandle c4 = new MDragHandle(5, Cursor.DEFAULT);  //top right
-            c4.setPositionX(getBounds().getMaxX());
-            c4.setPositionY(getBounds().getMinY());
+            MDragSquare c4 = new MDragSquare();  //top right
+            c4.setX(getBounds().getMaxX());
+            c4.setY(getBounds().getMinY());
             dragHandles.add(c4);
 
             c4.setOnMouseDragged(e->{

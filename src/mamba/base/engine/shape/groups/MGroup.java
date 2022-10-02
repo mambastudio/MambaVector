@@ -15,7 +15,8 @@ import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.transform.Transform;
 import mamba.base.MambaShape;
 import mamba.base.engine.MEngine;
-import mamba.overlayselect.MDragHandle;
+import mamba.overlayselect.drag.MDrag;
+import mamba.overlayselect.drag.MDragSquare;
 import mamba.util.MBound2;
 
 /**
@@ -128,7 +129,7 @@ public class MGroup implements MambaShape<MEngine>{
     }
 
     @Override
-    public void updateDragHandles(MDragHandle referenceHandle) {
+    public void updateDragHandles(MDrag referenceHandle) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 

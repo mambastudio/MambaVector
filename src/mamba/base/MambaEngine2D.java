@@ -38,6 +38,7 @@ public interface MambaEngine2D<MShape extends MambaShape> {
     }
     
     public void setSelectionModel(MSelectionModel selectionModel);
+    public MSelectionModel getSelectionModel();
     
     public List<MShape> getShapes();
     

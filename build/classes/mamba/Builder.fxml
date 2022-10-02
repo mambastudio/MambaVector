@@ -64,12 +64,12 @@
                      </graphic>
                   </Button>
                   <Separator prefHeight="0.0" prefWidth="30.0" />
-                  <ToggleButton minWidth="30.0" mnemonicParsing="false" prefHeight="30.0" prefWidth="10.0">
+                  <ToggleButton disable="true" minWidth="30.0" mnemonicParsing="false" prefHeight="30.0" prefWidth="10.0">
                      <graphic>
                         <PhosphorIcon glyphName="pen-nib" />
                      </graphic>
                   </ToggleButton>
-                  <ToggleButton minWidth="30.0" mnemonicParsing="false" prefHeight="30.0" prefWidth="10.0">
+                  <ToggleButton disable="true" minWidth="30.0" mnemonicParsing="false" prefHeight="30.0" prefWidth="10.0">
                      <graphic>
                         <PhosphorIcon glyphName="eraser" />
                      </graphic>
@@ -138,12 +138,12 @@
                            <graphic>
                               <MaterialsIcon glyphName="move_down" />
                            </graphic></Button>
-                        <Button mnemonicParsing="false">
+                        <Button disable="true" mnemonicParsing="false">
                            <graphic>
                               <PhosphorIcon glyphName="arrows-in" />
                            </graphic>
                         </Button>
-                        <Button mnemonicParsing="false">
+                        <Button disable="true" mnemonicParsing="false">
                            <graphic>
                               <PhosphorIcon glyphName="arrows-out" />
                            </graphic>
