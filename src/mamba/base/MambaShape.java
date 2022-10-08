@@ -21,7 +21,6 @@ import static mamba.base.MambaShape.ShapeState.DISPLAY;
 import static mamba.base.MambaShape.ShapeState.EXPERT;
 import static mamba.base.MambaShape.ShapeState.SELECT;
 import mamba.overlayselect.drag.MDrag;
-import mamba.overlayselect.drag.MDragSquare;
 import mamba.util.MIntersection;
 
 /**
