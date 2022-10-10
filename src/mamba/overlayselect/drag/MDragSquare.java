@@ -5,6 +5,8 @@
  */
 package mamba.overlayselect.drag;
 
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.scene.Cursor;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
@@ -33,7 +35,7 @@ public class MDragSquare extends MDrag {
     }
     
     @Override
-    protected Shape initDrag() {
+    protected ObservableList<Shape> initDrag() {
         rectangle = new Rectangle();
         rectangle.setWidth(6);
         rectangle.setHeight(6);
@@ -42,7 +44,7 @@ public class MDragSquare extends MDrag {
         rectangle.setStroke(Color.BLACK);
         rectangle.setStrokeWidth(1);
         
-        return rectangle;
+        return FXCollections.observableArrayList(rectangle);
     }
 
     @Override

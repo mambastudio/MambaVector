@@ -36,11 +36,11 @@ public abstract class MDrag<S extends Shape> extends Group {
     public MDrag(Cursor dragCursor)
     {
         this.setCursor(dragCursor);
-        S drag = initDrag();    
-        super.getChildren().add(drag);
+        ObservableList<S> drag = initDrag();    
+        super.getChildren().addAll(drag);
     }
     
-    protected abstract S initDrag();       
+    protected abstract ObservableList<S> initDrag();       
     
     //required to use directly to underlying shapes to avoid use of transforms
     public abstract double getWidth();

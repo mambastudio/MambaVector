@@ -50,16 +50,6 @@
                      </graphic></Button>
                   <Button minWidth="30.0" mnemonicParsing="false" prefHeight="10.0" prefWidth="30.0">
                      <graphic>
-                        <PhosphorIcon glyphName="bezier-curve" />
-                     </graphic>
-                  </Button>
-                  <Button minWidth="30.0" mnemonicParsing="false" prefHeight="10.0" prefWidth="30.0">
-                     <graphic>
-                        <PhosphorIcon glyphName="path" />
-                     </graphic>
-                  </Button>
-                  <Button minWidth="30.0" mnemonicParsing="false" prefHeight="10.0" prefWidth="30.0">
-                     <graphic>
                         <PhosphorIcon glyphName="image" />
                      </graphic>
                   </Button>
@@ -149,6 +139,7 @@
                            </graphic>
                         </Button>
                         <Separator orientation="VERTICAL" prefHeight="200.0" />
+                        <ComboBox fx:id="pathToComboBox" prefHeight="25.0" prefWidth="174.0" promptText="PATH_TO" />
                      </items>
                      <padding>
                         <Insets bottom="1.0" left="1.0" top="2.0" />

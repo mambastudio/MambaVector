@@ -34,6 +34,7 @@ import mamba.base.engine.MEngine;
 import mamba.base.engine.shape.MCircle;
 import mamba.base.engine.shape.MEllipse;
 import mamba.base.engine.shape.MLine;
+import mamba.base.engine.shape.MPoly.PathTo;
 import mamba.base.engine.shape.MRectangle;
 import mamba.base.parser.svg.SVGDocument;
 import mamba.base.parser.svg.SVGParser;
@@ -70,6 +71,8 @@ public class BuilderController implements Initializable {
     ComboBox<Paint> paintTypeComboBox;
     @FXML
     TreeView<MambaShape> layerTreeView;
+    @FXML
+    ComboBox<PathTo> pathToComboBox;
     
     private final BackgroundPane backgroundPanel = new BackgroundPane();
     private ResizeableCanvas renderCanvas;
@@ -78,6 +81,8 @@ public class BuilderController implements Initializable {
     
     private final FileChooser fileChooser = new FileChooser();
     
+
+    
     
     @Override
     public void initialize(URL url, ResourceBundle rb) {
@@ -85,6 +90,10 @@ public class BuilderController implements Initializable {
         renderCanvas = new ResizeableCanvas(this, 500, 500);  
         
         baseDrawPanel.getChildren().addAll(backgroundPanel, renderCanvas, selectionLayer);
+        
+        //current path drawing state
+        pathToComboBox.getItems().setAll(PathTo.values());
+        pathToComboBox.getSelectionModel().select(PathTo.LINE_TO);
         
         //ensure they grow according to base draw panel
         backgroundPanel.prefWidthProperty().bind(baseDrawPanel.widthProperty());
@@ -159,6 +168,8 @@ public class BuilderController implements Initializable {
         fileChooser.getExtensionFilters().addAll(
                 new FileChooser.ExtensionFilter("SVG files", "*.svg")
         );
+        
+        
     }    
     
     public void addCircle(ActionEvent e)

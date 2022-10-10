@@ -5,6 +5,8 @@
  */
 package mamba.overlayselect.drag;
 
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.shape.Shape;
@@ -26,7 +28,7 @@ public class MDragTest extends MDrag{
     }
     
     @Override
-    protected Shape initDrag() {
+    protected ObservableList<Shape> initDrag() {
         rectangle = new Rectangle();
         rectangle.setWidth(8); //should be even to avoid blur in the division at setX & setY
         rectangle.setHeight(8); //should be even to avoid blur in the division at setX & setY
@@ -34,7 +36,7 @@ public class MDragTest extends MDrag{
         rectangle.setStrokeType(StrokeType.INSIDE);
         rectangle.setStroke(Color.BLACK);
         rectangle.setStrokeWidth(1);
-        return rectangle;
+        return FXCollections.observableArrayList(rectangle);
     }
 
     @Override

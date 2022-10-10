@@ -4,10 +4,12 @@ package mamba;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Rectangle2D;
+import javafx.scene.ImageCursor;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
+import mamba.snapshot.NodeSnapshot;
 
 /*
  * To change this license header, choose License Headers in Project Properties.
@@ -34,6 +36,8 @@ public class MambaVector extends Application{
         primaryStage.setScene(scene);
        // primaryStage.setMaximized(true);
         primaryStage.show();
+        
+        primaryStage.getScene().setCursor(new ImageCursor(NodeSnapshot.getPhosphorIcon("pen-nib", 24, 90)));
     }
     
     public static void main(String[] args) {

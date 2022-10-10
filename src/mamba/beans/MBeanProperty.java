@@ -7,6 +7,7 @@ package mamba.beans;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -22,8 +23,7 @@ public final class MBeanProperty implements MBeanPropertyItem{
     public static final String CATEGORY_LABEL_KEY = "propertysheet.item.category.label";
     
     private final Object bean;
-    private final MPropertyDescriptor beanPropertyDescriptor;
-    private final Method readMethod;
+    private final MPropertyDescriptor beanPropertyDescriptor; //contains read and write method
     private boolean editable = true;
     private Optional<ObservableValue<? extends Object>> observableValue = Optional.empty();
     private final MambaEngine2D engine;
@@ -32,9 +32,7 @@ public final class MBeanProperty implements MBeanPropertyItem{
     {
         this.bean = bean;
         this.beanPropertyDescriptor = propertyDescriptor;
-        this.readMethod = propertyDescriptor.getReadMethod();
-        
-        
+       
         if (this.beanPropertyDescriptor.getWriteMethod() == null) {
             this.setEditable(false);            
         }
@@ -74,14 +72,15 @@ public final class MBeanProperty implements MBeanPropertyItem{
     @Override
     public Object getValue() {
         try {
-            Object obj = this.readMethod.invoke(this.bean);
+            Object obj = this.beanPropertyDescriptor.getReadMethod().invoke(this.bean);
             
             
             return obj;
         } catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException | NullPointerException e) {
             System.err.println(e);
+             
             System.out.println(this.bean);
-            System.out.println(readMethod+ " " +getName());
+            System.out.println(beanPropertyDescriptor.getReadMethod()+ "<- readmethod; getname-> " +getName());
             return null;
         }
     }
@@ -97,6 +96,12 @@ public final class MBeanProperty implements MBeanPropertyItem{
     @Override
     public boolean isEditable() {
         return this.editable;
+    }
+    
+    public boolean isReadAndWriteAndObservable()
+    {
+        return (!Objects.isNull(beanPropertyDescriptor.getReadMethod()) &&
+                !Objects.isNull(beanPropertyDescriptor.getWriteMethod()) && isObservable());
     }
     
     public boolean isObservable()

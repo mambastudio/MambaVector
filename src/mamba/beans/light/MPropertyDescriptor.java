@@ -57,6 +57,13 @@ public class MPropertyDescriptor extends MFeatureDescriptor {
     void setWriteMethod(Method writeMethod) {
         this._writeMethod = writeMethod;
     }
+    
+    public void checkIfFullReadAndWrite()
+    {
+        System.out.println("property name " +_propertyName);
+        System.out.println("read method   " +_readMethod);
+        System.out.println("write method  " +_writeMethod);
+    }
 
     @Override
     public boolean equals(Object object) {

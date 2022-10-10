@@ -5,6 +5,8 @@
  */
 package mamba.overlayselect.drag;
 
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.Shape;
@@ -18,14 +20,14 @@ public class MDragCircle extends MDrag{
     Circle circle;
     
     @Override
-    protected Shape initDrag() {
+    protected ObservableList<Shape> initDrag() {
         circle = new Circle();
         circle.setRadius(4);
         circle.setFill(Color.BISQUE);
         circle.setStrokeType(StrokeType.INSIDE);  
         circle.setStroke(Color.BLACK);
         circle.setStrokeWidth(1);        
-        return circle;
+        return FXCollections.observableArrayList(circle);
     }
 
     @Override

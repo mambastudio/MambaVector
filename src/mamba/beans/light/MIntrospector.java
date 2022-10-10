@@ -96,20 +96,21 @@ public class MIntrospector {
      */
     static private class FieldOrderComparator implements Comparator<String> {
 
-        private List<String> order = new ArrayList<>();
+        private final List<String> order = new ArrayList<>();
 
         @Override
         public int compare(String o1, String o2) {
             int index1 = order.indexOf(o1);
             int index2 = order.indexOf(o2);
+            
+            //slightly reducted from the original code. It introduced a null exception everytime.
             if(index1 == -1) {
                 if(index2 == -1) {
                     return o1.compareTo(o2);
-                } else {
-                    return 1;
-                }
+                } 
             }
-            return index1 - index2;
+            
+            return index1 - index2;            
         }
 
         public void addFields(Field... fields) {
@@ -163,13 +164,13 @@ public class MIntrospector {
                 }
 
                 Class<?> resultType = m.getReturnType();
-                if (resultType == void.class) {
+                if (resultType == Void.class) {
                     continue;
                 }
 
                 String name = m.getName();
                 if (name.startsWith("get")) {
-                    if (resultType == void.class) {
+                    if (resultType == Void.class) {
                         continue;
                     }
 
@@ -179,7 +180,7 @@ public class MIntrospector {
                     }
                     
                 } else if (name.startsWith("is")) {
-                    if (resultType == void.class) {
+                    if (resultType == Void.class) {
                         continue;
                     }
 
