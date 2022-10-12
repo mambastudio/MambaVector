@@ -39,6 +39,7 @@ public interface MambaShape<Engine2D extends MambaEngine2D> extends MambaHierarc
     public void translate(Point2D p);
     public Point2D getTranslate();
     
+    //mouse offset when dragging
     public void setOffset(Point2D offset);
     public Point2D getOffset();
     
