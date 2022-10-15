@@ -35,8 +35,6 @@ import mamba.util.MBound2;
  */
 public class MEllipse implements MambaShape<MEngine>{
     
-    private ShapeState shapeState = ShapeState.DISPLAY;
-    
     private MEngine engine2D;
     private GraphicsContext graphicContext;
     
@@ -210,16 +208,6 @@ public class MEllipse implements MambaShape<MEngine>{
             Logger.getLogger(MEllipse.class.getName()).log(Level.SEVERE, null, ex);
         }
         return false;
-    }
-
-    @Override
-    public ShapeState getState() {
-        return shapeState;
-    }
-
-    @Override
-    public void setState(ShapeState shapeState) {
-        this.shapeState = shapeState;
     }
 
     @Override

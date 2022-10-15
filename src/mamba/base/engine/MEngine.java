@@ -9,6 +9,7 @@ import java.util.List;
 import javafx.geometry.Point2D;
 import javafx.scene.canvas.GraphicsContext;
 import mamba.base.MambaEngine2D;
+import static mamba.base.MambaEngine2D.DrawState.EDIT;
 import mamba.base.MambaShape;
 import mamba.base.engine.shape.groups.MRoot;
 import mamba.overlayselect.MSelectionModel;
@@ -19,9 +20,10 @@ import mamba.util.MIntersection;
  * @author user
  */
 public class MEngine implements MambaEngine2D {
-    private GraphicsContext graphicContext;        
-    MSelectionModel selectionModel = null;
-    MRoot rootShape = null;
+    private GraphicsContext graphicContext = null;        
+    private MSelectionModel selectionModel = null;
+    private MRoot rootShape = null;
+    private DrawState drawState = EDIT;
     
     public MEngine()
     {
@@ -172,5 +174,15 @@ public class MEngine implements MambaEngine2D {
     @Override
     public MSelectionModel getSelectionModel() {
         return selectionModel;
+    }
+
+    @Override
+    public DrawState getDrawState() {
+        return drawState;
+    }
+
+    @Override
+    public void setDrawState(DrawState drawState) {
+        this.drawState = drawState;
     }
 }

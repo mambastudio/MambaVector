@@ -18,6 +18,10 @@ import mamba.util.MIntersection;
  */
 public interface MambaEngine2D<MShape extends MambaShape> {
     
+    public static enum DrawState{
+        DISPLAY, EDIT
+    };
+        
     public GraphicsContext getGraphicsContext();
     public void setGraphicsContext(GraphicsContext graphicContext);
     
@@ -44,5 +48,7 @@ public interface MambaEngine2D<MShape extends MambaShape> {
     
     public MShape getRoot();
     
+    public DrawState getDrawState();
+    public void setDrawState(DrawState drawState);
     
 }

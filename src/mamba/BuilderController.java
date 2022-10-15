@@ -16,6 +16,7 @@ import javafx.fxml.Initializable;
 import javafx.scene.Group;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
+import javafx.scene.control.ToggleButton;
 import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeView;
 import javafx.scene.effect.Effect;
@@ -42,6 +43,7 @@ import mamba.components.BackgroundPane;
 import mamba.components.ResizeableCanvas;
 import mamba.overlayselect.MSelectionModel;
 import mamba.treeview.RecursiveTreeItem;
+import mamba.util.MDisableStateNodes;
 import mamba.util.MambaUtility;
 
 /**
@@ -71,17 +73,29 @@ public class BuilderController implements Initializable {
     ComboBox<Paint> paintTypeComboBox;
     @FXML
     TreeView<MambaShape> layerTreeView;
+    
     @FXML
-    ComboBox<PathTo> pathToComboBox;
+    ComboBox<PathTo> pathToComboBox;    
+    @FXML
+    Button groupShapes;
+    @FXML
+    Button ungroupShapes;
+    @FXML
+    ToggleButton penTool;
+    @FXML
+    ToggleButton eraserTool;
+    @FXML
+    ToggleButton dragTool;
+    
+   
     
     private final BackgroundPane backgroundPanel = new BackgroundPane();
     private ResizeableCanvas renderCanvas;
     private final Group selectionLayer = new Group();
-    private final MEngine engine2D = new MEngine();
-    
+    private final MEngine engine2D = new MEngine();    
     private final FileChooser fileChooser = new FileChooser();
     
-
+    private final MDisableStateNodes pathEditButtons = new MDisableStateNodes();
     
     
     @Override
@@ -169,7 +183,8 @@ public class BuilderController implements Initializable {
                 new FileChooser.ExtensionFilter("SVG files", "*.svg")
         );
         
-        
+        pathEditButtons.addNodes(eraserTool, penTool, groupShapes, ungroupShapes, pathToComboBox, dragTool);
+        pathEditButtons.disable();
     }    
     
     public void addCircle(ActionEvent e)
@@ -235,5 +250,10 @@ public class BuilderController implements Initializable {
     public void deleteSelected(ActionEvent e)
     {
         engine2D.deleteSelected();
+    }
+    
+    public void exit(ActionEvent e)
+    {
+        System.exit(0);
     }
 }

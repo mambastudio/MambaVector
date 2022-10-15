@@ -28,7 +28,6 @@ import mamba.base.MambaShape;
 import mamba.base.engine.MEngine;
 import mamba.overlayselect.drag.MDrag;
 import mamba.overlayselect.drag.MDragSquare;
-import mamba.overlayselect.drag.MDragTest;
 import mamba.util.MBound2;
 import mamba.util.MIntersection;
 
@@ -37,9 +36,7 @@ import mamba.util.MIntersection;
  * @author user
  */
 public class MLine implements MambaShape<MEngine>{
-    
-    private ShapeState shapeState = ShapeState.DISPLAY;
-    
+  
     private MEngine engine2D;
     private GraphicsContext graphicContext;
     
@@ -194,16 +191,6 @@ public class MLine implements MambaShape<MEngine>{
             Logger.getLogger(MLine.class.getName()).log(Level.SEVERE, null, ex);
         }
         return false;
-    }
-
-    @Override
-    public ShapeState getState() {
-        return shapeState;
-    }
-
-    @Override
-    public void setState(ShapeState shapeState) {
-        this.shapeState = shapeState;
     }
 
     @Override

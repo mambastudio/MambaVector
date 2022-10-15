@@ -6,10 +6,12 @@
 package mamba.base.engine.shape;
 
 import javafx.beans.property.StringProperty;
+import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.geometry.BoundingBox;
 import javafx.geometry.Point2D;
 import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.effect.Effect;
 import javafx.scene.transform.Transform;
 import mamba.base.MambaShape;
 import mamba.base.engine.MEngine;
@@ -25,61 +27,76 @@ public class MPoly implements MambaShape<MEngine>{
         LINE_TO, QUADRATIC_CURVE_TO, BEZIER_CURVE_TO, ARC_TO
     };
     
+    private MEngine engine2D;
+    private GraphicsContext graphicContext;
+    
+    private Point2D offset;
+    
     ObservableList<MPathPoint> points = null;
+    
+    private Transform transform;
+    
+    private Effect effect = null;
+    
+    public MPoly()
+    {
+        points = FXCollections.observableArrayList();
+    }
     
     @Override
     public Transform getTransform() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return transform;
     }
 
     @Override
     public void setTransform(Transform transform) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        this.transform = transform;
     }
 
     @Override
     public void translate(Point2D p) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        Point2D tp = p.subtract(offset);
+        this.transform = Transform.translate(tp.getX(), tp.getY());
     }
 
     @Override
     public Point2D getTranslate() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return this.transform.transform(new Point2D(0, 0));
     }
 
     @Override
     public void setOffset(Point2D offset) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        this.offset = offset;
     }
 
     @Override
     public Point2D getOffset() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return offset;
     }
 
     @Override
     public ShapeType getType() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return ShapeType.SHAPE_POLY;
     }
 
     @Override
     public MEngine getEngine2D() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return engine2D;
     }
 
     @Override
     public void setEngine(MEngine engine2D) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        this.engine2D = engine2D;
     }
 
     @Override
     public void setGraphicContext(GraphicsContext context) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        this.graphicContext = context;
     }
 
     @Override
     public GraphicsContext getGraphicsContext() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return this.graphicContext;
     }
 
     @Override
@@ -94,16 +111,6 @@ public class MPoly implements MambaShape<MEngine>{
 
     @Override
     public boolean contains(Point2D p) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
-    public ShapeState getState() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
-    public void setState(ShapeState shapeState) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 

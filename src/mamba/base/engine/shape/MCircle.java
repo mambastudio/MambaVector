@@ -34,9 +34,6 @@ import mamba.util.MBound2;
  * @author user
  */
 public class MCircle implements MambaShape<MEngine>{
-    
-    private ShapeState shapeState = ShapeState.DISPLAY;
-    
     private MEngine engine2D;
     private GraphicsContext graphicContext;
     
@@ -241,16 +238,6 @@ public class MCircle implements MambaShape<MEngine>{
     
     public ObjectProperty<Color> solidColorProperty(){
         return solidColor;
-    }
-
-    @Override
-    public ShapeState getState() {
-        return this.shapeState;
-    }
-
-    @Override
-    public void setState(ShapeState shapeState) {
-        this.shapeState = shapeState;
     }
     
     /*

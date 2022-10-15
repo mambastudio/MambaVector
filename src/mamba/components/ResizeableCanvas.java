@@ -23,7 +23,6 @@ import javafx.scene.effect.Effect;
 import javafx.scene.effect.Glow;
 import javafx.scene.effect.InnerShadow;
 import javafx.scene.effect.MotionBlur;
-import javafx.scene.effect.PerspectiveTransform;
 import javafx.scene.effect.Reflection;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Region;
@@ -31,13 +30,10 @@ import javafx.scene.layout.VBox;
 import mamba.BuilderController;
 import mamba.base.MambaCanvas;
 import mamba.base.MambaShape;
-import mamba.base.MambaShape.ShapeState;
-import static mamba.base.MambaShape.ShapeState.DISPLAY;
 import mamba.base.engine.MEngine;
 import mamba.beans.MBeanPropertyItem;
 import mamba.beans.MBeanPropertySheet;
 import mamba.beans.MBeanPropertyUtility;
-import mamba.beans.editors.MDefaultDisplayNameFactory;
 import mamba.beans.editors.MDefaultEditorFactory;
 import mamba.util.MambaUtility;
 
@@ -86,7 +82,6 @@ public final class ResizeableCanvas extends Region implements MambaCanvas<MEngin
         this.setOnMouseClicked(this::mouseClicked);
         this.setOnMouseDragged(this::mouseDragged);
         this.setOnMousePressed(this::mousePressed);
-        this.setOnMouseReleased(this::mouseReleased);
     }
     
     private void setShapeEffect(Effect effect)
@@ -124,24 +119,14 @@ public final class ResizeableCanvas extends Region implements MambaCanvas<MEngin
     }
     
     public void mousePressed(MouseEvent e)
-    {        
-      
-        //remove selection drawing first
-        MambaShape previousSelected = engine2D.getSelected();        
-        if(previousSelected != null && !previousSelected.isExpert()){
-            previousSelected.setState(ShapeState.DISPLAY);
-            engine2D.draw();
-        }
-        
+    {              
         //new selection
         Point2D p = new Point2D(e.getX(), e.getY());
         engine2D.hitSelect(p);
         
-        //init new shape for dragging and init select state
+        //init new shape for dragging 
         if(engine2D.isSelected())
-        {
-            if(!engine2D.getSelected().isExpert())
-                engine2D.getSelected().setState(ShapeState.SELECT); //set selection
+        {            
             engine2D.getSelected().setOffset(p.subtract(engine2D.getSelected().getTranslate()));               
             engine2D.draw();
         }
@@ -161,11 +146,6 @@ public final class ResizeableCanvas extends Region implements MambaCanvas<MEngin
         controller.selectLayerTreeView(engine2D.getSelected());
     }
     
-    public void mouseReleased(MouseEvent e)
-    {        
-        //tempShape = null;
-    }
-    
     public void mouseDragged(MouseEvent e)
     {
         if(e.isPrimaryButtonDown() && engine2D.isSelected())
@@ -173,10 +153,8 @@ public final class ResizeableCanvas extends Region implements MambaCanvas<MEngin
             Point2D p = new Point2D(e.getX(), e.getY());
             engine2D.getSelected().translate(p);    
             engine2D.getSelected().updateDragHandles(null);
-            Platform.runLater(()->engine2D.draw());
-           
-        }
-        
+            Platform.runLater(()->engine2D.draw());           
+        }        
     }
     
     public void select(MambaShape shape)
@@ -187,8 +165,7 @@ public final class ResizeableCanvas extends Region implements MambaCanvas<MEngin
         
         //remove selection drawing first
         MambaShape previousSelected = engine2D.getSelected();        
-        if(previousSelected != null && !previousSelected.isExpert()){
-            previousSelected.setState(ShapeState.DISPLAY);
+        if(previousSelected != null){            
             engine2D.draw();
         }
         
@@ -197,9 +174,7 @@ public final class ResizeableCanvas extends Region implements MambaCanvas<MEngin
         
         //init new shape for dragging and init select state
         if(engine2D.isSelected())
-        {
-            if(!engine2D.getSelected().isExpert())
-                engine2D.getSelected().setState(ShapeState.SELECT); //set selection
+        {            
             //engine2D.getSelected().setOffset(p.subtract(engine2D.getSelected().getTranslate()));               
             engine2D.draw();
         }
@@ -220,11 +195,11 @@ public final class ResizeableCanvas extends Region implements MambaCanvas<MEngin
     
     public void initPropertySheet(MambaShape shape)
     {
-        if(shape != null && shape.getState() != DISPLAY)
+        if(shape != null)
         {
             propertyDisplayPanel.getChildren().clear();
-            ObservableList<MBeanPropertyItem> properties = MBeanPropertyUtility.getProperties(shape, new MDefaultDisplayNameFactory(), engine2D);
-            MBeanPropertySheet propertySheet = new MBeanPropertySheet();
+            ObservableList<MBeanPropertyItem> properties = MBeanPropertyUtility.getProperties(shape, engine2D);
+            MBeanPropertySheet propertySheet = new MBeanPropertySheet();            
             propertySheet.setFactory(new MDefaultEditorFactory());
             propertySheet.init(properties);
             propertyDisplayPanel.getChildren().add(propertySheet);
@@ -239,16 +214,17 @@ public final class ResizeableCanvas extends Region implements MambaCanvas<MEngin
     public void initEffectPropertySheet(MambaShape shape)
     {
        
-        if(shape != null && shape.getState() != DISPLAY)
+        if(shape != null)
         {                        
             effectPropertyDisplayPanel.getChildren().clear();
             if(shape.getEffect() != null)
             {
-                ObservableList<MBeanPropertyItem> properties = MBeanPropertyUtility.getProperties(shape.getEffect(), new MDefaultDisplayNameFactory(), engine2D);
-                MBeanPropertySheet propertySheet = new MBeanPropertySheet();
+                ObservableList<MBeanPropertyItem> properties = MBeanPropertyUtility.getProperties(shape.getEffect(), engine2D);
+                MBeanPropertySheet propertySheet = new MBeanPropertySheet();                
                 propertySheet.setFactory(new MDefaultEditorFactory());
-
                 propertySheet.init(properties);
+                
+                
                 effectPropertyDisplayPanel.getChildren().add(propertySheet);
             }            
         }

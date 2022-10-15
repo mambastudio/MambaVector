@@ -27,7 +27,6 @@ import static mamba.util.Reversed.reversed;
  */
 public class MRoot implements MambaShape<MEngine>{
     private Transform transform;
-    private final ShapeState shapeState = ShapeState.DISPLAY;    
     
     private MEngine engine2D;
     private GraphicsContext graphicContext;
@@ -110,16 +109,6 @@ public class MRoot implements MambaShape<MEngine>{
     @Override
     public boolean contains(Point2D p) {
         return true;
-    }
-
-    @Override
-    public ShapeState getState() {
-        return shapeState;
-    }
-
-    @Override
-    public void setState(ShapeState shapeState) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
     @Override

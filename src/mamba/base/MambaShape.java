@@ -16,10 +16,6 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.shape.Shape;
 import javafx.scene.transform.Transform;
-import static mamba.base.MambaShape.ShapeState.ANIMATION;
-import static mamba.base.MambaShape.ShapeState.DISPLAY;
-import static mamba.base.MambaShape.ShapeState.EXPERT;
-import static mamba.base.MambaShape.ShapeState.SELECT;
 import mamba.overlayselect.drag.MDrag;
 import mamba.util.MIntersection;
 
@@ -29,9 +25,8 @@ import mamba.util.MIntersection;
  * @param <Engine2D>
  */
 public interface MambaShape<Engine2D extends MambaEngine2D> extends MambaHierarchyData<MambaShape<Engine2D>> {
-    public enum ShapeState{DISPLAY, SELECT, ANIMATION, EXPERT};
-    public enum ShapeType{CONTAINER, SHAPE, SHAPE_POLY};
     
+    public enum ShapeType{CONTAINER, SHAPE, SHAPE_POLY};
     
     public Transform getTransform();
     public void setTransform(Transform transform);
@@ -81,30 +76,7 @@ public interface MambaShape<Engine2D extends MambaEngine2D> extends MambaHierarc
         }
         return false;
     }
-    
-    public ShapeState getState();
-    public void setState(ShapeState shapeState);
         
-    default boolean isDisplay()
-    {
-        return getState() == DISPLAY;
-    }
-    
-    default boolean isSelect()
-    {
-        return getState() == SELECT;
-    }
-    
-    default boolean isAnimation()
-    {
-        return getState() == ANIMATION;
-    }
-    
-    default boolean isExpert()
-    {
-        return getState() == EXPERT;
-    }
-    
     default String getSVGString()
     {
         return null;

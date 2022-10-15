@@ -28,6 +28,10 @@ public class MBeanPropertySheet<P extends MBeanPropertyItem, E extends MInterfac
     private Callback<P, E> propertyEditorFactory;
     private static final int MIN_COLUMN_WIDTH = 60;
     
+    public MBeanPropertySheet()
+    {
+       setMinSize(USE_PREF_SIZE, USE_PREF_SIZE);
+    }
     
     public final void init(ObservableList<P> list)
     {

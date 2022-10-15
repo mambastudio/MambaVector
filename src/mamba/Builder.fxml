@@ -14,6 +14,7 @@
 <?import javafx.scene.control.Tab?>
 <?import javafx.scene.control.TabPane?>
 <?import javafx.scene.control.ToggleButton?>
+<?import javafx.scene.control.ToggleGroup?>
 <?import javafx.scene.control.ToolBar?>
 <?import javafx.scene.control.TreeView?>
 <?import javafx.scene.layout.BorderPane?>
@@ -54,12 +55,20 @@
                      </graphic>
                   </Button>
                   <Separator prefHeight="0.0" prefWidth="30.0" />
-                  <ToggleButton disable="true" minWidth="30.0" mnemonicParsing="false" prefHeight="30.0" prefWidth="10.0">
+                  <ToggleButton fx:id="dragTool" minWidth="30.0" mnemonicParsing="false" prefHeight="30.0" prefWidth="10.0">
+                     <toggleGroup>
+                        <ToggleGroup fx:id="editToolGroup" />
+                     </toggleGroup>
+                     <graphic>
+                        <PhosphorIcon glyphName="hand-pointing" />
+                     </graphic>
+                  </ToggleButton>
+                  <ToggleButton fx:id="penTool" minWidth="30.0" mnemonicParsing="false" prefHeight="30.0" prefWidth="10.0" selected="true" toggleGroup="$editToolGroup">
                      <graphic>
                         <PhosphorIcon glyphName="pen-nib" />
                      </graphic>
                   </ToggleButton>
-                  <ToggleButton disable="true" minWidth="30.0" mnemonicParsing="false" prefHeight="30.0" prefWidth="10.0">
+                  <ToggleButton fx:id="eraserTool" minWidth="30.0" mnemonicParsing="false" prefHeight="30.0" prefWidth="10.0" toggleGroup="$editToolGroup">
                      <graphic>
                         <PhosphorIcon glyphName="eraser" />
                      </graphic>
@@ -86,7 +95,7 @@
                       <Menu mnemonicParsing="false" text="File">
                         <items>
                               <MenuItem mnemonicParsing="false" onAction="#open" text="Open" />
-                          <MenuItem mnemonicParsing="false" text="Close" />
+                          <MenuItem mnemonicParsing="false" onAction="#exit" text="Close" />
                         </items>
                       </Menu>
                       <Menu mnemonicParsing="false" text="Help">
@@ -128,12 +137,12 @@
                            <graphic>
                               <MaterialsIcon glyphName="move_down" />
                            </graphic></Button>
-                        <Button disable="true" mnemonicParsing="false">
+                        <Button fx:id="groupShapes" mnemonicParsing="false">
                            <graphic>
                               <PhosphorIcon glyphName="arrows-in" />
                            </graphic>
                         </Button>
-                        <Button disable="true" mnemonicParsing="false">
+                        <Button fx:id="ungroupShapes" mnemonicParsing="false">
                            <graphic>
                               <PhosphorIcon glyphName="arrows-out" />
                            </graphic>

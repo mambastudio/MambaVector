@@ -68,4 +68,9 @@ public class MSelectionModel {
     {
         return selectedShapeProperty.get();
     }
+    
+    public ObjectProperty<MambaShape> getSelectionProperty()
+    {
+        return selectedShapeProperty;
+    }
 }

@@ -36,8 +36,6 @@ import mamba.util.MBound2;
  */
 public final class MRectangle implements MambaShape<MEngine>{
 
-    private ShapeState shapeState = ShapeState.DISPLAY;
-    
     private MEngine engine2D;
     private GraphicsContext graphicContext;
     
@@ -230,16 +228,6 @@ public final class MRectangle implements MambaShape<MEngine>{
         return false;
     }
 
-    @Override
-    public ShapeState getState() {
-        return shapeState;
-    }
-
-    @Override
-    public void setState(ShapeState shapeState) {
-        this.shapeState = shapeState;
-    }
-    
     public double getWidth()
     {
         return width.doubleValue();

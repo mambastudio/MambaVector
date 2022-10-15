@@ -25,8 +25,6 @@ import mamba.util.MBound2;
  */
 public class MGroup implements MambaShape<MEngine>{
     
-    private final ShapeState shapeState = ShapeState.DISPLAY;    
-    
     private MEngine engine2D;
     private GraphicsContext graphicContext;
     
@@ -116,16 +114,6 @@ public class MGroup implements MambaShape<MEngine>{
                 return true;
         }
         return false;
-    }
-
-    @Override
-    public ShapeState getState() {
-        return shapeState;
-    }
-
-    @Override
-    public void setState(ShapeState shapeState) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
     @Override

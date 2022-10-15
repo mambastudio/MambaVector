@@ -23,7 +23,21 @@ public class MBeanPropertyUtility {
     
     public static ObservableList<MBeanPropertyItem> getProperties(final Object bean, MambaEngine2D engine)
     {
-        return getProperties(bean, (p)->{return p;}, engine);
+        return getProperties(
+                bean, 
+                //https://stackoverflow.com/questions/3752636/java-split-string-when-an-uppercase-letter-is-found
+                //https://attacomsian.com/blog/capitalize-first-letter-of-string-java#:~:text=The%20simplest%20way%20to%20capitalize,substring(0%2C%201).
+                (p)->{
+                    String[] r = p.split("(?=\\p{Upper})");
+                    r[0] = r[0].substring(0, 1).toUpperCase() + r[0].substring(1);
+                    StringBuilder string = new StringBuilder();
+                    for(String str: r)
+                    {
+                        string.append(str).append(" ");
+                    }
+                    return string.toString();
+                }, 
+                engine);
     }
     
     public static ObservableList<MBeanPropertyItem> getProperties(final Object bean, final Function<String, String> displayNameCall, MambaEngine2D engine)
@@ -34,7 +48,7 @@ public class MBeanPropertyUtility {
             MBeanInfo beanInfo = MIntrospector.getBeanInfo(bean.getClass(), Object.class);
             for (MPropertyDescriptor p : beanInfo.getPropertyDescriptors()) {     
                 //custom display name if any
-                String displayName = displayNameCall.apply(p.getDisplayName());
+                String displayName = displayNameCall.apply(p.getName());
                 p.setDisplayName(displayName);
                 
                 //init bean property
