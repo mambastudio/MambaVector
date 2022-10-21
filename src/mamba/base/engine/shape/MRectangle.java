@@ -177,6 +177,16 @@ public final class MRectangle implements MambaShape<MEngine>{
         
         //draw shape, this is just local coordinates 
         graphicContext.setFill(solidColor.get());
+        //stroke line
+        graphicContext.setStroke(strokeColor.get());
+        graphicContext.setLineWidth(strokeWidth.doubleValue());
+        graphicContext.strokeRoundRect(-width.doubleValue()/2  + strokeWidth.doubleValue()/2, 
+                -height.doubleValue()/2  + strokeWidth.doubleValue()/2, 
+                width.doubleValue()  - strokeWidth.doubleValue(), 
+                height.doubleValue() - strokeWidth.doubleValue(), 
+                arcWidth.doubleValue(), 
+                arcHeight.doubleValue());
+        
         graphicContext.setEffect(effect);                
         graphicContext.fillRoundRect(
                 -width.doubleValue()/2  + strokeWidth.doubleValue()/2, 
@@ -186,14 +196,7 @@ public final class MRectangle implements MambaShape<MEngine>{
                 arcWidth.doubleValue(), 
                 arcHeight.doubleValue());
                 
-        graphicContext.setStroke(strokeColor.get());
-        graphicContext.setLineWidth(strokeWidth.doubleValue());
-        graphicContext.strokeRoundRect(-width.doubleValue()/2  + strokeWidth.doubleValue()/2, 
-                -height.doubleValue()/2  + strokeWidth.doubleValue()/2, 
-                width.doubleValue()  - strokeWidth.doubleValue(), 
-                height.doubleValue() - strokeWidth.doubleValue(), 
-                arcWidth.doubleValue(), 
-                arcHeight.doubleValue());
+        
         
         
         
