@@ -95,6 +95,7 @@
                       <Menu mnemonicParsing="false" text="File">
                         <items>
                               <MenuItem mnemonicParsing="false" onAction="#open" text="Open" />
+                              <MenuItem mnemonicParsing="false" text="Load Pictures" />
                           <MenuItem mnemonicParsing="false" onAction="#exit" text="Close" />
                         </items>
                       </Menu>
