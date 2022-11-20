@@ -5,21 +5,36 @@
  */
 package mamba;
 
+import java.awt.image.RenderedImage;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
 import java.net.URL;
+import java.nio.file.Path;
+import java.util.List;
+import java.util.Optional;
 import java.util.ResourceBundle;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.embed.swing.SwingFXUtils;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.Cursor;
 import javafx.scene.Group;
+import javafx.scene.ImageCursor;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.ToggleButton;
+import javafx.scene.control.ToggleGroup;
 import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeView;
 import javafx.scene.effect.Effect;
+import javafx.scene.image.Image;
+import javafx.scene.image.WritableImage;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
@@ -30,18 +45,23 @@ import javafx.scene.paint.RadialGradient;
 import javafx.scene.paint.Stop;
 import javafx.stage.FileChooser;
 import javafx.util.StringConverter;
+import javax.imageio.ImageIO;
+import jfx.gallery.GalleryDialog;
 import mamba.base.MambaShape;
 import mamba.base.engine.MEngine;
 import mamba.base.engine.shape.MCircle;
 import mamba.base.engine.shape.MEllipse;
+import mamba.base.engine.shape.MImage;
 import mamba.base.engine.shape.MLine;
-import mamba.base.engine.shape.MPoly.PathTo;
+import mamba.base.engine.shape.MPath;
+import mamba.base.engine.shape.MPath.PathTo;
 import mamba.base.engine.shape.MRectangle;
 import mamba.base.parser.svg.SVGDocument;
 import mamba.base.parser.svg.SVGParser;
 import mamba.components.BackgroundPane;
 import mamba.components.ResizeableCanvas;
 import mamba.overlayselect.MSelectionModel;
+import mamba.snapshot.NodeSnapshot;
 import mamba.treeview.RecursiveTreeItem;
 import mamba.util.MDisableStateNodes;
 import mamba.util.MambaUtility;
@@ -56,6 +76,13 @@ public class BuilderController implements Initializable {
     /**
      * Initializes the controller class.
      */
+    @FXML
+    Pane rootPane;
+    
+    @FXML
+    HBox hEditBox;
+    @FXML
+    VBox vShapeBox;
     
     @FXML
     Pane baseDrawPanel;
@@ -72,21 +99,20 @@ public class BuilderController implements Initializable {
     @FXML
     ComboBox<Paint> paintTypeComboBox;
     @FXML
-    TreeView<MambaShape> layerTreeView;
-    
-    @FXML
-    ComboBox<PathTo> pathToComboBox;    
+    TreeView<MambaShape> layerTreeView;    
     @FXML
     Button groupShapes;
     @FXML
     Button ungroupShapes;
+    
+    @FXML
+    ToggleGroup editToolGroup;
     @FXML
     ToggleButton penTool;
     @FXML
     ToggleButton eraserTool;
     @FXML
-    ToggleButton dragTool;
-    
+    ToggleButton bendTool;
    
     
     private final BackgroundPane backgroundPanel = new BackgroundPane();
@@ -97,6 +123,7 @@ public class BuilderController implements Initializable {
     
     private final MDisableStateNodes pathEditButtons = new MDisableStateNodes();
     
+    private final GalleryDialog gallery = new GalleryDialog(800, 500);
     
     @Override
     public void initialize(URL url, ResourceBundle rb) {
@@ -104,20 +131,20 @@ public class BuilderController implements Initializable {
         renderCanvas = new ResizeableCanvas(this, 500, 500);  
         
         baseDrawPanel.getChildren().addAll(backgroundPanel, renderCanvas, selectionLayer);
-        
-        //current path drawing state
-        pathToComboBox.getItems().setAll(PathTo.values());
-        pathToComboBox.getSelectionModel().select(PathTo.LINE_TO);
-        
+              
         //ensure they grow according to base draw panel
         backgroundPanel.prefWidthProperty().bind(baseDrawPanel.widthProperty());
         backgroundPanel.prefHeightProperty().bind(baseDrawPanel.heightProperty());        
         renderCanvas.prefWidthProperty().bind(baseDrawPanel.widthProperty());
         renderCanvas.prefHeightProperty().bind(baseDrawPanel.heightProperty());
-        
-        renderCanvas.setEngine2D(engine2D);
+                
+        //add properties and selection model first
         renderCanvas.setPropertyDisplayPanel(propertyPanel);
         renderCanvas.setEffectPropertyDisplayPanel(effectPropertyDisplayPanel);
+        engine2D.setSelectionModel(new MSelectionModel(selectionLayer));       
+        renderCanvas.setEngine2D(engine2D);
+        
+        
         renderCanvas.setEffectTypeComboBox(effectTypeComboBox);        
         effectTypeComboBox.setConverter(new StringConverter<Effect>(){
             @Override
@@ -134,8 +161,6 @@ public class BuilderController implements Initializable {
             }
             
         });
-        
-        engine2D.setSelectionModel(new MSelectionModel(selectionLayer));       
         
         effectButtonRemove.setOnAction(e->{
             effectTypeComboBox.setValue(null);           
@@ -183,8 +208,43 @@ public class BuilderController implements Initializable {
                 new FileChooser.ExtensionFilter("SVG files", "*.svg")
         );
         
-        pathEditButtons.addNodes(eraserTool, penTool, groupShapes, ungroupShapes, pathToComboBox, dragTool);
+        pathEditButtons.addNodes(eraserTool, penTool, bendTool, groupShapes, ungroupShapes);
         pathEditButtons.disable();
+        
+        engine2D.getSelectionModel().getSelectionProperty().addListener((o, ov, nv)->{
+            if(nv != null && nv instanceof MPath)
+            {
+                pathEditButtons.enable();
+                if(this.editToolGroup.getSelectedToggle() == null)
+                    this.applyCursorEdit(null);
+                else
+                    this.applyCursorEdit(this.editToolGroup.getSelectedToggle().getUserData());
+            }               
+            else
+            {
+                pathEditButtons.disable();
+                this.applyCursorEdit(null);
+            }
+        });
+        
+        //Path edit tools
+        penTool.setUserData("pentool");        
+        eraserTool.setUserData("erasertool");        
+        editToolGroup.selectedToggleProperty().addListener((o, ov, nv)->{
+            if(nv != null)
+            {
+                this.applyCursorEdit(nv.getUserData());
+                vShapeBox.setDisable(true);
+                hEditBox.setDisable(true);
+            }
+            else
+            {
+                this.applyCursorEdit(null);
+                vShapeBox.setDisable(false);
+                hEditBox.setDisable(false);
+            }
+        });
+   
     }    
     
     public void addCircle(ActionEvent e)
@@ -209,6 +269,24 @@ public class BuilderController implements Initializable {
     {        
         engine2D.addShape(new MLine());   
         //buildTreeItems(layerTreeView, engine2D.getShapes());
+    }
+    
+    public void addImage(ActionEvent e)
+    {
+        Optional<List<Path>> option = gallery.showAndWait(rootPane.getScene().getWindow());
+        if(option.isPresent())
+        {
+            for(Path path : option.get())
+            {
+                MImage image = new MImage(path);
+                engine2D.addShape(image);
+            }
+        }
+    }
+    
+    public void addPath(ActionEvent e)
+    {
+        engine2D.addShape(new MPath());   
     }
     
     public void clearAll(ActionEvent e)
@@ -237,6 +315,31 @@ public class BuilderController implements Initializable {
         }
     }
     
+    public void saveImage(ActionEvent e)
+    {
+        FileChooser fileChooser = new FileChooser();
+                
+        //Set extension filter
+        FileChooser.ExtensionFilter extFilter = 
+                new FileChooser.ExtensionFilter("png files (*.png)", "*.png");
+        fileChooser.getExtensionFilters().add(extFilter);
+
+        //Show save file dialog
+        File file = fileChooser.showSaveDialog(renderCanvas.getScene().getWindow());
+
+        if(file != null){
+            try {
+                WritableImage writableImage = new WritableImage((int)renderCanvas.getWidth(), (int)renderCanvas.getHeight());
+                renderCanvas.snapshot(null, writableImage);
+                RenderedImage renderedImage = SwingFXUtils.fromFXImage(writableImage, null);
+                ImageIO.write(renderedImage, "png", file);
+            } catch (IOException ex) {
+                Logger.getLogger(BuilderController.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+            
+    }
+    
     public void transferSelectedToBack(ActionEvent e)
     {
         this.selectLayerTreeView(engine2D.transferSelectionToBack());
@@ -255,5 +358,31 @@ public class BuilderController implements Initializable {
     public void exit(ActionEvent e)
     {
         System.exit(0);
+    }
+    
+    protected void applyCursorEdit(Object object)
+    {
+        if(object == null)
+            renderCanvas.setCursor(Cursor.DEFAULT);
+        else if(object.equals("pentool"))
+            renderCanvas.setCursor(new ImageCursor(NodeSnapshot.getPhosphorIcon("pen-nib", 24, 90)));
+        else if(object.equals("erasertool"))
+            renderCanvas.setCursor(new ImageCursor(NodeSnapshot.getPhosphorIcon("eraser", 24, 90)));        
+        else
+            renderCanvas.setCursor(Cursor.DEFAULT);
+    }
+    
+    public boolean isPenToolSelected()
+    {
+        if(pathEditButtons.isEnabled())
+            return penTool.isSelected();
+        return false;
+    }
+    
+    public boolean isEraserToolSelected()
+    {
+        if(pathEditButtons.isEnabled())
+            return eraserTool.isSelected();
+        return false;
     }
 }

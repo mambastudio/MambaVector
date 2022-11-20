@@ -31,10 +31,12 @@ import mamba.BuilderController;
 import mamba.base.MambaCanvas;
 import mamba.base.MambaShape;
 import mamba.base.engine.MEngine;
+import mamba.base.engine.shape.MPath;
 import mamba.beans.MBeanPropertyItem;
 import mamba.beans.MBeanPropertySheet;
 import mamba.beans.MBeanPropertyUtility;
 import mamba.beans.editors.MDefaultEditorFactory;
+import mamba.util.MObservableStack;
 import mamba.util.MambaUtility;
 
 /**
@@ -53,12 +55,17 @@ public final class ResizeableCanvas extends Region implements MambaCanvas<MEngin
     private ComboBox<Effect> effectTypeComboBox = null;
     private ChangeListener<Effect> effectTypeComboBoxListener = null;
     
+    private MObservableStack preparatoryStack = null;
+    
     private final BuilderController controller;   
+    
+    
         
                
     public ResizeableCanvas(BuilderController controller, double width, double height) 
     {
-        this.controller = controller;
+        this.preparatoryStack = new MObservableStack(); 
+        this.controller = controller; 
         
         //set the width and height of this and the canvas as the same
         setWidth(width);
@@ -106,6 +113,21 @@ public final class ResizeableCanvas extends Region implements MambaCanvas<MEngin
     public void setEngine2D(MEngine engine2D) {
         this.engine2D = engine2D;
         this.engine2D.setGraphicsContext(getGraphicsContext2D());
+        //what happens if shape is selected -> init properties, effect editors
+        this.engine2D.getSelectionModel().getSelectionProperty().addListener((o, ov, nv)->{
+            if(nv != null)
+            {
+                initPropertySheet(engine2D.getSelected());                
+                initEffectList(engine2D.getSelected().getEffect()); //init fresh combobox effect list
+                controller.selectLayerTreeView(engine2D.getSelected());
+            }
+            else
+            {
+                initPropertySheet(null);                
+                initEffectList(null); //init fresh combobox effect list
+                controller.selectLayerTreeView(null);
+            }
+        });
     }
 
     @Override
@@ -119,7 +141,17 @@ public final class ResizeableCanvas extends Region implements MambaCanvas<MEngin
     }
     
     public void mousePressed(MouseEvent e)
-    {              
+    {            
+        if(engine2D.isSelected() && engine2D.getSelectionModel().getSelected() instanceof MPath)
+        {            
+            if(controller.isPenToolSelected())
+            {
+                MPath path = (MPath) engine2D.getSelectionModel().getSelected();
+                path.addLineTo(e.getX(), e.getY());
+                return;
+            }
+        }
+            
         //new selection
         Point2D p = new Point2D(e.getX(), e.getY());
         engine2D.hitSelect(p);
@@ -133,23 +165,17 @@ public final class ResizeableCanvas extends Region implements MambaCanvas<MEngin
         else
             engine2D.draw();
         
-        //property of new selected shape
-        if(engine2D.isSelected()){
-            initPropertySheet(engine2D.getSelected());                
-            initEffectList(engine2D.getSelected().getEffect()); //init fresh combobox effect list
-        }
-        else{
-            initPropertySheet(null);           
-            initEffectList(null); //init fresh combobox effect list
-        }
         
-        controller.selectLayerTreeView(engine2D.getSelected());
     }
     
     public void mouseDragged(MouseEvent e)
     {
         if(e.isPrimaryButtonDown() && engine2D.isSelected())
         {        
+            if(engine2D.isSelected() && engine2D.getSelectionModel().getSelected() instanceof MPath)
+                if(controller.isPenToolSelected())
+                    return;
+            
             Point2D p = new Point2D(e.getX(), e.getY());
             engine2D.getSelected().translate(p);    
             engine2D.getSelected().updateDragHandles(null);
@@ -180,17 +206,6 @@ public final class ResizeableCanvas extends Region implements MambaCanvas<MEngin
         }
         else
             engine2D.draw();
-        
-        //property of new selected shape
-        if(engine2D.isSelected()){
-            initPropertySheet(engine2D.getSelected());                
-            initEffectList(engine2D.getSelected().getEffect()); //init fresh combobox effect list
-        }
-        else{
-            initPropertySheet(null);           
-            initEffectList(null); //init fresh combobox effect list
-        }
-        
     }
     
     public void initPropertySheet(MambaShape shape)
@@ -198,7 +213,7 @@ public final class ResizeableCanvas extends Region implements MambaCanvas<MEngin
         if(shape != null)
         {
             propertyDisplayPanel.getChildren().clear();
-            ObservableList<MBeanPropertyItem> properties = MBeanPropertyUtility.getProperties(shape, engine2D);
+            ObservableList<MBeanPropertyItem> properties = MBeanPropertyUtility.getProperties(shape, ()-> engine2D.draw());
             MBeanPropertySheet propertySheet = new MBeanPropertySheet();            
             propertySheet.setFactory(new MDefaultEditorFactory());
             propertySheet.init(properties);
@@ -219,7 +234,7 @@ public final class ResizeableCanvas extends Region implements MambaCanvas<MEngin
             effectPropertyDisplayPanel.getChildren().clear();
             if(shape.getEffect() != null)
             {
-                ObservableList<MBeanPropertyItem> properties = MBeanPropertyUtility.getProperties(shape.getEffect(), engine2D);
+                ObservableList<MBeanPropertyItem> properties = MBeanPropertyUtility.getProperties(shape.getEffect(), ()-> engine2D.draw());
                 MBeanPropertySheet propertySheet = new MBeanPropertySheet();                
                 propertySheet.setFactory(new MDefaultEditorFactory());
                 propertySheet.init(properties);

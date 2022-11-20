@@ -17,16 +17,37 @@ import javafx.scene.shape.StrokeType;
  * @author user
  */
 public class MDragCircle extends MDrag{
-    Circle circle;
+    private Circle circle;
+    private final Color fillColor;
     
-    @Override
-    protected ObservableList<Shape> initDrag() {
-        circle = new Circle();
-        circle.setRadius(4);
-        circle.setFill(Color.BISQUE);
+    public MDragCircle()
+    {
+        super();
+        this.fillColor = Color.BISQUE;
+        this.init();
+    }
+    
+    public MDragCircle(Color fillColor)
+    {
+        super();
+        this.fillColor = fillColor;
+        this.init();
+    }
+    
+    private void init()
+    {        
+        circle.setRadius(4); 
+        circle.setFill(fillColor);
         circle.setStrokeType(StrokeType.INSIDE);  
         circle.setStroke(Color.BLACK);
         circle.setStrokeWidth(1);        
+    }
+    
+    
+    //this is called first in super constructor, hence it's important to initialise circle
+    @Override
+    protected ObservableList<Shape> initDrag() { 
+        circle = new Circle();
         return FXCollections.observableArrayList(circle);
     }
 

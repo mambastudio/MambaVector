@@ -13,11 +13,11 @@ import javafx.collections.ObservableList;
 import javafx.geometry.BoundingBox;
 import javafx.geometry.Point2D;
 import javafx.scene.canvas.GraphicsContext;
-import javafx.scene.transform.Transform;
 import mamba.base.MambaShape;
 import mamba.base.engine.MEngine;
+import mamba.base.math.MTransform;
+import mamba.base.math.MTransformGeneric;
 import mamba.overlayselect.drag.MDrag;
-import mamba.overlayselect.drag.MDragSquare;
 import mamba.util.MIntersection;
 import static mamba.util.Reversed.reversed;
 
@@ -26,7 +26,7 @@ import static mamba.util.Reversed.reversed;
  * @author jmburu
  */
 public class MRoot implements MambaShape<MEngine>{
-    private Transform transform;
+    private MTransformGeneric transform;
     
     private MEngine engine2D;
     private GraphicsContext graphicContext;
@@ -36,17 +36,17 @@ public class MRoot implements MambaShape<MEngine>{
     
     public MRoot()
     {
-        this.transform = Transform.translate(0, 0); //identity
+        this.transform = MTransform.translate(0, 0); //identity
         this.nameProperty = new SimpleStringProperty("Root");
         this.children = FXCollections.observableArrayList();
     }
     @Override
-    public Transform getTransform() {
+    public MTransformGeneric getTransform() {
         return transform;
     }
 
     @Override
-    public void setTransform(Transform transform) {
+    public void setTransform(MTransformGeneric transform) {
         this.transform = transform;
     }
 

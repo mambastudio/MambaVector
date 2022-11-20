@@ -5,8 +5,6 @@
  */
 package mamba.base.engine.shape;
 
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleDoubleProperty;
@@ -21,13 +19,13 @@ import javafx.scene.Cursor;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.effect.Effect;
 import javafx.scene.paint.Color;
-import javafx.scene.transform.NonInvertibleTransformException;
-import javafx.scene.transform.Transform;
 import mamba.base.MambaShape;
 import mamba.base.engine.MEngine;
 import mamba.overlayselect.drag.MDrag;
 import mamba.overlayselect.drag.MDragSquare;
-import mamba.util.MBound2;
+import mamba.base.math.MBound;
+import mamba.base.math.MTransform;
+import mamba.base.math.MTransformGeneric;
 
 /**
  *
@@ -46,7 +44,7 @@ public class MCircle implements MambaShape<MEngine>{
         
     private Effect effect = null;
     
-    private Transform transform;
+    private MTransform transform;
     
     private final StringProperty nameProperty;
     
@@ -63,25 +61,25 @@ public class MCircle implements MambaShape<MEngine>{
         strokeWidth = new SimpleDoubleProperty(0.001);
         strokeColor = new SimpleObjectProperty(Color.BLACK);
         
-        transform = Transform.translate(50, 50); 
+        transform = MTransform.translate(50, 50); 
         
         nameProperty = new SimpleStringProperty("Circle");
     }
 
     @Override
-    public Transform getTransform() {
+    public MTransformGeneric getTransform() {
         return this.transform;
     }
 
     @Override
-    public void setTransform(Transform transform) {
-        this.transform = transform;
+    public void setTransform(MTransformGeneric transform) {        
+        this.transform = (MTransform)transform;           
     }
 
     @Override
     public void translate(Point2D p) {
         Point2D tp = p.subtract(offset);
-        this.transform = Transform.translate(tp.getX(), tp.getY());
+        this.transform = MTransform.translate(tp.getX(), tp.getY());
     }
 
     @Override
@@ -124,9 +122,7 @@ public class MCircle implements MambaShape<MEngine>{
         
         graphicContext.save();
         //apply transform first
-        graphicContext.setTransform(
-                transform.getMxx(), transform.getMyx(), transform.getMxy(),
-                transform.getMyy(), transform.getTx(), transform.getTy());
+        transform.transformGraphicsContext(graphicContext);
         
         //draw shape, this is just local coordinates 
         graphicContext.setFill(solidColor.get());
@@ -152,7 +148,7 @@ public class MCircle implements MambaShape<MEngine>{
     public BoundingBox getBounds() {
         Point2D min = new Point2D(-radius.doubleValue(), -radius.doubleValue());
         Point2D max = new Point2D(radius.doubleValue(), radius.doubleValue());
-        MBound2 bound = new MBound2();
+        MBound bound = new MBound();
         bound.include(min);
         bound.include(max);       
         return (BoundingBox) transform.transform(bound.getBoundingBox());
@@ -160,19 +156,16 @@ public class MCircle implements MambaShape<MEngine>{
 
     @Override
     public boolean contains(Point2D p) {
-        try {
-            //transform p to local coordinates
-            Point2D invP = transform.inverseTransform(p);
-            Point2D min = new Point2D(-radius.doubleValue(), -radius.doubleValue());
-            Point2D max = new Point2D(radius.doubleValue(), radius.doubleValue());
-            MBound2 bound = new MBound2();
-            bound.include(min);
-            bound.include(max);
-            return bound.contains(invP);
-        } catch (NonInvertibleTransformException ex) {
-            Logger.getLogger(MCircle.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        return false;
+       
+        //transform p to local coordinates
+        Point2D invP = transform.inverseTransform(p);
+        Point2D min = new Point2D(-radius.doubleValue(), -radius.doubleValue());
+        Point2D max = new Point2D(radius.doubleValue(), radius.doubleValue());
+        MBound bound = new MBound();
+        bound.include(min);
+        bound.include(max);
+        return bound.contains(invP);
+        
     }
     
     public double getRadius()
@@ -270,8 +263,8 @@ public class MCircle implements MambaShape<MEngine>{
 
                 Point2D p = new Point2D(e.getX(), e.getY());
 
-                MBound2 nbound = new MBound2();
-                MBound2 cbound = new MBound2();
+                MBound nbound = new MBound();
+                MBound cbound = new MBound();
 
                 cbound.include(getBounds());          //current bounds 
                 nbound.include(p, cbound.getPoint(2));      //new bounds
@@ -302,8 +295,8 @@ public class MCircle implements MambaShape<MEngine>{
 
                 Point2D p = new Point2D(e.getX(), e.getY());
 
-                MBound2 nbound = new MBound2();
-                MBound2 cbound = new MBound2();
+                MBound nbound = new MBound();
+                MBound cbound = new MBound();
 
                 cbound.include(getBounds());          //current bounds 
                 nbound.include(p, cbound.getPoint(0));      //new bounds
@@ -334,8 +327,8 @@ public class MCircle implements MambaShape<MEngine>{
 
                 Point2D p = new Point2D(e.getX(), e.getY());
 
-                MBound2 nbound = new MBound2();
-                MBound2 cbound = new MBound2();
+                MBound nbound = new MBound();
+                MBound cbound = new MBound();
 
                 cbound.include(getBounds());       //current bounds             
                 nbound.include(p, cbound.getPoint(1));      //new bounds
@@ -366,8 +359,8 @@ public class MCircle implements MambaShape<MEngine>{
 
                 Point2D p = new Point2D(e.getX(), e.getY());
 
-                MBound2 nbound = new MBound2();
-                MBound2 cbound = new MBound2();
+                MBound nbound = new MBound();
+                MBound cbound = new MBound();
 
                 cbound.include(getBounds());       //current bounds             
                 nbound.include(p, cbound.getPoint(3));      //new bounds

@@ -16,6 +16,7 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.shape.Shape;
 import javafx.scene.transform.Transform;
+import mamba.base.math.MTransformGeneric;
 import mamba.overlayselect.drag.MDrag;
 import mamba.util.MIntersection;
 
@@ -27,9 +28,10 @@ import mamba.util.MIntersection;
 public interface MambaShape<Engine2D extends MambaEngine2D> extends MambaHierarchyData<MambaShape<Engine2D>> {
     
     public enum ShapeType{CONTAINER, SHAPE, SHAPE_POLY};
+    public enum ShapeState{PREPAROTRY, EDIT, DISPLAY};
     
-    public Transform getTransform();
-    public void setTransform(Transform transform);
+    public MTransformGeneric getTransform();
+    public void setTransform(MTransformGeneric transform);
         
     public void translate(Point2D p);
     public Point2D getTranslate();
@@ -112,5 +114,10 @@ public interface MambaShape<Engine2D extends MambaEngine2D> extends MambaHierarc
     default MambaShape copy()
     {
         return null;
+    }
+    
+    default boolean isComplete()
+    {
+        return true;
     }
 }

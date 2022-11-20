@@ -15,10 +15,16 @@ import mamba.base.MambaShape;
  * @author user
  */
 public class MSelectionModel {
-    Group selectionLayer;
     
+    //group selection layer is always on top of canvas. 
+    //either remove or add components to it for editing shape
+    Group selectionLayer;    
     ObjectProperty<MambaShape> selectedShapeProperty;
     
+    //selection overlay, where controls are
+    MSelectionOverlay selectionOverlay;
+    
+    //set overlay group for adding editing nodes/components
     public MSelectionModel(Group layoutBoundsOverlay)
     {
         this.selectionLayer = layoutBoundsOverlay;
@@ -32,7 +38,7 @@ public class MSelectionModel {
         {
             if(shape == this.selectedShapeProperty)
                 return;
-            MSelectionOverlay selectionOverlay = new MSelectionOverlay(shape);
+            selectionOverlay = new MSelectionOverlay(shape);
             selectionLayer.getChildren().clear();
             selectionLayer.getChildren().add(selectionOverlay);
             this.selectedShapeProperty.set(shape);
@@ -48,6 +54,7 @@ public class MSelectionModel {
     public void clear() {
 
         selectionLayer.getChildren().clear();
+        selectionOverlay = null;
         selectedShapeProperty.set(null);
     }
     
@@ -72,5 +79,11 @@ public class MSelectionModel {
     public ObjectProperty<MambaShape> getSelectionProperty()
     {
         return selectedShapeProperty;
+    }
+    
+    public void refreshOverlay()
+    {
+        if(selectionOverlay != null)
+            selectionOverlay.refresh();
     }
 }

@@ -52,4 +52,9 @@ public class MDisableStateNodes {
     {
         disableProperty.set(false);        
     }
+    
+    public boolean isEnabled()
+    {
+        return !disableProperty.get();
+    }
 }

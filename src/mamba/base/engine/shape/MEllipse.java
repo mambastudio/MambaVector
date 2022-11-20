@@ -5,8 +5,6 @@
  */
 package mamba.base.engine.shape;
 
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleDoubleProperty;
@@ -21,13 +19,13 @@ import javafx.scene.Cursor;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.effect.Effect;
 import javafx.scene.paint.Color;
-import javafx.scene.transform.NonInvertibleTransformException;
-import javafx.scene.transform.Transform;
 import mamba.base.MambaShape;
 import mamba.base.engine.MEngine;
 import mamba.overlayselect.drag.MDrag;
 import mamba.overlayselect.drag.MDragSquare;
-import mamba.util.MBound2;
+import mamba.base.math.MBound;
+import mamba.base.math.MTransform;
+import mamba.base.math.MTransformGeneric;
 
 /**
  *
@@ -55,7 +53,7 @@ public class MEllipse implements MambaShape<MEngine>{
     private final DoubleProperty strokeWidth;
     private final ObjectProperty<Color> strokeColor;
     
-    private Transform transform;    
+    private MTransform transform;    
     private Effect effect;
     
     private final ObservableList<MDrag> dragHandles = FXCollections.observableArrayList();
@@ -80,7 +78,7 @@ public class MEllipse implements MambaShape<MEngine>{
         strokeColor = new SimpleObjectProperty(Color.BLACK);
         
         //to be at positon (0, 0)
-        transform = Transform.translate(radiusX.get(), radiusY.get()); //
+        transform = MTransform.translate(radiusX.get(), radiusY.get()); //
         
         nameProperty = new SimpleStringProperty("Ellipse");
     }
@@ -101,19 +99,19 @@ public class MEllipse implements MambaShape<MEngine>{
     }
 
     @Override
-    public Transform getTransform() {
+    public MTransform getTransform() {
         return transform;
     }
 
     @Override
-    public void setTransform(Transform transform) {
-        this.transform = transform;
+    public void setTransform(MTransformGeneric transform) {
+        this.transform = (MTransform) transform;
     }
 
     @Override
     public void translate(Point2D p) {
         Point2D tp = p.subtract(offset);
-        this.transform = Transform.translate(tp.getX(), tp.getY());
+        this.transform = MTransform.translate(tp.getX(), tp.getY());
     }
 
     @Override
@@ -160,10 +158,8 @@ public class MEllipse implements MambaShape<MEngine>{
     public void draw() {
         graphicContext.save();
         //apply transform first
-        graphicContext.setTransform(
-                transform.getMxx(), transform.getMyx(), transform.getMxy(),
-                transform.getMyy(), transform.getTx(), transform.getTy());
-        
+        transform.transformGraphicsContext(graphicContext);
+               
         //draw shape, this is just local coordinates 
         graphicContext.setFill(fillColor.get());
         graphicContext.setEffect(effect);             
@@ -187,7 +183,7 @@ public class MEllipse implements MambaShape<MEngine>{
     public BoundingBox getBounds() {
         Point2D min = new Point2D(centerX.doubleValue() - radiusX.doubleValue(), centerY.doubleValue() - radiusY.doubleValue());
         Point2D max = new Point2D(centerX.doubleValue() + radiusX.doubleValue(), centerY.doubleValue() + radiusY.doubleValue());
-        MBound2 bound = new MBound2();
+        MBound bound = new MBound();
         bound.include(min);
         bound.include(max);   
         return (BoundingBox) transform.transform(bound.getBoundingBox());
@@ -195,19 +191,16 @@ public class MEllipse implements MambaShape<MEngine>{
 
     @Override
     public boolean contains(Point2D p) {
-        try {
-            //transform p to local coordinates
-            Point2D invP = transform.inverseTransform(p);
-            Point2D min = new Point2D(centerX.doubleValue() - radiusX.doubleValue(), centerY.doubleValue() - radiusY.doubleValue());
-            Point2D max = new Point2D(centerX.doubleValue() + radiusX.doubleValue(), centerY.doubleValue() + radiusY.doubleValue());
-            MBound2 bound = new MBound2();
-            bound.include(min);
-            bound.include(max);       
-            return bound.contains(invP);
-        } catch (NonInvertibleTransformException ex) {
-            Logger.getLogger(MEllipse.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        return false;
+        
+        //transform p to local coordinates
+        Point2D invP = transform.inverseTransform(p);
+        Point2D min = new Point2D(centerX.doubleValue() - radiusX.doubleValue(), centerY.doubleValue() - radiusY.doubleValue());
+        Point2D max = new Point2D(centerX.doubleValue() + radiusX.doubleValue(), centerY.doubleValue() + radiusY.doubleValue());
+        MBound bound = new MBound();
+        bound.include(min);
+        bound.include(max);       
+        return bound.contains(invP);
+       
     }
 
     @Override
@@ -244,8 +237,8 @@ public class MEllipse implements MambaShape<MEngine>{
 
                 Point2D p = new Point2D(e.getX(), e.getY());
 
-                MBound2 nbound = new MBound2();
-                MBound2 cbound = new MBound2();
+                MBound nbound = new MBound();
+                MBound cbound = new MBound();
 
                 cbound.include(getBounds());          //current bounds 
                 nbound.include(p, cbound.getPoint(2));      //new bounds
@@ -272,8 +265,8 @@ public class MEllipse implements MambaShape<MEngine>{
             c2.setOnMouseDragged(e->{
                 Point2D p = new Point2D(e.getX(), e.getY());
 
-                MBound2 nbound = new MBound2();
-                MBound2 cbound = new MBound2();
+                MBound nbound = new MBound();
+                MBound cbound = new MBound();
 
                 cbound.include(getBounds());          //current bounds 
                 nbound.include(p, cbound.getPoint(0));      //new bounds
@@ -306,8 +299,8 @@ public class MEllipse implements MambaShape<MEngine>{
 
                 Point2D p = new Point2D(e.getX(), e.getY());
 
-                MBound2 nbound = new MBound2();
-                MBound2 cbound = new MBound2();
+                MBound nbound = new MBound();
+                MBound cbound = new MBound();
 
                 cbound.include(getBounds());       //current bounds             
                 nbound.include(p, cbound.getPoint(1));      //new bounds
@@ -335,8 +328,8 @@ public class MEllipse implements MambaShape<MEngine>{
 
                 Point2D p = new Point2D(e.getX(), e.getY());
 
-                MBound2 nbound = new MBound2();
-                MBound2 cbound = new MBound2();
+                MBound nbound = new MBound();
+                MBound cbound = new MBound();
 
                 cbound.include(getBounds());       //current bounds             
                 nbound.include(p, cbound.getPoint(3));      //new bounds

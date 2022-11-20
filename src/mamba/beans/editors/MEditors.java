@@ -9,6 +9,7 @@ import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.scene.control.Button;
+import javafx.scene.control.CheckBox;
 import javafx.scene.control.ColorPicker;
 import javafx.scene.control.ComboBox;
 import javafx.scene.effect.Blend;
@@ -69,6 +70,25 @@ public class MEditors {
                     @Override
                     public void initEditorValue() {                        
                         getEditor().setValue(this.getPropertyValue());                        
+                    }
+                };
+    }
+    
+    public static final MInterfacePropertyEditor<?> createBooleanEditor(MBeanPropertyItem propertyItem) {
+        
+        return new MAbstractPropertyEditor<Boolean, CheckBox>(
+                propertyItem, 
+                new CheckBox()) 
+                {                  
+                
+                    @Override
+                    protected ObservableValue<Boolean> getEditorObservableValue() {
+                        return getEditor().selectedProperty();
+                    }
+                    
+                    @Override
+                    public void initEditorValue() {                        
+                        getEditor().setSelected(this.getPropertyValue());                        
                     }
                 };
     }

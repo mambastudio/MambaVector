@@ -3,7 +3,17 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
+            <file>file:/C:/Users/user/Documents/GitHub/MambaVector/src/mamba/base/engine/shape/MPath.java</file>
+            <file>file:/C:/Users/user/Documents/GitHub/MambaVector/src/mamba/components/ResizeableCanvas.java</file>
+            <file>file:/C:/Users/user/Documents/GitHub/MambaVector/src/mamba/base/engine/shape/attributes/MPathPoint.java</file>
+            <file>file:/C:/Users/user/Documents/GitHub/MambaVector/src/mamba/overlayselect/drag/MDragPathP.java</file>
+            <file>file:/C:/Users/user/Documents/GitHub/MambaVector/src/mamba/overlayselect/drag/MDrag.java</file>
+            <file>file:/C:/Users/user/Documents/GitHub/MambaVector/src/mamba/overlayselect/MSelectionModel.java</file>
             <file>file:/C:/Users/user/Documents/GitHub/MambaVector/src/mamba/BuilderController.java</file>
+            <file>file:/C:/Users/user/Documents/GitHub/MambaVector/src/mamba/overlayselect/MMouseHandler.java</file>
+            <file>file:/C:/Users/user/Documents/GitHub/MambaVector/src/mamba/base/engine/shape/MRectangle.java</file>
+            <file>file:/C:/Users/user/Documents/GitHub/MambaVector/src/mamba/overlayselect/drag/MDragCircle.java</file>
+            <file>file:/C:/Users/user/Documents/GitHub/MambaVector/src/mamba/overlayselect/MSelectionOverlay.java</file>
         </group>
     </open-files>
 </project-private>

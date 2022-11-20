@@ -9,6 +9,7 @@
 <?import javafx.scene.control.Menu?>
 <?import javafx.scene.control.MenuBar?>
 <?import javafx.scene.control.MenuItem?>
+<?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.control.Separator?>
 <?import javafx.scene.control.SplitPane?>
 <?import javafx.scene.control.Tab?>
@@ -23,56 +24,43 @@
 <?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
 
-<StackPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="904.0" prefWidth="1271.0" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mamba.BuilderController">
+<StackPane fx:id="rootPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="904.0" prefWidth="1271.0" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mamba.BuilderController">
    <children>
-      <BorderPane prefHeight="200.0" prefWidth="200.0">
+      <BorderPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="200.0" prefWidth="200.0">
          <left>
-            <VBox alignment="TOP_CENTER" prefHeight="807.0" prefWidth="36.0" spacing="4.0" style="-fx-border-style: hidden solid hidden hidden; -fx-border-color: lightgray;" BorderPane.alignment="TOP_CENTER">
+            <VBox fx:id="vShapeBox" alignment="TOP_CENTER" prefHeight="807.0" prefWidth="36.0" spacing="4.0" style="-fx-border-style: hidden solid hidden hidden; -fx-border-color: lightgray;" BorderPane.alignment="TOP_CENTER">
                <children>
                   <Button minWidth="30.0" mnemonicParsing="false" onAction="#addCircle" prefHeight="2.0" prefWidth="30.0">
                      <graphic>
                         <PhosphorIcon glyphName="circle" />
-                     </graphic></Button>
+                     </graphic>
+                  </Button>
                   <Button minWidth="30.0" mnemonicParsing="false" onAction="#addRectangle" prefHeight="8.0" prefWidth="30.0">
                      <graphic>
                         <PhosphorIcon glyphName="rectangle" />
-                     </graphic></Button>
+                     </graphic>
+                  </Button>
                   <Button minWidth="30.0" mnemonicParsing="false" onAction="#addEllipse" prefHeight="11.0" prefWidth="30.0">
                      <graphic>
                         <PhosphorIcon glyphName="circle" glyphSize="22.0" scaleY="0.7" />
-                     </graphic></Button>
+                     </graphic>
+                  </Button>
                   <Button minWidth="30.0" mnemonicParsing="false" onAction="#addLine" prefHeight="11.0" prefWidth="30.0">
                      <graphic>
                         <PhosphorIcon glyphName="line-segment" />
-                     </graphic></Button>
-                  <Button minWidth="30.0" mnemonicParsing="false" prefHeight="10.0" prefWidth="30.0">
+                     </graphic>
+                  </Button>
+                  <Button minWidth="30.0" mnemonicParsing="false" onAction="#addPath" prefHeight="10.0" prefWidth="30.0">
                      <graphic>
                         <PhosphorIcon glyphName="polygon" />
-                     </graphic></Button>
-                  <Button minWidth="30.0" mnemonicParsing="false" prefHeight="10.0" prefWidth="30.0">
+                     </graphic>
+                  </Button>
+                  <Button minWidth="30.0" mnemonicParsing="false" onAction="#addImage" prefHeight="10.0" prefWidth="30.0">
                      <graphic>
                         <PhosphorIcon glyphName="image" />
                      </graphic>
                   </Button>
                   <Separator prefHeight="0.0" prefWidth="30.0" />
-                  <ToggleButton fx:id="dragTool" minWidth="30.0" mnemonicParsing="false" prefHeight="30.0" prefWidth="10.0">
-                     <toggleGroup>
-                        <ToggleGroup fx:id="editToolGroup" />
-                     </toggleGroup>
-                     <graphic>
-                        <PhosphorIcon glyphName="hand-pointing" />
-                     </graphic>
-                  </ToggleButton>
-                  <ToggleButton fx:id="penTool" minWidth="30.0" mnemonicParsing="false" prefHeight="30.0" prefWidth="10.0" selected="true" toggleGroup="$editToolGroup">
-                     <graphic>
-                        <PhosphorIcon glyphName="pen-nib" />
-                     </graphic>
-                  </ToggleButton>
-                  <ToggleButton fx:id="eraserTool" minWidth="30.0" mnemonicParsing="false" prefHeight="30.0" prefWidth="10.0" toggleGroup="$editToolGroup">
-                     <graphic>
-                        <PhosphorIcon glyphName="eraser" />
-                     </graphic>
-                  </ToggleButton>
                   <Button minWidth="30.0" mnemonicParsing="false" prefHeight="10.0" prefWidth="30.0">
                      <graphic>
                         <PhosphorIcon glyphName="copy-simple" />
@@ -95,7 +83,6 @@
                       <Menu mnemonicParsing="false" text="File">
                         <items>
                               <MenuItem mnemonicParsing="false" onAction="#open" text="Open" />
-                              <MenuItem mnemonicParsing="false" text="Load Pictures" />
                           <MenuItem mnemonicParsing="false" onAction="#exit" text="Close" />
                         </items>
                       </Menu>
@@ -108,48 +95,75 @@
                   </MenuBar>
                   <ToolBar minHeight="-Infinity" minWidth="-Infinity" prefHeight="39.0" prefWidth="1271.0">
                      <items>
-                        <Button mnemonicParsing="false">
+                        <HBox fx:id="hEditBox" alignment="CENTER_LEFT" prefHeight="0.0" prefWidth="337.0" spacing="4.0">
+                           <children>
+                              <Button mnemonicParsing="false" onAction="#saveImage">
+                                 <graphic>
+                                    <MaterialsIcon glyphName="save" />
+                                 </graphic>
+                              </Button>
+                              <Button minWidth="30.0" mnemonicParsing="false" onAction="#clearAll">
+                                 <graphic>
+                                    <MaterialsIcon glyphName="clear_all" />
+                                 </graphic>
+                              </Button>
+                              <Button mnemonicParsing="false" onAction="#deleteSelected">
+                                 <graphic>
+                                    <PhosphorIcon glyphName="trash" />
+                                 </graphic>
+                              </Button>
+                              <Separator orientation="VERTICAL" prefHeight="12.0" prefWidth="0.0" />
+                              <Button mnemonicParsing="false" onAction="#transferSelectedToFront">
+                                 <graphic>
+                                    <PhosphorIcon glyphName="selection-background" />
+                                 </graphic>
+                              </Button>
+                              <Button mnemonicParsing="false" onAction="#transferSelectedToBack">
+                                 <graphic>
+                                    <PhosphorIcon glyphName="selection-foreground" />
+                                 </graphic>
+                              </Button>
+                              <Button mnemonicParsing="false">
+                                 <graphic>
+                                    <MaterialsIcon glyphName="move_up" />
+                                 </graphic>
+                              </Button>
+                              <Button mnemonicParsing="false">
+                                 <graphic>
+                                    <MaterialsIcon glyphName="move_down" />
+                                 </graphic>
+                              </Button>
+                              <Button fx:id="groupShapes" mnemonicParsing="false">
+                                 <graphic>
+                                    <PhosphorIcon glyphName="arrows-in" />
+                                 </graphic>
+                              </Button>
+                              <Button fx:id="ungroupShapes" mnemonicParsing="false">
+                                 <graphic>
+                                    <PhosphorIcon glyphName="arrows-out" />
+                                 </graphic>
+                              </Button>
+                           </children>
+                        </HBox>
+                        <Separator orientation="VERTICAL" prefHeight="36.0" prefWidth="0.0" />
+                        <ToggleButton fx:id="penTool" minWidth="30.0" mnemonicParsing="false" prefHeight="30.0" prefWidth="10.0">
                            <graphic>
-                              <MaterialsIcon glyphName="save" />
+                              <PhosphorIcon glyphName="pen-nib" />
                            </graphic>
-                        </Button>
-                        <Button minWidth="30.0" mnemonicParsing="false" onAction="#clearAll">
+                           <toggleGroup>
+                              <ToggleGroup fx:id="editToolGroup" />
+                           </toggleGroup>
+                        </ToggleButton>
+                        <ToggleButton fx:id="eraserTool" minWidth="30.0" mnemonicParsing="false" prefHeight="30.0" prefWidth="10.0" toggleGroup="$editToolGroup">
                            <graphic>
-                              <MaterialsIcon glyphName="clear_all" />
-                           </graphic></Button>
-                        <Button mnemonicParsing="false" onAction="#deleteSelected">
-                           <graphic>
-                              <PhosphorIcon glyphName="trash" />
-                           </graphic></Button>
-                        <Separator orientation="VERTICAL" prefHeight="12.0" prefWidth="5.0" />
-                        <Button mnemonicParsing="false" onAction="#transferSelectedToFront">
-                           <graphic>
-                              <PhosphorIcon glyphName="selection-background" />
-                           </graphic></Button>
-                        <Button mnemonicParsing="false" onAction="#transferSelectedToBack">
-                           <graphic>
-                              <PhosphorIcon glyphName="selection-foreground" />
-                           </graphic></Button>
-                        <Button mnemonicParsing="false">
-                           <graphic>
-                              <MaterialsIcon glyphName="move_up" />
-                           </graphic></Button>
-                        <Button mnemonicParsing="false">
-                           <graphic>
-                              <MaterialsIcon glyphName="move_down" />
-                           </graphic></Button>
-                        <Button fx:id="groupShapes" mnemonicParsing="false">
-                           <graphic>
-                              <PhosphorIcon glyphName="arrows-in" />
+                              <PhosphorIcon glyphName="eraser" />
                            </graphic>
-                        </Button>
-                        <Button fx:id="ungroupShapes" mnemonicParsing="false">
+                        </ToggleButton>
+                        <ToggleButton fx:id="bendTool" minWidth="30.0" mnemonicParsing="false" prefHeight="30.0" prefWidth="10.0" toggleGroup="$editToolGroup">
                            <graphic>
-                              <PhosphorIcon glyphName="arrows-out" />
+                              <PhosphorIcon glyphName="bezier-curve" />
                            </graphic>
-                        </Button>
-                        <Separator orientation="VERTICAL" prefHeight="200.0" />
-                        <ComboBox fx:id="pathToComboBox" prefHeight="25.0" prefWidth="174.0" promptText="PATH_TO" />
+                        </ToggleButton>
                      </items>
                      <padding>
                         <Insets bottom="1.0" left="1.0" top="2.0" />
@@ -171,7 +185,11 @@
                            <tabs>
                               <Tab closable="false" text="Properties">
                                  <content>
-                                    <VBox fx:id="propertyPanel" prefHeight="200.0" prefWidth="100.0" />
+                                    <ScrollPane fitToWidth="true">
+                                       <content>
+                                          <VBox fx:id="propertyPanel" prefHeight="200.0" prefWidth="100.0" />
+                                       </content>
+                                    </ScrollPane>
                                  </content>
                               </Tab>
                               <Tab closable="false" text="Color">

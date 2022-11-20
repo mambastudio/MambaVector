@@ -14,6 +14,8 @@ import mamba.base.MambaShape;
  * @author user
  */
 public class MambaUtility {
+    
+   
     public static<E extends MambaEngine2D, T extends MambaShape<E>> TreeItem<T> searchTreeItem(TreeItem<T> parent , T value) 
     {
         if (parent != null && parent.getValue().equals(value))
@@ -40,4 +42,6 @@ public class MambaUtility {
         }
         return null;
     }
+    
+    
 }

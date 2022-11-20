@@ -22,13 +22,14 @@ import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.effect.Effect;
 import javafx.scene.paint.Color;
 import javafx.scene.transform.NonInvertibleTransformException;
-import javafx.scene.transform.Transform;
 import mamba.base.MambaShape;
 import mamba.base.engine.MEngine;
 import mamba.overlayselect.drag.MDrag;
 import mamba.overlayselect.drag.MDragCircle;
 import mamba.overlayselect.drag.MDragSquare;
-import mamba.util.MBound2;
+import mamba.base.math.MBound;
+import mamba.base.math.MTransform;
+import mamba.base.math.MTransformGeneric;
 
 /**
  *
@@ -51,7 +52,7 @@ public final class MRectangle implements MambaShape<MEngine>{
     private final DoubleProperty strokeWidth;
     private final ObjectProperty<Color> strokeColor;
         
-    private Transform transform;
+    private MTransformGeneric transform;
     
     private Effect effect = null;
     
@@ -76,7 +77,7 @@ public final class MRectangle implements MambaShape<MEngine>{
         strokeColor = new SimpleObjectProperty(Color.BLACK);
         
         //to be at positon (0, 0), Transform.translate(width.get()/2, height.get()/2), since origin is at the middle
-        transform = Transform.translate(width.get()/2, height.get()/2); //
+        transform = MTransform.translate(width.get()/2, height.get()/2); //
         
         nameProperty = new SimpleStringProperty();
     }
@@ -117,19 +118,19 @@ public final class MRectangle implements MambaShape<MEngine>{
     }
     
     @Override
-    public Transform getTransform() {
+    public MTransformGeneric getTransform() {
        return transform;
     }
 
     @Override
-    public void setTransform(Transform transform) {
+    public void setTransform(MTransformGeneric transform) {
         this.transform = transform;
     }
 
     @Override
     public void translate(Point2D p) {
         Point2D tp = p.subtract(offset);
-        this.transform = Transform.translate(tp.getX(), tp.getY());
+        this.transform = MTransform.translate(tp.getX(), tp.getY());
     }
 
     @Override
@@ -171,9 +172,7 @@ public final class MRectangle implements MambaShape<MEngine>{
     public void draw() {
         graphicContext.save();
         //apply transform first
-        graphicContext.setTransform(
-                transform.getMxx(), transform.getMyx(), transform.getMxy(),
-                transform.getMyy(), transform.getTx(), transform.getTy());
+        transform.transformGraphicsContext(graphicContext);
         
         //draw shape, this is just local coordinates 
         graphicContext.setFill(solidColor.get());
@@ -208,27 +207,22 @@ public final class MRectangle implements MambaShape<MEngine>{
     public BoundingBox getBounds() {
         Point2D min = new Point2D(-width.doubleValue()/2, -height.doubleValue()/2);
         Point2D max = new Point2D(width.doubleValue()/2, height.doubleValue()/2);
-        MBound2 bound = new MBound2();
+        MBound bound = new MBound();
         bound.include(min);
         bound.include(max);       
         return (BoundingBox) transform.transform(bound.getBoundingBox());
     }
 
     @Override
-    public boolean contains(Point2D p) {
-        try {
-            //transform p to local coordinates
-            Point2D invP = transform.inverseTransform(p);
-            Point2D min = new Point2D(-width.doubleValue()/2, -height.doubleValue()/2);
-            Point2D max = new Point2D(width.doubleValue()/2, height.doubleValue()/2);
-            MBound2 bound = new MBound2();
-            bound.include(min);
-            bound.include(max);       
-            return bound.contains(invP);
-        } catch (NonInvertibleTransformException ex) {
-            Logger.getLogger(MRectangle.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        return false;
+    public boolean contains(Point2D p) {      
+        //transform p to local coordinates
+        Point2D invP = transform.inverseTransform(p);
+        Point2D min = new Point2D(-width.doubleValue()/2, -height.doubleValue()/2);
+        Point2D max = new Point2D(width.doubleValue()/2, height.doubleValue()/2);
+        MBound bound = new MBound();
+        bound.include(min);
+        bound.include(max);       
+        return bound.contains(invP);       
     }
 
     public double getWidth()
@@ -368,8 +362,8 @@ public final class MRectangle implements MambaShape<MEngine>{
 
                 Point2D p = new Point2D(e.getX(), e.getY());
 
-                MBound2 nbound = new MBound2();
-                MBound2 cbound = new MBound2();
+                MBound nbound = new MBound();
+                MBound cbound = new MBound();
 
                 cbound.include(getBounds());          //current bounds 
                 nbound.include(p, cbound.getPoint(2));      //new bounds
@@ -396,8 +390,8 @@ public final class MRectangle implements MambaShape<MEngine>{
             c2.setOnMouseDragged(e->{
                 Point2D p = new Point2D(e.getX(), e.getY());
 
-                MBound2 nbound = new MBound2();
-                MBound2 cbound = new MBound2();
+                MBound nbound = new MBound();
+                MBound cbound = new MBound();
 
                 cbound.include(getBounds());          //current bounds 
                 nbound.include(p, cbound.getPoint(0));      //new bounds
@@ -431,8 +425,8 @@ public final class MRectangle implements MambaShape<MEngine>{
 
                 Point2D p = new Point2D(e.getX(), e.getY());
 
-                MBound2 nbound = new MBound2();
-                MBound2 cbound = new MBound2();
+                MBound nbound = new MBound();
+                MBound cbound = new MBound();
 
                 cbound.include(getBounds());       //current bounds             
                 nbound.include(p, cbound.getPoint(1));      //new bounds
@@ -460,8 +454,8 @@ public final class MRectangle implements MambaShape<MEngine>{
 
                 Point2D p = new Point2D(e.getX(), e.getY());
 
-                MBound2 nbound = new MBound2();
-                MBound2 cbound = new MBound2();
+                MBound nbound = new MBound();
+                MBound cbound = new MBound();
 
                 cbound.include(getBounds());       //current bounds             
                 nbound.include(p, cbound.getPoint(3));      //new bounds

@@ -12,12 +12,11 @@ import javafx.collections.ObservableList;
 import javafx.geometry.BoundingBox;
 import javafx.geometry.Point2D;
 import javafx.scene.canvas.GraphicsContext;
-import javafx.scene.transform.Transform;
 import mamba.base.MambaShape;
 import mamba.base.engine.MEngine;
 import mamba.overlayselect.drag.MDrag;
-import mamba.overlayselect.drag.MDragSquare;
-import mamba.util.MBound2;
+import mamba.base.math.MBound;
+import mamba.base.math.MTransformGeneric;
 
 /**
  *
@@ -38,12 +37,12 @@ public class MGroup implements MambaShape<MEngine>{
     }
 
     @Override
-    public Transform getTransform() {
+    public MTransformGeneric getTransform() {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
     @Override
-    public void setTransform(Transform transform) {
+    public void setTransform(MTransformGeneric transform) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
@@ -97,7 +96,7 @@ public class MGroup implements MambaShape<MEngine>{
 
     @Override
     public BoundingBox getBounds() {
-        MBound2 bound = new MBound2();
+        MBound bound = new MBound();
         for(MambaShape shape : children)
         {
             bound.include(shape.getBounds());

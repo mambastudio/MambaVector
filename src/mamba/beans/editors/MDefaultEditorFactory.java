@@ -32,7 +32,8 @@ public class MDefaultEditorFactory implements Callback<MBeanPropertyItem, MInter
             return MEditors.createEnumEditor(item);       
         else if(Effect.class.isAssignableFrom(type))        
             return MEditors.createEffectEditor(item);      
-      
+        else if(isBoolean(type))
+            return MEditors.createBooleanEditor(item);      
         
         return null; 
     }
@@ -51,6 +52,17 @@ public class MDefaultEditorFactory implements Callback<MBeanPropertyItem, MInter
     private static boolean isNumber(Class<?> type)  {
         if ( type == null ) return false;
         for (Class<?> cls : numericTypes) {
+            if ( type == cls ) return true;
+        }
+        return false;
+    }
+    
+    private static boolean isBoolean(Class<?> type)
+    {
+        Class<?>[] booleanTypes = {boolean.class, Boolean.class};
+        
+        if ( type == null ) return false;
+        for (Class<?> cls : booleanTypes) {
             if ( type == cls ) return true;
         }
         return false;

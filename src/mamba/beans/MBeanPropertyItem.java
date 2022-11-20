@@ -12,8 +12,9 @@ import mamba.beans.editors.base.MInterfacePropertyEditor;
 /**
  *
  * @author user
+ * @param <C> consumer
  */
-public interface MBeanPropertyItem {
+public interface MBeanPropertyItem<C> {
     public Class<?> getType();
        
     public String getCategory();

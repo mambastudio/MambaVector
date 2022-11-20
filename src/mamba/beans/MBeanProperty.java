@@ -12,7 +12,6 @@ import java.util.Optional;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javafx.beans.value.ObservableValue;
-import mamba.base.MambaEngine2D;
 import mamba.beans.light.MPropertyDescriptor;
 
 /**
@@ -26,19 +25,18 @@ public final class MBeanProperty implements MBeanPropertyItem{
     private final MPropertyDescriptor beanPropertyDescriptor; //contains read and write method
     private boolean editable = true;
     private Optional<ObservableValue<? extends Object>> observableValue = Optional.empty();
-    private final MambaEngine2D engine;
+    private final MConsumerVoid consume;
     
-    public MBeanProperty(final Object bean, final MPropertyDescriptor propertyDescriptor, MambaEngine2D engine)
+    public MBeanProperty(final Object bean, final MPropertyDescriptor propertyDescriptor, MConsumerVoid consume)
     {
         this.bean = bean;
         this.beanPropertyDescriptor = propertyDescriptor;
-       
+        this.consume = consume;
         if (this.beanPropertyDescriptor.getWriteMethod() == null) {
             this.setEditable(false);            
         }
 
         this.findObservableValue();
-        this.engine = engine;
     }
     
     @Override
@@ -47,7 +45,8 @@ public final class MBeanProperty implements MBeanPropertyItem{
         if ( writeMethod != null ) {
             try {
                 writeMethod.invoke(this.bean, value);
-                engine.draw();
+                if(consume != null)
+                    consume.call();
             } catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {                
                 Logger.getLogger(MBeanProperty.class.getName()).log(Level.SEVERE, null, e);
             }

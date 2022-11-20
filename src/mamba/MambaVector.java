@@ -36,8 +36,6 @@ public class MambaVector extends Application{
         primaryStage.setScene(scene);
        // primaryStage.setMaximized(true);
         primaryStage.show();
-        
-        primaryStage.getScene().setCursor(new ImageCursor(NodeSnapshot.getPhosphorIcon("pen-nib", 24, 90)));
     }
     
     public static void main(String[] args) {

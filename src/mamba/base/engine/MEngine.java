@@ -52,6 +52,7 @@ public class MEngine implements MambaEngine2D {
         rootShape.addShape(shape);
         shape.setGraphicContext(graphicContext);
         shape.setEngine(this);
+        this.selectionModel.set(shape);
         draw();
     }
 
@@ -90,7 +91,7 @@ public class MEngine implements MambaEngine2D {
         
     @Override
     public MambaShape hitSelect(Point2D p) {  
-               
+        
         MIntersection isect = new MIntersection();
         if(rootShape.intersect(p, isect))
         {
@@ -168,6 +169,7 @@ public class MEngine implements MambaEngine2D {
         {
             rootShape.getChildren().remove(selectionModel.getSelected());
             selectionModel.clear();
+            draw();
         }
     }
 

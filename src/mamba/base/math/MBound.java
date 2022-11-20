@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package mamba.util;
+package mamba.base.math;
 
 import javafx.geometry.BoundingBox;
 import javafx.geometry.Point2D;
@@ -12,11 +12,11 @@ import javafx.geometry.Point2D;
  *
  * @author user
  */
-public class MBound2 {
+public class MBound {
     private Point2D min;
     private Point2D max;
     
-    public MBound2()
+    public MBound()
     {
         min = new Point2D(Double.POSITIVE_INFINITY, Double.POSITIVE_INFINITY);
         max = new Point2D(Double.NEGATIVE_INFINITY, Double.NEGATIVE_INFINITY);
@@ -61,7 +61,7 @@ public class MBound2 {
         
     }
     
-    public final void include(MBound2 bound)
+    public final void include(MBound bound)
     {
         include(bound.getMin(), bound.getMax());
     }

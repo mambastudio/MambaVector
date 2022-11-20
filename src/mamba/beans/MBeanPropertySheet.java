@@ -27,6 +27,7 @@ import mamba.beans.editors.base.MInterfacePropertyEditor;
 public class MBeanPropertySheet<P extends MBeanPropertyItem, E extends MInterfacePropertyEditor> extends VBox {
     private Callback<P, E> propertyEditorFactory;
     private static final int MIN_COLUMN_WIDTH = 60;
+    private static final int MIN_ROW_HEIGHT = 25;
     
     public MBeanPropertySheet()
     {
@@ -72,6 +73,7 @@ public class MBeanPropertySheet<P extends MBeanPropertyItem, E extends MInterfac
                 // setup property label
                 Label label = new Label(title);
                 label.setMinWidth(MIN_COLUMN_WIDTH);
+                label.setMinHeight(MIN_ROW_HEIGHT);
                 
                 // show description as a tooltip
                 String description = item.getDescription();
@@ -89,6 +91,7 @@ public class MBeanPropertySheet<P extends MBeanPropertyItem, E extends MInterfac
                     if (editor instanceof Region) {
                         ((Region)editor).setMinWidth(MIN_COLUMN_WIDTH);
                         ((Region)editor).setMaxWidth(Double.MAX_VALUE);
+                        ((Region)editor).setMinHeight(MIN_ROW_HEIGHT);
                     }
                     label.setLabelFor(editor);               
                     add(editor, 1, row);

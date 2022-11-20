@@ -6,7 +6,6 @@
 package mamba.overlayselect.drag;
 
 import javafx.collections.ObservableList;
-import javafx.geometry.Point2D;
 import javafx.scene.Cursor;
 import javafx.scene.Group;
 import javafx.scene.Node;
@@ -23,6 +22,8 @@ public abstract class MDrag<S extends Shape> extends Group {
      * Offset coordinates below are not used directly for position (use getPosition instead).
      * This is used in some calculation for editing purpose and hence have no meaning across all shapes.
      * For example, the rectangle use these coordinate but not circle.
+     * 
+     * Drags such as mouse drag and mouse pressed are handle in shape
      * 
     **/
     private double offsetX, offsetY;

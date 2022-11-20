@@ -7,8 +7,10 @@ package mamba.base.engine.shape;
 
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.ObjectProperty;
+import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleDoubleProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.SimpleStringProperty;
@@ -22,13 +24,15 @@ import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.effect.Effect;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.StrokeLineCap;
+import static javafx.scene.shape.StrokeLineCap.BUTT;
 import javafx.scene.transform.NonInvertibleTransformException;
-import javafx.scene.transform.Transform;
 import mamba.base.MambaShape;
 import mamba.base.engine.MEngine;
 import mamba.overlayselect.drag.MDrag;
 import mamba.overlayselect.drag.MDragSquare;
-import mamba.util.MBound2;
+import mamba.base.math.MBound;
+import mamba.base.math.MTransform;
+import mamba.base.math.MTransformGeneric;
 import mamba.util.MIntersection;
 
 /**
@@ -49,8 +53,12 @@ public class MLine implements MambaShape<MEngine>{
     //stroke width, color
     private final DoubleProperty strokeWidth;
     private final ObjectProperty<Color> strokeColor;
+    private final ObjectProperty<StrokeLineCap> lineCap;
+    private final BooleanProperty dashedLine;
+    private final DoubleProperty dashSize;
+    private final DoubleProperty gapSize;
     
-    private Transform transform;    
+    private MTransformGeneric transform;    
     private Effect effect;
     
     private final ObservableList<MDrag> dragHandles = FXCollections.observableArrayList();
@@ -66,13 +74,47 @@ public class MLine implements MambaShape<MEngine>{
         p1 = new Point2D(10, 10);
         p2 = new Point2D(60, 60);
         
-        strokeWidth = new SimpleDoubleProperty(10);
+        strokeWidth = new SimpleDoubleProperty(4);
         strokeColor = new SimpleObjectProperty(Color.BLACK);
         
         //to be at positon (p1, p2)
-        transform = Transform.translate(0, 0); 
+        transform = MTransform.translate(0, 0); 
         
         nameProperty = new SimpleStringProperty("Line");
+        dashedLine = new SimpleBooleanProperty(false);
+        dashSize = new SimpleDoubleProperty(5);
+        gapSize = new SimpleDoubleProperty(5);
+        lineCap = new SimpleObjectProperty(BUTT);
+    }
+    
+    public void setStrokeWidth(double strokeWidth)
+    {
+        this.strokeWidth.set(strokeWidth);
+    }
+    
+    public double getStrokeWidth()
+    {
+        return this.strokeWidth.get();
+    }
+    
+    public DoubleProperty strokeWidthProperty()
+    {
+        return this.strokeWidth;
+    }
+       
+    public void setLineCap(StrokeLineCap lineCap)
+    {
+        this.lineCap.set(lineCap);
+    }
+    
+    public StrokeLineCap getLineCap()
+    {
+        return this.lineCap.get();
+    }
+    
+    public ObjectProperty<StrokeLineCap> lineCapProperty()
+    {
+        return this.lineCap;
     }
     
     public void setStrokeColor(Color strokeColor)
@@ -89,21 +131,51 @@ public class MLine implements MambaShape<MEngine>{
     {
         return this.strokeColor;
     }
+    
+    public void setDashSize(double dashSize)
+    {
+        this.dashSize.set(dashSize);
+    }
+    
+    public double getDashSize()
+    {
+        return this.dashSize.get();
+    }
+    
+    public DoubleProperty dashSizeProperty()
+    {
+        return this.dashSize;
+    }
+    
+    public void setGapSize(double gapSize)
+    {
+        this.gapSize.set(gapSize);
+    }
+    
+    public double getGapSize()
+    {
+        return this.gapSize.get();
+    }
+    
+    public DoubleProperty gapSizeProperty()
+    {
+        return this.gapSize;
+    }
 
     @Override
-    public Transform getTransform() {
+    public MTransformGeneric getTransform() {
         return transform;
     }
 
     @Override
-    public void setTransform(Transform transform) {
+    public void setTransform(MTransformGeneric transform) {
         this.transform = transform;
     }
 
     @Override
     public void translate(Point2D p) {
         Point2D tp = p.subtract(offset);
-        this.transform = Transform.translate(tp.getX(), tp.getY());
+        this.transform = MTransform.translate(tp.getX(), tp.getY());
     }
 
     @Override
@@ -150,14 +222,16 @@ public class MLine implements MambaShape<MEngine>{
     public void draw() {
         graphicContext.save();
         //apply transform first
-        graphicContext.setTransform(
-                transform.getMxx(), transform.getMyx(), transform.getMxy(),
-                transform.getMyy(), transform.getTx(), transform.getTy());
-        
+        transform.transformGraphicsContext(graphicContext);
+                
         //draw shape, this is just local coordinates         
-        graphicContext.setLineCap(StrokeLineCap.BUTT);        
+        graphicContext.setLineCap(lineCap.get());        
         graphicContext.setStroke(strokeColor.get());
         graphicContext.setLineWidth(strokeWidth.doubleValue());
+        
+        if(dashedLine.get())
+            graphicContext.setLineDashes(dashSize.get(), gapSize.get());
+        
         graphicContext.strokeLine(p1.getX(), p1.getY(), p2.getX(), p2.getY());
         
         
@@ -167,30 +241,25 @@ public class MLine implements MambaShape<MEngine>{
 
     @Override
     public BoundingBox getBounds() {
-        MBound2 bound = new MBound2();
+        MBound bound = new MBound();
         bound.include(p1);
         bound.include(p2);   
         return (BoundingBox) transform.transform(bound.getBoundingBox());
     }
 
     @Override
-    public boolean contains(Point2D p) {
-        try {
-            //transform p to local coordinates
-            Point2D invP = transform.inverseTransform(p);            
-            MBound2 bound = new MBound2();
-            
-            //expand a bit to maximum 5 on x and y in order to have minimum bound that is not less than 5
-            //future plans is to implement oriented bounding box
-            bound.include(new Point2D(p1.getX()-5, p1.getY()-5), new Point2D(p1.getX() + 5, p1.getY() + 5));
-            bound.include(new Point2D(p2.getX()-5, p2.getY()-5), new Point2D(p2.getX() + 5, p2.getY() + 5));
-            bound.include(p1);
-            bound.include(p2);       
-            return bound.contains(invP);
-        } catch (NonInvertibleTransformException ex) {
-            Logger.getLogger(MLine.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        return false;
+    public boolean contains(Point2D p) {       
+        //transform p to local coordinates
+        Point2D invP = transform.inverseTransform(p);            
+        MBound bound = new MBound();
+
+        //expand a bit to maximum 5 on x and y in order to have minimum bound that is not less than 5
+        //future plans is to implement oriented bounding box
+        bound.include(new Point2D(p1.getX()-5, p1.getY()-5), new Point2D(p1.getX() + 5, p1.getY() + 5));
+        bound.include(new Point2D(p2.getX()-5, p2.getY()-5), new Point2D(p2.getX() + 5, p2.getY() + 5));
+        bound.include(p1);
+        bound.include(p2);       
+        return bound.contains(invP);       
     }
 
     @Override
@@ -275,15 +344,9 @@ public class MLine implements MambaShape<MEngine>{
     }
     
     private Point2D pointInvTransform(Point2D point)
-    {
-        try {
-            return transform.inverseTransform(point);
-        } catch (NonInvertibleTransformException ex) {
-            Logger.getLogger(MLine.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        return null;
-    }
-    
+    {       
+        return transform.inverseTransform(point);       
+    }    
     
     private Point2D getGlobalP1()
     {
@@ -293,8 +356,21 @@ public class MLine implements MambaShape<MEngine>{
     private Point2D getGlobalP2()
     {
         return pointTransform(p2);
+    }    
+    
+    public void setDashedLine(boolean dashedLine)
+    {       
+        this.dashedLine.set(dashedLine);    
+    }    
+    public boolean getDashedLine()
+    {
+        return this.dashedLine.get();
     }
     
+    public BooleanProperty dashedLineProperty()
+    {
+        return dashedLine;
+    }
 
     @Override
     public StringProperty getNameProperty() {
