@@ -244,6 +244,14 @@ public class BuilderController implements Initializable {
                 hEditBox.setDisable(false);
             }
         });
+        
+        bendTool.selectedProperty().addListener((o, ov, nv)->{
+            if(nv != null && engine2D.getSelected() instanceof MPath)
+            {
+                MPath path = (MPath)engine2D.getSelected();
+                path.getIsBezierEdit().set(nv);
+            }
+        });
    
     }    
     

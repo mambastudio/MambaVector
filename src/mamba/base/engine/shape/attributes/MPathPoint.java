@@ -14,6 +14,7 @@ import mamba.base.engine.shape.MPath;
 import static mamba.base.engine.shape.MPath.PathToMove.MOVE_TO;
 import mamba.overlayselect.drag.MDrag;
 import mamba.overlayselect.drag.MDragCircle;
+import mamba.overlayselect.drag.MDragLine;
 
 /**
  *
@@ -22,11 +23,15 @@ import mamba.overlayselect.drag.MDragCircle;
 public class MPathPoint implements MPathPointGeneric{
     MPath path;
     MPathTypeGeneric pathType;
+    
     Point2D point;
+    Point2D control_1;
+    Point2D control_2;
    
     MDrag drag;
     MDrag dragC1;
     MDrag dragC2;
+    MDragLine dragLine;
     
     //for calculating control points (control drags too) relative to drag point
     double tC1;
@@ -56,6 +61,7 @@ public class MPathPoint implements MPathPointGeneric{
         dC1 = Point2D.ZERO;
         tC2 = 0;
         dC2 = Point2D.ZERO;
+        
     }
     
     @Override
@@ -88,7 +94,22 @@ public class MPathPoint implements MPathPointGeneric{
     @Override
     public void updateDragHandles() {                
         drag.setX(pointTransform(point).getX());
-        drag.setY(pointTransform(point).getY());             
+        drag.setY(pointTransform(point).getY());        
+        
+        Point2D pC1 = point.add(dC1.multiply(tC1));
+        Point2D pC2 = point.add(dC2.multiply(tC2));
+        
+        //if editing bezier control points
+        if(path.isBezierEdit())
+        {
+            dragC1.setX(pointTransform(pC1).getX());
+            dragC1.setY(pointTransform(pC1).getY());
+            dragC2.setX(pointTransform(pC2).getX());
+            dragC2.setY(pointTransform(pC2).getY());
+
+            dragLine.setStart(dragC1.getX(), dragC1.getY());
+            dragLine.setEnd(dragC2.getX(), dragC2.getY());
+        }
     }
 
     @Override
@@ -108,7 +129,13 @@ public class MPathPoint implements MPathPointGeneric{
         pointDrag.setOnMouseMoved(e->{
             pointDrag.setCursor(Cursor.HAND);
         });
-        return FXCollections.observableArrayList(pointDrag);
+        ObservableList<MDrag> drags = FXCollections.observableArrayList(pointDrag);
+        
+        //if editing bezier control points
+        if(path.isBezierEdit())
+            drags.addAll(getControlDragHandles());
+        
+        return drags;
     }
     
     private ObservableList<MDrag> getControlDragHandles()
@@ -140,12 +167,18 @@ public class MPathPoint implements MPathPointGeneric{
         //color
         MDragCircle c2 = new MDragCircle(Color.CHOCOLATE);
         //O + tD
-        c2.setX(pointTransform(point).getX()); 
-        c2.setY(pointTransform(point).getY());     
+        c2.setX(pointTransform(point).getX() + dC2.multiply(tC2).getX()); 
+        c2.setY(pointTransform(point).getY() + dC2.multiply(tC2).getY());     
         dragC2 = c2;
         c2.setOnMouseDragged(e->{
             Point2D p = new Point2D(e.getX(), e.getY());   //in global coordinates             
-            Point2D eP = this.pointInvTransform(p);   //transform to local coordinates
+            Point2D ep = this.pointInvTransform(p);   //transform to local coordinates
+            
+            //update relative control points data
+            tC2 = ep.distance(point);
+            dC2 = (tC2 > 0) ? ep.subtract(point).normalize() : Point2D.ZERO;
+            tC1 = tC2;
+            dC1 = dC2.multiply(-1);
             
             path.updateDragHandles(null);                
             path.getEngine2D().draw();
@@ -154,6 +187,10 @@ public class MPathPoint implements MPathPointGeneric{
         c2.setOnMouseMoved(e->{
             c2.setCursor(Cursor.HAND);
         });
-        return FXCollections.observableArrayList(c1);
+        
+        dragLine = new MDragLine();
+        dragLine.setStart(c1.getX(), c1.getY());
+        dragLine.setEnd(c2.getX(), c2.getY());
+        return FXCollections.observableArrayList(dragLine, c1, c2);
     }
 }

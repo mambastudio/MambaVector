@@ -74,6 +74,8 @@ public class MPath implements MambaShape<MEngine>{
     
     private final ObjectProperty<PathTo> pathToProperty;
     
+    private final BooleanProperty isBezierEdit;
+    
     public MPath()
     {
         //to be at positon (p1, p2)
@@ -98,6 +100,11 @@ public class MPath implements MambaShape<MEngine>{
         dashSize = new SimpleDoubleProperty(5);
         gapSize = new SimpleDoubleProperty(5);
         lineCap = new SimpleObjectProperty(BUTT);
+        
+        isBezierEdit = new SimpleBooleanProperty(false);
+        isBezierEdit.addListener((o, ov, nv)->{
+            getEngine2D().getSelectionModel().refreshOverlay(); //refresh overlay
+        });
     }
     
     public void addLineTo(double x, double y)
@@ -105,7 +112,7 @@ public class MPath implements MambaShape<MEngine>{
         Point2D point = new Point2D(x, y);        
         points.add(new MPathPoint(this, LINE_TO, point));
         getEngine2D().draw();
-        getEngine2D().getSelectionModel().refreshOverlay();
+        getEngine2D().getSelectionModel().refreshOverlay(); //refresh overlay
     }
     
     public void addMoveTo(double x, double y)
@@ -113,7 +120,7 @@ public class MPath implements MambaShape<MEngine>{
         Point2D point = new Point2D(x, y);        
         points.add(new MPathPoint(this, MOVE_TO, point));
         getEngine2D().draw();
-        getEngine2D().getSelectionModel().refreshOverlay();
+        getEngine2D().getSelectionModel().refreshOverlay(); //refresh overlay
     }
     
     @Override
@@ -427,7 +434,16 @@ public class MPath implements MambaShape<MEngine>{
     {
         return this.gapSize;
     }
+    
+    public BooleanProperty getIsBezierEdit()
+    {
+        return isBezierEdit;
+    }
         
+    public boolean isBezierEdit()
+    {
+        return isBezierEdit.get();
+    }
 
     @Override
     public ObservableList<MambaShape<MEngine>> getChildren() {
