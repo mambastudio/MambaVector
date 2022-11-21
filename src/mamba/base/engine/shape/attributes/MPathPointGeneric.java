@@ -24,14 +24,52 @@
 package mamba.base.engine.shape.attributes;
 
 import javafx.collections.ObservableList;
+import javafx.geometry.Point2D;
 import mamba.overlayselect.drag.MDrag;
 
 /**
  *
  * @author user
+ * @param <Bezier>
  */
-public interface MPathPointGeneric {
+public interface MPathPointGeneric<Bezier extends MPathBezier> 
+{
     public MPathTypeGeneric getPathType();
     public ObservableList<MDrag> getDragHandles();
     public void updateDragHandles();
+    
+    public default Bezier getBezier()
+    {
+        return null;
+    }
+    
+    public default Point2D getPoint()
+    {
+        return null;
+    }
+    
+    public default void setPoint(Point2D point)
+    {
+        
+    }
+    
+    public default Point2D getControlFirst()
+    {
+        return null;
+    }
+    
+    public default void setControlFirst(Point2D point)
+    {
+        
+    }
+    
+    public default Point2D getControlSecond()
+    {
+        return null;
+    }
+    
+    public default void setControlSecond(Point2D point)
+    {
+        
+    }
 }

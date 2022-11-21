@@ -197,17 +197,30 @@ public class MPath implements MambaShape<MEngine>{
         
         graphicContext.setFill(fillColor.get());
         
-        graphicContext.beginPath();        
+        graphicContext.beginPath(); 
+        
+        MPathPoint previousPoint = points.get(0);
+        
         for(MPathPoint point : points)
         {
             if(point.getPathType() == MOVE_TO)
                 graphicContext.moveTo(
                         point.getPoint().getX(), 
+                        point.getPoint().getY());            
+            else if(point.isInBezierRange())
+                graphicContext.bezierCurveTo(
+                        previousPoint.getC2().getX(), 
+                        previousPoint.getC2().getY(), 
+                        point.getC1().getX(), 
+                        point.getC1().getY(), 
+                        point.getPoint().getX(), 
                         point.getPoint().getY());
-            else if(point.getPathType() == LINE_TO)
+            else
                 graphicContext.lineTo(
                         point.getPoint().getX(), 
                         point.getPoint().getY());
+            
+            previousPoint = point;
         }   
         if(getClosePath())
             graphicContext.closePath();

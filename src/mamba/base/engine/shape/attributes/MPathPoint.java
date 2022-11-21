@@ -193,4 +193,19 @@ public class MPathPoint implements MPathPointGeneric{
         dragLine.setEnd(c2.getX(), c2.getY());
         return FXCollections.observableArrayList(dragLine, c1, c2);
     }
+    
+    public Point2D getC1()
+    {
+        return point.add(dC1.multiply(tC1));
+    }
+    
+    public Point2D getC2()
+    {
+        return point.add(dC2.multiply(tC2));
+    }
+    
+    public boolean isInBezierRange()
+    {
+        return tC1 > 0.5;
+    }
 }
