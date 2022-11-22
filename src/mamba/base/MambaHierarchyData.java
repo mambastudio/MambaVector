@@ -17,6 +17,11 @@ public interface MambaHierarchyData<T extends MambaHierarchyData> {
      */
     ObservableList<T> getChildren();
     
+    default boolean isChild()
+    {
+        return getChildren().isEmpty();
+    }
+    
     default void clear()
     {
         getChildren().clear();
