@@ -26,6 +26,7 @@ import mamba.base.MambaShape;
 import mamba.base.engine.MEngine;
 import static mamba.base.engine.shape.MPath.PathTo.LINE_TO;
 import static mamba.base.engine.shape.MPath.PathToMove.MOVE_TO;
+import mamba.base.engine.shape.attributes.MPathBezier;
 import mamba.base.engine.shape.attributes.MPathPoint;
 import mamba.base.engine.shape.attributes.MPathTypeGeneric;
 import mamba.overlayselect.drag.MDrag;
@@ -37,7 +38,8 @@ import mamba.base.math.MTransformGeneric;
  *
  * @author user
  */
-public class MPath implements MambaShape<MEngine>{
+public class MPath extends MPathBezier<MPathPoint> implements MambaShape<MEngine>{
+
     public static enum PathTo implements MPathTypeGeneric{
         LINE_TO, QUADRATIC_CURVE_TO, BEZIER_CURVE_TO, ARC_TO;
     };
@@ -50,12 +52,10 @@ public class MPath implements MambaShape<MEngine>{
     private GraphicsContext graphicContext;
     
     private Point2D offset;
-    
-    ObservableList<MPathPoint> points = null;
-    
+        
     private final ObjectProperty<Color> lineColor;
     private final DoubleProperty lineWidth;
-    private final BooleanProperty closePath;
+    private final BooleanProperty isClosed;
     private final ObjectProperty<Color> fillColor;
     private final BooleanProperty fillPath;
     private final ObjectProperty<StrokeLineCap> lineCap;
@@ -81,12 +81,10 @@ public class MPath implements MambaShape<MEngine>{
         //to be at positon (p1, p2)
         transform = MTransform.translate(0, 0); 
         
-        points = FXCollections.observableArrayList();
-        points.add(new MPathPoint(this));
-        points.add(new MPathPoint(this, LINE_TO, new Point2D(150, 150)));
+        add(new MPathPoint(this));
+        add(new MPathPoint(this, LINE_TO, new Point2D(150, 150)));
         
-        offset = new Point2D(0, 0);
-        
+        offset = new Point2D(0, 0);        
          
         nameProperty = new SimpleStringProperty();
         pathToProperty = new SimpleObjectProperty(LINE_TO);
@@ -94,7 +92,7 @@ public class MPath implements MambaShape<MEngine>{
         lineColor = new SimpleObjectProperty(Color.BLACK);
         lineWidth = new SimpleDoubleProperty(2);
         fillColor = new SimpleObjectProperty(Color.BLACK);
-        closePath = new SimpleBooleanProperty(false);
+        isClosed = new SimpleBooleanProperty(false);
         fillPath = new SimpleBooleanProperty(false);
         dashedLine = new SimpleBooleanProperty(false);
         dashSize = new SimpleDoubleProperty(5);
@@ -106,11 +104,11 @@ public class MPath implements MambaShape<MEngine>{
             getEngine2D().getSelectionModel().refreshOverlay(); //refresh overlay
         });
     }
-    
+        
     public void addLineTo(double x, double y)
     {
         Point2D point = new Point2D(x, y);        
-        points.add(new MPathPoint(this, LINE_TO, point));
+        add(new MPathPoint(this, LINE_TO, point));
         getEngine2D().draw();
         getEngine2D().getSelectionModel().refreshOverlay(); //refresh overlay
     }
@@ -118,7 +116,7 @@ public class MPath implements MambaShape<MEngine>{
     public void addMoveTo(double x, double y)
     {
         Point2D point = new Point2D(x, y);        
-        points.add(new MPathPoint(this, MOVE_TO, point));
+        add(new MPathPoint(this, MOVE_TO, point));
         getEngine2D().draw();
         getEngine2D().getSelectionModel().refreshOverlay(); //refresh overlay
     }
@@ -198,31 +196,31 @@ public class MPath implements MambaShape<MEngine>{
         graphicContext.setFill(fillColor.get());
         
         graphicContext.beginPath(); 
-        
-        MPathPoint previousPoint = points.get(0);
-        
-        for(MPathPoint point : points)
+                        
+        for(MPathPoint point : getList())
         {
-            if(point.getPathType() == MOVE_TO)
+            boolean isFirst = isFirst(point);
+            if(isFirst)
                 graphicContext.moveTo(
                         point.getPoint().getX(), 
                         point.getPoint().getY());            
             else if(point.isInBezierRange())
+            {
+                MPathPoint previousPoint = getPrevious(point);
                 graphicContext.bezierCurveTo(
-                        previousPoint.getC2().getX(), 
-                        previousPoint.getC2().getY(), 
-                        point.getC1().getX(), 
-                        point.getC1().getY(), 
+                        previousPoint.getMirrorControl().getX(), 
+                        previousPoint.getMirrorControl().getY(), 
+                        point.getControl().getX(), 
+                        point.getControl().getY(), 
                         point.getPoint().getX(), 
                         point.getPoint().getY());
+            }
             else
                 graphicContext.lineTo(
                         point.getPoint().getX(), 
-                        point.getPoint().getY());
-            
-            previousPoint = point;
+                        point.getPoint().getY());       
         }   
-        if(getClosePath())
+        if(getIsClosed())
             graphicContext.closePath();
         
         graphicContext.setEffect(effect);     
@@ -239,7 +237,7 @@ public class MPath implements MambaShape<MEngine>{
     @Override
     public BoundingBox getBounds() {
         MBound bound = new MBound();
-        for(MPathPoint point : points)
+        for(MPathPoint point : getList())
         {
             bound.include(point.getPoint());
         }
@@ -252,7 +250,7 @@ public class MPath implements MambaShape<MEngine>{
         //transform p to local coordinates
         Point2D invP = transform.inverseTransform(p);
         MBound bound = new MBound();
-        for(MPathPoint point : points)
+        for(MPathPoint point : getList())
         {
             bound.include(point.getPoint());
         }
@@ -261,7 +259,7 @@ public class MPath implements MambaShape<MEngine>{
 
     @Override
     public void updateDragHandles(MDrag referenceHandle) {
-        for(MPathPoint point: points)
+        for(MPathPoint point: getList())
         {
             point.updateDragHandles();
         }        
@@ -273,7 +271,7 @@ public class MPath implements MambaShape<MEngine>{
         ObservableList<MDrag> handles = FXCollections.observableArrayList();
         //if(points.isEmpty())
         {
-            for(MPathPoint point: points)
+            for(MPathPoint point: getList())
             {
                 handles.addAll(point.getDragHandles());
             }
@@ -361,18 +359,21 @@ public class MPath implements MambaShape<MEngine>{
         return fillColor;
     }
     
-    public void setClosePath(boolean closePath)
+    @Override
+    public void setIsClosed(boolean closePath)
     {       
-        this.closePath.set(closePath);    
+        this.isClosed.set(closePath);    
     }    
-    public boolean getClosePath()
+    @Override
+    public boolean getIsClosed()
     {
-        return this.closePath.get();
+        return this.isClosed.get();
     }
     
-    public BooleanProperty closePathProperty()
+    @Override
+    public BooleanProperty isClosedProperty()
     {
-        return closePath;
+        return isClosed;
     }
     
     public void setFillPath(boolean fillPath)
@@ -456,6 +457,18 @@ public class MPath implements MambaShape<MEngine>{
     public boolean isBezierEdit()
     {
         return isBezierEdit.get();
+    }
+    
+    @Override
+    public boolean isComplete()
+    {
+        return size() > 1;
+    }
+    
+    @Override
+    public boolean isPath()
+    {
+        return true;
     }
 
     @Override

@@ -15,7 +15,6 @@ import javafx.scene.effect.Effect;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.shape.Shape;
-import javafx.scene.transform.Transform;
 import mamba.base.math.MTransformGeneric;
 import mamba.overlayselect.drag.MDrag;
 import mamba.util.MIntersection;
@@ -119,5 +118,10 @@ public interface MambaShape<Engine2D extends MambaEngine2D> extends MambaHierarc
     default boolean isComplete()
     {
         return true;
+    }
+    
+    default boolean isPath()
+    {
+        return false;
     }
 }

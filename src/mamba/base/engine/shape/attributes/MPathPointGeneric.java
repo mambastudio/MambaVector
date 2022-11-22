@@ -53,23 +53,6 @@ public interface MPathPointGeneric<Bezier extends MPathBezier>
         
     }
     
-    public default Point2D getControlFirst()
-    {
-        return null;
-    }
-    
-    public default void setControlFirst(Point2D point)
-    {
-        
-    }
-    
-    public default Point2D getControlSecond()
-    {
-        return null;
-    }
-    
-    public default void setControlSecond(Point2D point)
-    {
-        
-    }
+    public Point2D getControl();  
+    public Point2D getMirrorControl();
 }

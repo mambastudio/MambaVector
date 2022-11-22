@@ -44,6 +44,21 @@ public abstract class MPathBezier<P extends MPathPointGeneric> {
     public abstract void setIsClosed(boolean isClosed);    
     public abstract boolean getIsClosed();
     public abstract BooleanProperty isClosedProperty();
+    
+    public P get(int index)
+    {
+        return points.get(index);
+    }
+    
+    public ObservableList<P> getList()
+    {
+        return points;
+    }
+    
+    public int size()
+    {
+        return points.size();
+    }
    
     public void add(P point)
     {
@@ -58,6 +73,11 @@ public abstract class MPathBezier<P extends MPathPointGeneric> {
     public boolean absent(P point)
     {
         return !points.contains(point);
+    }
+    
+    public boolean hasNext(P point)
+    {
+        return !isLast(point);
     }
     
     public P getNext(P point)
