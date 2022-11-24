@@ -25,6 +25,7 @@ package mamba.base;
 
 import javafx.collections.ObservableList;
 import javafx.geometry.BoundingBox;
+import javafx.geometry.Bounds;
 import javafx.geometry.Point2D;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.effect.Effect;
@@ -39,10 +40,7 @@ import mamba.util.MIntersection;
  * 
  * 
  * A shape can be anything; a circle, rectangle, path, image, text, etc.
- * 
- * A shape can be also be attached to the canvas itself, which is the screen and window to the world
- *  - This allows zooming, translation, etc of scene/world
- * 
+ *  
  * A parent shape can be a layout actually
  * 
  */
@@ -70,7 +68,7 @@ public interface MambaShapeSkeleton<Engine2D extends MambaEngine2D> extends Mamb
     
     //intersection of bounds and shape (this applies to the top-down hierarchy intersection)
     public boolean intersect(Point2D localPoint, MIntersection isect);
-    public boolean intersect(BoundingBox localBound, MIntersection isect);
+    public boolean intersect(Bounds localBound, MIntersection isect);
     
     //good for traversing up the hierarchy
     public MambaShape<Engine2D> getParent();
