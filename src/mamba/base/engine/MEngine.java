@@ -9,9 +9,10 @@ import java.util.List;
 import javafx.geometry.Point2D;
 import javafx.scene.canvas.GraphicsContext;
 import mamba.base.MambaEngine2D;
-import static mamba.base.MambaEngine2D.DrawState.EDIT;
 import mamba.base.MambaShape;
 import mamba.base.engine.shape.groups.MRoot;
+import mamba.base.math.MTransform;
+import mamba.base.math.MTransformGeneric;
 import mamba.overlayselect.MSelectionModel;
 import mamba.util.MIntersection;
 
@@ -23,12 +24,14 @@ public class MEngine implements MambaEngine2D {
     private GraphicsContext graphicContext = null;        
     private MSelectionModel selectionModel = null;
     private MRoot rootShape = null;
-    private DrawState drawState = EDIT;
+    
+    private MTransformGeneric transform;
     
     public MEngine()
     {
         graphicContext = null;
         rootShape = new MRoot();
+        transform = new MTransform();
     }
 
     @Override
@@ -61,17 +64,6 @@ public class MEngine implements MambaEngine2D {
         rootShape.clear();
         selectionModel.clear();
         draw();
-    }
-
-    @Override
-    public void remove(MambaShape shape) {
-        throw new UnsupportedOperationException("remove method not implemented yet");
-    }
-    
-    
-    @Override
-    public void addShape(List shapes) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
     @Override
@@ -123,10 +115,6 @@ public class MEngine implements MambaEngine2D {
         this.selectionModel = selectionModel;
     }
 
-    @Override
-    public List getShapes() {
-        throw new UnsupportedOperationException("Not supported yet");
-    }
 
     @Override
     public MambaShape getRoot() {
@@ -179,12 +167,12 @@ public class MEngine implements MambaEngine2D {
     }
 
     @Override
-    public DrawState getDrawState() {
-        return drawState;
+    public MTransformGeneric getTransform() {
+        return transform;
     }
 
     @Override
-    public void setDrawState(DrawState drawState) {
-        this.drawState = drawState;
+    public void setTransform(MTransformGeneric transform) {
+        this.transform = transform;
     }
 }
