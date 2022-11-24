@@ -6,6 +6,7 @@
 package mamba.base.math;
 
 import javafx.geometry.BoundingBox;
+import javafx.geometry.Bounds;
 import javafx.geometry.Point2D;
 
 /**
@@ -50,7 +51,7 @@ public class MBound {
         }
     }
     
-    public final void include(BoundingBox boundingBox)
+    public final void include(Bounds boundingBox)
     {
         Point2D p0 = new Point2D(boundingBox.getMinX(), boundingBox.getMinY());
         Point2D p1 = new Point2D(boundingBox.getMinX(), boundingBox.getMinY());

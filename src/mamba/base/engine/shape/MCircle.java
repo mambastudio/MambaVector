@@ -9,34 +9,32 @@ import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleDoubleProperty;
 import javafx.beans.property.SimpleObjectProperty;
-import javafx.beans.property.SimpleStringProperty;
-import javafx.beans.property.StringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.geometry.BoundingBox;
+import javafx.geometry.Bounds;
 import javafx.geometry.Point2D;
 import javafx.scene.Cursor;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.effect.Effect;
 import javafx.scene.paint.Color;
 import mamba.base.MambaShape;
+import mamba.base.MambaShapeAbstract;
 import mamba.base.engine.MEngine;
 import mamba.overlayselect.drag.MDrag;
 import mamba.overlayselect.drag.MDragSquare;
 import mamba.base.math.MBound;
 import mamba.base.math.MTransform;
-import mamba.base.math.MTransformGeneric;
+import mamba.util.MIntersection;
 
 /**
  *
  * @author user
  */
-public class MCircle implements MambaShape<MEngine>{
-    private MEngine engine2D;
+public class MCircle extends MambaShapeAbstract<MEngine>{
+    
     private GraphicsContext graphicContext;
-    
-    private Point2D offset;
-    
+        
     private final DoubleProperty radius;
     private final ObjectProperty<Color> solidColor;
     private final DoubleProperty strokeWidth;
@@ -44,68 +42,19 @@ public class MCircle implements MambaShape<MEngine>{
         
     private Effect effect = null;
     
-    private MTransform transform;
     
-    private final StringProperty nameProperty;
-    
-    ObservableList<MDrag> dragHandles = FXCollections.observableArrayList();
     
     private final ObservableList<MambaShape<MEngine>> children = FXCollections.emptyObservableList();
     
     public MCircle()
-    {
-        offset = new Point2D(0, 0);
-        
+    {        
         radius = new SimpleDoubleProperty(45);
         solidColor = new SimpleObjectProperty(Color.YELLOW);
         strokeWidth = new SimpleDoubleProperty(0.001);
-        strokeColor = new SimpleObjectProperty(Color.BLACK);
-        
-        transform = MTransform.translate(50, 50); 
-        
-        nameProperty = new SimpleStringProperty("Circle");
+        strokeColor = new SimpleObjectProperty(Color.BLACK);    
+        this.setLocalTransform(MTransform.translate(50, 50));
     }
-
-    @Override
-    public MTransformGeneric getTransform() {
-        return this.transform;
-    }
-
-    @Override
-    public void setTransform(MTransformGeneric transform) {        
-        this.transform = (MTransform)transform;           
-    }
-
-    @Override
-    public void translate(Point2D p) {
-        Point2D tp = p.subtract(offset);
-        this.transform = MTransform.translate(tp.getX(), tp.getY());
-    }
-
-    @Override
-    public Point2D getTranslate() {
-        return this.transform.transform(new Point2D(0, 0));
-    }
-
-    @Override
-    public void setOffset(Point2D offset) {
-        this.offset = offset;
-    }
-   
-    @Override
-    public Point2D getOffset() {
-        return offset;
-    }
-
-    @Override
-    public MEngine getEngine2D() {
-        return engine2D;
-    }
-
-    @Override
-    public void setEngine(MEngine engine2D) {
-        this.engine2D = engine2D;
-    }
+    
 
     @Override
     public void setGraphicContext(GraphicsContext context) {
@@ -122,7 +71,7 @@ public class MCircle implements MambaShape<MEngine>{
         
         graphicContext.save();
         //apply transform first
-        transform.transformGraphicsContext(graphicContext);
+        getLocalTransform().transformGraphicsContext(graphicContext);
         
         //draw shape, this is just local coordinates 
         graphicContext.setFill(solidColor.get());
@@ -145,20 +94,10 @@ public class MCircle implements MambaShape<MEngine>{
     }
 
     @Override
-    public BoundingBox getBounds() {
-        Point2D min = new Point2D(-radius.doubleValue(), -radius.doubleValue());
-        Point2D max = new Point2D(radius.doubleValue(), radius.doubleValue());
-        MBound bound = new MBound();
-        bound.include(min);
-        bound.include(max);       
-        return (BoundingBox) transform.transform(bound.getBoundingBox());
-    }
-
-    @Override
-    public boolean contains(Point2D p) {
+    public boolean containsGlobalPoint(Point2D p) {
        
         //transform p to local coordinates
-        Point2D invP = transform.inverseTransform(p);
+        Point2D invP = getLocalTransform().inverseTransform(p);
         Point2D min = new Point2D(-radius.doubleValue(), -radius.doubleValue());
         Point2D max = new Point2D(radius.doubleValue(), radius.doubleValue());
         MBound bound = new MBound();
@@ -175,9 +114,8 @@ public class MCircle implements MambaShape<MEngine>{
     
     public void setRadius(double radius)
     {
-        this.radius.set(radius);
-        
-        updateDragHandles(null);
+        this.radius.set(radius);        
+        updateDragHandles();
     }
     
     public DoubleProperty radiusProperty()
@@ -245,18 +183,17 @@ public class MCircle implements MambaShape<MEngine>{
     */
     
     @Override
-    public ObservableList<MDrag> getDragHandles()
+    public ObservableList<MDrag> initDragHandles()
     {
         if(dragHandles.isEmpty())
         {       
             MDragSquare c1 = new MDragSquare();            
-            c1.setX(getBounds().getMinX());
-            c1.setY(getBounds().getMinY());
+            c1.setX(getGlobalBounds().getMinX());
+            c1.setY(getGlobalBounds().getMinY());
             dragHandles.add(c1);
 
             c1.setOnMousePressed(e->{
-               Point2D p = new Point2D(e.getX(), e.getY()); 
-               setOffset(Point2D.ZERO);    
+               Point2D p = new Point2D(e.getX(), e.getY());                
             });
 
             c1.setOnMouseDragged(e->{
@@ -266,14 +203,14 @@ public class MCircle implements MambaShape<MEngine>{
                 MBound nbound = new MBound();
                 MBound cbound = new MBound();
 
-                cbound.include(getBounds());          //current bounds 
+                cbound.include(getGlobalBounds());          //current bounds 
                 nbound.include(p, cbound.getPoint(2));      //new bounds
                 double nRadius = nbound.getMaxExtentRadius(); //new radius
                 
                 setRadius((int)nRadius);  
                 
-                updateDragHandles(null);                
-                engine2D.draw();
+                updateDragHandles();                
+                getEngine2D().draw();
 
             });
 
@@ -282,13 +219,12 @@ public class MCircle implements MambaShape<MEngine>{
             });
             
             MDragSquare c2 = new MDragSquare();
-            c2.setX(getBounds().getMaxX());
-            c2.setY(getBounds().getMaxY());
+            c2.setX(getGlobalBounds().getMaxX());
+            c2.setY(getGlobalBounds().getMaxY());
             dragHandles.add(c2);
 
             c2.setOnMousePressed(e->{
-               Point2D p = new Point2D(e.getX(), e.getY()); 
-               setOffset(Point2D.ZERO);     
+               Point2D p = new Point2D(e.getX(), e.getY());                
             });
 
             c2.setOnMouseDragged(e->{
@@ -298,15 +234,15 @@ public class MCircle implements MambaShape<MEngine>{
                 MBound nbound = new MBound();
                 MBound cbound = new MBound();
 
-                cbound.include(getBounds());          //current bounds 
+                cbound.include(getGlobalBounds());          //current bounds 
                 nbound.include(p, cbound.getPoint(0));      //new bounds
                 double nRadius = nbound.getMaxExtentRadius(); //new radius
                
                 setRadius((int)nRadius);    
                 
-                updateDragHandles(null);       
+                updateDragHandles();       
                 
-                engine2D.draw();
+                getEngine2D().draw();
             });
 
             c2.setOnMouseMoved(e->{
@@ -314,13 +250,12 @@ public class MCircle implements MambaShape<MEngine>{
             });
             
             MDragSquare c3 = new MDragSquare();
-            c3.setX(getBounds().getMinX());
-            c3.setY(getBounds().getMaxY());
+            c3.setX(getGlobalBounds().getMinX());
+            c3.setY(getGlobalBounds().getMaxY());
             dragHandles.add(c3);
 
             c3.setOnMousePressed(e->{
-               Point2D p = new Point2D(e.getX(), e.getY()); 
-               setOffset(Point2D.ZERO);    
+               Point2D p = new Point2D(e.getX(), e.getY());               
             });
 
             c3.setOnMouseDragged(e->{
@@ -330,15 +265,15 @@ public class MCircle implements MambaShape<MEngine>{
                 MBound nbound = new MBound();
                 MBound cbound = new MBound();
 
-                cbound.include(getBounds());       //current bounds             
+                cbound.include(getGlobalBounds());       //current bounds             
                 nbound.include(p, cbound.getPoint(1));      //new bounds
                 double nRadius = nbound.getMaxExtentRadius(); //new radius
                
                 setRadius((int)nRadius);
 
-                updateDragHandles(null);            
+                updateDragHandles();            
 
-                engine2D.draw();
+                getEngine2D().draw();
             });
 
             c3.setOnMouseMoved(e->{
@@ -346,13 +281,12 @@ public class MCircle implements MambaShape<MEngine>{
             });
 
             MDragSquare c4 = new MDragSquare();
-            c4.setX(getBounds().getMaxX());
-            c4.setY(getBounds().getMinY());
+            c4.setX(getGlobalBounds().getMaxX());
+            c4.setY(getGlobalBounds().getMinY());
             dragHandles.add(c4);
 
             c4.setOnMousePressed(e->{
-               Point2D p = new Point2D(e.getX(), e.getY()); 
-               setOffset(Point2D.ZERO);    
+               Point2D p = new Point2D(e.getX(), e.getY());             
             });
 
             c4.setOnMouseDragged(e->{
@@ -362,15 +296,15 @@ public class MCircle implements MambaShape<MEngine>{
                 MBound nbound = new MBound();
                 MBound cbound = new MBound();
 
-                cbound.include(getBounds());       //current bounds             
+                cbound.include(getGlobalBounds());       //current bounds             
                 nbound.include(p, cbound.getPoint(3));      //new bounds
                 double nRadius = nbound.getMaxExtentRadius(); //new radius
                
                 setRadius((int)nRadius);
 
-                updateDragHandles(null);             
+                updateDragHandles();             
 
-                engine2D.draw();
+                getEngine2D().draw();
             });
 
             //c4 on mouse moved
@@ -384,27 +318,24 @@ public class MCircle implements MambaShape<MEngine>{
     }
 
     @Override
-    public void updateDragHandles(MDrag referenceHandle) {
+    public void updateDragHandles() {
         
         //TODO
         MDrag c1 = dragHandles.get(0);
-        c1.setX(getBounds().getMinX());
-        c1.setY(getBounds().getMinY());
-        
-        
+        c1.setX(getGlobalBounds().getMinX());
+        c1.setY(getGlobalBounds().getMinY());
+                
         MDrag c2 = dragHandles.get(1);
-        c2.setX(getBounds().getMaxX());
-        c2.setY(getBounds().getMaxY());
-       
-       
+        c2.setX(getGlobalBounds().getMaxX());
+        c2.setY(getGlobalBounds().getMaxY());
+              
         MDrag c3 = dragHandles.get(2);
-        c3.setX(getBounds().getMinX());
-        c3.setY(getBounds().getMaxY());
+        c3.setX(getGlobalBounds().getMinX());
+        c3.setY(getGlobalBounds().getMaxY());
         
         MDrag c4 = dragHandles.get(3);        
-        c4.setX(getBounds().getMaxX());
-        c4.setY(getBounds().getMinY());  
-        
+        c4.setX(getGlobalBounds().getMaxX());
+        c4.setY(getGlobalBounds().getMinY());          
     }
     
     @Override
@@ -420,21 +351,6 @@ public class MCircle implements MambaShape<MEngine>{
     }
 
     @Override
-    public StringProperty getNameProperty() {
-        return nameProperty;
-    }
-
-    @Override
-    public String getName() {
-        return nameProperty.get();
-    }
-
-    @Override
-    public ShapeType getType() {
-        return ShapeType.SHAPE;
-    }
-
-    @Override
     public ObservableList<MambaShape<MEngine>> getChildren() {
         return children;
     }
@@ -443,5 +359,30 @@ public class MCircle implements MambaShape<MEngine>{
     public String toString()
     {
         return "Circle";
+    }
+    
+    @Override
+    public boolean intersect(Point2D localPoint, MIntersection isect) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public boolean intersect(Bounds localBound, MIntersection isect) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public BoundingBox getShapeBound() {
+        Point2D min = new Point2D(-radius.doubleValue(), -radius.doubleValue());
+        Point2D max = new Point2D(radius.doubleValue(), radius.doubleValue());
+        MBound bound = new MBound();
+        bound.include(min);
+        bound.include(max);       
+        return (BoundingBox)(bound.getBoundingBox());
+    }
+
+    @Override
+    public boolean isComplete() {
+        return true;
     }
 }

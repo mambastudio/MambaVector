@@ -20,11 +20,11 @@ public class MSelectionOverlay extends Region{
     public MSelectionOverlay(MambaShape shape) {
         this.monitoredShape = shape;       
         setPickOnBounds(false);
-        this.getChildren().setAll(shape.getDragHandles());
+        this.getChildren().setAll(shape.initDragHandles());
     }
     
     public void refresh()
     {
-        this.getChildren().setAll(monitoredShape.getDragHandles());
+        this.getChildren().setAll(monitoredShape.initDragHandles());
     }
 }

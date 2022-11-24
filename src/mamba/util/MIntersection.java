@@ -5,6 +5,7 @@
  */
 package mamba.util;
 
+import javafx.geometry.Point2D;
 import mamba.base.MambaShape;
 
 /**
@@ -12,10 +13,12 @@ import mamba.base.MambaShape;
  * @author jmburu
  */
 public class MIntersection {
+    public Point2D offset;
     public MambaShape shape;
     
     public MIntersection()
     {
         shape = null;
+        offset = Point2D.ZERO;
     }
 }

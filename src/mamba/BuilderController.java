@@ -118,7 +118,7 @@ public class BuilderController implements Initializable {
     private final BackgroundPane backgroundPanel = new BackgroundPane();
     private ResizeableCanvas renderCanvas;
     private final Group selectionLayer = new Group();
-    private final MEngine engine2D = new MEngine();    
+        private final MEngine engine2D = new MEngine();    
     private final FileChooser fileChooser = new FileChooser();
     
     private final MDisableStateNodes pathEditButtons = new MDisableStateNodes();
@@ -190,7 +190,7 @@ public class BuilderController implements Initializable {
         
         TreeItem<MambaShape> rootItem = new RecursiveTreeItem<>(
                 engine2D.getRoot(),
-                engine2D.getRoot()::getDisplay,
+                //engine2D.getRoot()::getDisplay,
                 engine2D.getRoot()::get);
         layerTreeView.setRoot(rootItem);
         layerTreeView.setShowRoot(false);
