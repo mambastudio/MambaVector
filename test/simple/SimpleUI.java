@@ -24,13 +24,18 @@
 package simple;
 
 import javafx.application.Application;
+import javafx.geometry.Point2D;
 import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
+import javafx.scene.paint.Color;
+import javafx.scene.transform.Scale;
 import javafx.stage.Stage;
 import mamba.base.engine.MEngine;
 import mamba.base.engine.shape.MCircle;
+import mamba.base.engine.shape.MCircle2;
+import mamba.base.math.MTransform;
 import mamba.components.BackgroundPane;
 import mamba.overlayselect.MSelectionModel;
 
@@ -52,6 +57,15 @@ public class SimpleUI extends Application{
         engine2D.setSelectionModel(new MSelectionModel(selectionLayer));       
         MCircle circle = new MCircle();
         engine2D.addShape(circle);
+        
+        MCircle2 circle2 = new MCircle2();
+        circle2.setSolidColor(Color.BLUE);
+        circle2.setLocation(0, 0);
+        engine2D.addShape(circle2);
+        engine2D.setSelected(circle2);
+        
+        engine2D.setTransform(engine2D.getTransform().createConcatenation(MTransform.scale(new Point2D(4, 4))));
+        
                 
         Pane root = new Pane(background, canvas, selectionLayer);     
         
@@ -64,7 +78,11 @@ public class SimpleUI extends Application{
         Scene scene = new Scene(new StackPane(root), 800, 650);        
         primaryStage.setTitle("Hello World!");
         primaryStage.setScene(scene);
-        primaryStage.show();        
+        primaryStage.show();       
+        
+        //Point2D p = new Point2D(1, 1);
+        //MTransform scale = MTransform.scale(new Point2D(2, 2));
+        //System.out.println(scale.transform(p));
     }
 
     /**

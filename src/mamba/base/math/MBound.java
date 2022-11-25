@@ -13,7 +13,7 @@ import javafx.geometry.Point2D;
  *
  * @author user
  */
-public class MBound {
+public final class MBound {
     private Point2D min;
     private Point2D max;
     
@@ -21,6 +21,18 @@ public class MBound {
     {
         min = new Point2D(Double.POSITIVE_INFINITY, Double.POSITIVE_INFINITY);
         max = new Point2D(Double.NEGATIVE_INFINITY, Double.NEGATIVE_INFINITY);
+    }
+    
+    public MBound(Bounds bound)
+    {
+        this();
+        this.setBoundingBox(bound);
+    }
+    
+    public MBound(Point2D... pointArray)
+    {
+        this();
+        include(pointArray);
     }
     
     public final void include(Point2D p) {
@@ -67,7 +79,7 @@ public class MBound {
         include(bound.getMin(), bound.getMax());
     }
     
-    public void setBoundingBox(BoundingBox boundingBox)
+    public void setBoundingBox(Bounds boundingBox)
     {
         this.min = new Point2D(boundingBox.getMinX(), boundingBox.getMinY());
         this.max = new Point2D(boundingBox.getMaxX(), boundingBox.getMaxY());
@@ -111,9 +123,39 @@ public class MBound {
         return getExtents().getY();
     }
     
+    public Point2D getCenter()
+    {
+        return getMin().add(getExtents().multiply(0.5));
+    }
+    
+    public Point2D getUpperRight()
+    {
+        return new Point2D(max.getX(), min.getY());
+    }
+    
+    public Point2D getUpperLeft()
+    {
+        return this.getMin();
+    }
+    
+    public Point2D getLowerRight()
+    {
+        return this.getMax();
+    }
+    
+    public Point2D getLowerLeft()
+    {
+        return new Point2D(min.getX(), max.getY());
+    }
+    
     public Point2D getExtents()
     {
         return max.subtract(min);
+    }
+    
+    public Point2D getExtentsHalf()
+    {
+        return max.subtract(min).multiply(0.5);
     }
     
     public double getMaxExtent()
@@ -122,7 +164,7 @@ public class MBound {
         return Math.max(extents.getX(), extents.getY());
     }
     
-    public double getMaxExtentRadius()
+    public double getMaxExtentHalf()
     {
         return getMaxExtent()/2;
     }

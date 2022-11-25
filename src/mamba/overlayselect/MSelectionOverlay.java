@@ -26,5 +26,6 @@ public class MSelectionOverlay extends Region{
     public void refresh()
     {
         this.getChildren().setAll(monitoredShape.initDragHandles());
+        monitoredShape.updateDragHandles();
     }
 }

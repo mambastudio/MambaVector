@@ -205,7 +205,7 @@ public class MCircle extends MambaShapeAbstract<MEngine>{
 
                 cbound.include(getGlobalBounds());          //current bounds 
                 nbound.include(p, cbound.getPoint(2));      //new bounds
-                double nRadius = nbound.getMaxExtentRadius(); //new radius
+                double nRadius = nbound.getMaxExtentHalf(); //new radius
                 
                 setRadius((int)nRadius);  
                 
@@ -236,7 +236,7 @@ public class MCircle extends MambaShapeAbstract<MEngine>{
 
                 cbound.include(getGlobalBounds());          //current bounds 
                 nbound.include(p, cbound.getPoint(0));      //new bounds
-                double nRadius = nbound.getMaxExtentRadius(); //new radius
+                double nRadius = nbound.getMaxExtentHalf(); //new radius
                
                 setRadius((int)nRadius);    
                 
@@ -267,7 +267,7 @@ public class MCircle extends MambaShapeAbstract<MEngine>{
 
                 cbound.include(getGlobalBounds());       //current bounds             
                 nbound.include(p, cbound.getPoint(1));      //new bounds
-                double nRadius = nbound.getMaxExtentRadius(); //new radius
+                double nRadius = nbound.getMaxExtentHalf(); //new radius
                
                 setRadius((int)nRadius);
 
@@ -298,7 +298,7 @@ public class MCircle extends MambaShapeAbstract<MEngine>{
 
                 cbound.include(getGlobalBounds());       //current bounds             
                 nbound.include(p, cbound.getPoint(3));      //new bounds
-                double nRadius = nbound.getMaxExtentRadius(); //new radius
+                double nRadius = nbound.getMaxExtentHalf(); //new radius
                
                 setRadius((int)nRadius);
 

@@ -84,6 +84,8 @@ public class MSelectionModel {
     public void refreshOverlay()
     {
         if(selectionOverlay != null)
-            selectionOverlay.refresh();
+        {
+            selectionOverlay.refresh();           
+        }
     }
 }

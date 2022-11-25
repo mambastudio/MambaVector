@@ -26,10 +26,13 @@ package simple;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.input.ScrollEvent;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
 import mamba.base.MambaCanvas;
 import mamba.base.engine.MEngine;
+import mamba.base.math.MBound;
+import mamba.base.math.MTransform;
 
 /**
  *
@@ -64,6 +67,7 @@ public class SimpleCanvas extends Region implements MambaCanvas<MEngine, VBox>{
         this.setOnMouseClicked(this::mouseClicked);
         this.setOnMouseDragged(this::mouseDragged);
         this.setOnMousePressed(this::mousePressed);
+        this.setOnScroll(this::mouseScrolled);
     }
 
     @Override
@@ -99,6 +103,21 @@ public class SimpleCanvas extends Region implements MambaCanvas<MEngine, VBox>{
     public void mouseDragged(MouseEvent e)
     {
         
+    }
+    
+    public void mouseScrolled(ScrollEvent e)
+    {
+        double deltaY = e.getDeltaY()* 0.1;
+        double scale;
+        if(deltaY > 0)
+            scale = 1.5;
+        else
+            scale = 0.5;
+        
+        engine2D.setTransform(engine2D.getTransform().createConcatenation(MTransform.scale(scale, scale)));        
+        if(engine2D.isSelected())
+            engine2D.getSelectionModel().refreshOverlay();
+        engine2D.draw();
     }
     
 }

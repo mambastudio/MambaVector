@@ -30,6 +30,7 @@ import javafx.geometry.Point2D;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.transform.Affine;
 import javafx.scene.transform.NonInvertibleTransformException;
+import javafx.scene.transform.Scale;
 import javafx.scene.transform.Translate;
 
 /**
@@ -74,13 +75,23 @@ public class MTransform implements MTransformGeneric{
         return new MTransform(m, minv);
     }
     
+    public static MTransform scale(double x, double y)
+    {
+        return scale(new Point2D(x, y));
+    }
+    
     public static MTransform scale(Point2D scale) 
     {
-        MMatrix4 m = new MMatrix4(
-                new Translate(scale.getX(), scale.getY()));
-        MMatrix4 mInv = new MMatrix4(
-                new Translate(scale.getX(), scale.getY()).createInverse());
-        return new MTransform(m, mInv);
+        try {
+            MMatrix4 m = new MMatrix4(
+                    Affine.scale(scale.getX(), scale.getY()));
+            MMatrix4 mInv = new MMatrix4(
+                    Affine.scale(scale.getX(), scale.getY()).createInverse());
+            return new MTransform(m, mInv);
+        } catch (NonInvertibleTransformException ex) {
+            Logger.getLogger(MTransform.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return null;
     }
     
     @Override

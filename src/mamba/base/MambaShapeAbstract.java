@@ -108,9 +108,9 @@ public abstract class MambaShapeAbstract<Engine2D extends MambaEngine2D> impleme
     public MTransformGeneric localToParentTransform()
     {
         if(this.hasParent())
-            return this.localTransform.createConcatenation(getParent().getLocalTransform());
+            return this.getLocalTransform().createConcatenation(getParent().getLocalTransform());
         else
-            return this.localTransform;
+            return this.getLocalTransform();
     }
     
     @Override
@@ -126,9 +126,9 @@ public abstract class MambaShapeAbstract<Engine2D extends MambaEngine2D> impleme
     {
         MTransformGeneric transform;
         if(this.hasParent())
-            transform = localTransform.createConcatenation(getParent().localToParentTransform());
+            transform = getLocalTransform().createConcatenation(getParent().localToParentTransform());
         else
-            transform = localTransform;        
+            transform = getLocalTransform();        
         return transform.createConcatenation(this.getEngine2D().getTransform());
     }
     
