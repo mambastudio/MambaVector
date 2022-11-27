@@ -108,7 +108,7 @@ public class MEngine implements MambaEngine2D {
     
     public boolean isSelected()
     {
-        return selectionModel.isSelected();
+        return selectionModel != null && selectionModel.isSelected();
     }
   
     @Override

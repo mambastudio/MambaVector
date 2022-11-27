@@ -64,6 +64,8 @@ public class MCircle2 extends MambaShapeAbstract<MEngine>
         height = new SimpleDoubleProperty(50);
         
         location = new SimpleObjectProperty(Point2D.ZERO);
+        
+        //this.setLocalTransform(MTransform.scale(5, 5));
     }
     
     
@@ -72,8 +74,7 @@ public class MCircle2 extends MambaShapeAbstract<MEngine>
         getGraphicsContext().save();
         //apply transform first
         this.localToGlobalTransform().transformGraphicsContext(getGraphicsContext());
-      //  getLocalTransform().transformGraphicsContext(getGraphicsContext());
-        
+      
         //draw shape, this is just local coordinates 
         getGraphicsContext().setFill(solidColor.get());
         getGraphicsContext().setEffect(getEffect());

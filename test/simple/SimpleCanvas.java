@@ -23,6 +23,8 @@
  */
 package simple;
 
+import javafx.geometry.Point2D;
+import javafx.scene.Cursor;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.input.MouseEvent;
@@ -31,7 +33,6 @@ import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
 import mamba.base.MambaCanvas;
 import mamba.base.engine.MEngine;
-import mamba.base.math.MBound;
 import mamba.base.math.MTransform;
 
 /**
@@ -42,6 +43,8 @@ public class SimpleCanvas extends Region implements MambaCanvas<MEngine, VBox>{
     
     private MEngine engine2D = null;
     private final Canvas canvas;
+    
+    Point2D pressed = new Point2D(0, 0);
     
     public SimpleCanvas()
     {
@@ -67,13 +70,14 @@ public class SimpleCanvas extends Region implements MambaCanvas<MEngine, VBox>{
         this.setOnMouseClicked(this::mouseClicked);
         this.setOnMouseDragged(this::mouseDragged);
         this.setOnMousePressed(this::mousePressed);
-        this.setOnScroll(this::mouseScrolled);
+        this.setOnMouseReleased(this::mouseReleased);
+        this.setOnScroll(this::mouseScrolled);        
     }
 
     @Override
     public void setEngine2D(MEngine engine2D) {
         this.engine2D = engine2D;
-        this.engine2D.setGraphicsContext(getGraphicsContext2D());
+        this.engine2D.setGraphicsContext(getGraphicsContext2D());       
     }
 
     @Override
@@ -97,12 +101,30 @@ public class SimpleCanvas extends Region implements MambaCanvas<MEngine, VBox>{
     
     public void mousePressed(MouseEvent e)
     {            
-                
+        pressed = new Point2D(e.getX(), e.getY());        
+    }
+    
+    public void mouseReleased(MouseEvent e)
+    {
+        this.setCursor(Cursor.DEFAULT);
     }
     
     public void mouseDragged(MouseEvent e)
     {
+        Point2D currentPressed = new Point2D(e.getX(), e.getY());
         
+        this.setCursor(Cursor.MOVE);
+               
+        MTransform zoom = engine2D.getTransform(). //get existing engine transform first
+                createConcatenation(MTransform.translate(currentPressed.subtract(pressed))).asMTransform();
+        
+        engine2D.setTransform(zoom);
+        
+        if(engine2D.isSelected())
+            engine2D.getSelectionModel().refreshOverlay();
+        engine2D.draw();
+        
+        pressed = currentPressed;
     }
     
     public void mouseScrolled(ScrollEvent e)
@@ -110,14 +132,26 @@ public class SimpleCanvas extends Region implements MambaCanvas<MEngine, VBox>{
         double deltaY = e.getDeltaY()* 0.1;
         double scale;
         if(deltaY > 0)
-            scale = 1.5;
+            scale = 1.1;
         else
-            scale = 0.5;
+            scale = 0.9;
         
-        engine2D.setTransform(engine2D.getTransform().createConcatenation(MTransform.scale(scale, scale)));        
+        Point2D mousePoint = new Point2D(e.getX(), e.getY());
+        Point2D scalePoint = new Point2D(scale, scale);
+        
+        zoom(mousePoint, scalePoint);
+     
         if(engine2D.isSelected())
             engine2D.getSelectionModel().refreshOverlay();
         engine2D.draw();
     }
     
+    //https://medium.com/@benjamin.botto/zooming-at-the-mouse-coordinates-with-affine-transformations-86e7312fd50b
+    public void zoom(Point2D point, Point2D scale)
+    {                
+        MTransform zoom = engine2D.getTransform(). //get existing engine transform first
+                createConcatenation(MTransform.scale(scale, point)).asMTransform();
+        
+        engine2D.setTransform(zoom);             
+    }
 }

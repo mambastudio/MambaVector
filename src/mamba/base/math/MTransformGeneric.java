@@ -35,7 +35,19 @@ public interface MTransformGeneric {
     
     public void transformGraphicsContext(GraphicsContext graphicsContext);
     
-    public MTransform createConcatenation(MTransformGeneric transform);
+    /**
+     * This is fundamental when combining different matrix
+     * 
+     * MTransform t = MTransform.scale(2, 2).
+     *                  createConcatenation(MTransform.translate(20, 20)).
+     *                  createConcatenation(MTransform.scale(5, 2));
+     * 
+     * In the following sequence first you: scale -> translate -> scale
+     * 
+     * @param transform
+     * @return 
+     */   
+    public MTransformGeneric createConcatenation(MTransformGeneric transform);
     
     public Bounds transform(Bounds bound);
     public Bounds inverseTransform(Bounds bound);
@@ -48,4 +60,12 @@ public interface MTransformGeneric {
     
     public MMatrix4 getMatrix();
     public MMatrix4 getInverseMatrix();
+    
+    public MTransformGeneric inverseTransform();
+    
+    
+    default MTransform asMTransform()
+    {
+        return new MTransform(getMatrix(), getInverseMatrix());
+    }
 }

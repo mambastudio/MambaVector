@@ -21,53 +21,24 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package mamba.base.math;
+package simple;
 
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import javafx.scene.transform.Affine;
-import javafx.scene.transform.NonInvertibleTransformException;
-import javafx.scene.transform.Transform;
+import javafx.geometry.Point2D;
+import mamba.base.math.MTransform;
 
 /**
  *
  * @author user
  */
-public class MMatrix4 {
-    private final Transform m;
-    
-    public MMatrix4()
+public class SimpleTestMatrix {
+    public static void main(String... args)
     {
-        m = new Affine();
-    }
-    
-    public MMatrix4(Transform m)
-    {
-        this.m = m;
-    }
-    
-    public MMatrix4 inverse()
-    {
-        try {
-            return new MMatrix4(m.createInverse());
-        } catch (NonInvertibleTransformException ex) {
-            Logger.getLogger(MMatrix4.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        return null;
-    }
-    
-    public Transform getTransform()
-    {
-        return m;
-    }
-    
-    public MMatrix4 createConcatenation(MMatrix4 matrix)
-    {
-        return new MMatrix4(m.createConcatenation(matrix.getTransform()));
-    }
-    
-    public MMatrix4 mul(MMatrix4 matrix)
-    {
-        return null;
+        MTransform t = MTransform.scale(2, 2).createConcatenation(MTransform.translate(20, 20)).createConcatenation(MTransform.scale(5, 2));
+        Point2D p = new Point2D(1, 1);
+        Point2D tp = t.transform(p);
+        
+        System.out.println(p);
+        System.out.println(tp);
+        System.out.println(t.inverseTransform(tp));
     }
 }

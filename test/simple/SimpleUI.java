@@ -24,20 +24,17 @@
 package simple;
 
 import javafx.application.Application;
-import javafx.geometry.Point2D;
 import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
-import javafx.scene.transform.Scale;
 import javafx.stage.Stage;
 import mamba.base.engine.MEngine;
-import mamba.base.engine.shape.MCircle;
 import mamba.base.engine.shape.MCircle2;
-import mamba.base.math.MTransform;
 import mamba.components.BackgroundPane;
 import mamba.overlayselect.MSelectionModel;
+import mamba.util.MambaUtility;
 
 /**
  *
@@ -55,18 +52,17 @@ public class SimpleUI extends Application{
         canvas.setEngine2D(engine2D);
         
         engine2D.setSelectionModel(new MSelectionModel(selectionLayer));       
-        MCircle circle = new MCircle();
+        MCircle2 circle = new MCircle2();
         engine2D.addShape(circle);
         
         MCircle2 circle2 = new MCircle2();
         circle2.setSolidColor(Color.BLUE);
-        circle2.setLocation(0, 0);
+        
+       // circle2.setLocalTransform(MTransform.scale(2, 2));
+        circle2.setLocation(60, 60);
         engine2D.addShape(circle2);
         engine2D.setSelected(circle2);
-        
-        engine2D.setTransform(engine2D.getTransform().createConcatenation(MTransform.scale(new Point2D(4, 4))));
-        
-                
+             
         Pane root = new Pane(background, canvas, selectionLayer);     
         
         //ensure they grow according to base draw panel
@@ -80,9 +76,14 @@ public class SimpleUI extends Application{
         primaryStage.setScene(scene);
         primaryStage.show();       
         
-        //Point2D p = new Point2D(1, 1);
-        //MTransform scale = MTransform.scale(new Point2D(2, 2));
-        //System.out.println(scale.transform(p));
+        //https://stackoverflow.com/questions/29064225/how-to-create-a-javafx-keycombination-with-three-or-more-keys
+        //register keys
+        scene.setOnKeyPressed(e->{
+            MambaUtility.getKeyCodes().add(e.getCode());
+        });
+        scene.setOnKeyReleased(e->{
+            MambaUtility.getKeyCodes().remove(e.getCode());
+        });
     }
 
     /**

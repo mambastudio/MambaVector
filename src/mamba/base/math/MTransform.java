@@ -30,8 +30,6 @@ import javafx.geometry.Point2D;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.transform.Affine;
 import javafx.scene.transform.NonInvertibleTransformException;
-import javafx.scene.transform.Scale;
-import javafx.scene.transform.Translate;
 
 /**
  *
@@ -82,11 +80,21 @@ public class MTransform implements MTransformGeneric{
     
     public static MTransform scale(Point2D scale) 
     {
+        return scale(scale, Point2D.ZERO);
+    }
+    
+    public static MTransform scale(double x, double y, double pivotX, double pivotY)
+    {
+        return scale(new Point2D(x, y), new Point2D(pivotX, pivotY));
+    }
+    
+    public static MTransform scale(Point2D scale, Point2D pivot) 
+    {
         try {
             MMatrix4 m = new MMatrix4(
-                    Affine.scale(scale.getX(), scale.getY()));
+                    Affine.scale(scale.getX(), scale.getY(), pivot.getX(), pivot.getY()));
             MMatrix4 mInv = new MMatrix4(
-                    Affine.scale(scale.getX(), scale.getY()).createInverse());
+                    Affine.scale(scale.getX(), scale.getY(), pivot.getX(), pivot.getY()).createInverse());
             return new MTransform(m, mInv);
         } catch (NonInvertibleTransformException ex) {
             Logger.getLogger(MTransform.class.getName()).log(Level.SEVERE, null, ex);
@@ -133,12 +141,24 @@ public class MTransform implements MTransformGeneric{
         return mInv.getTransform().deltaTransform(point);
     }
         
+    /**
+     * This is fundamental when combining different matrix
+     * 
+     * MTransform t = MTransform.scale(2, 2).
+     *                  createConcatenation(MTransform.translate(20, 20)).
+     *                  createConcatenation(MTransform.scale(5, 2));
+     * 
+     * In the above sequence first you: scale -> translate -> scale
+     * 
+     * @param transform
+     * @return 
+     */       
     @Override
     public MTransform createConcatenation(MTransformGeneric transform)
     {                
         return new MTransform(
-                getMatrix().createConcatenation(transform.getMatrix()), 
-                transform.getInverseMatrix().createConcatenation(getInverseMatrix()));        
+                transform.getMatrix().createConcatenation(getMatrix()), 
+                getInverseMatrix().createConcatenation(transform.getInverseMatrix()));        
     }
 
     @Override
@@ -149,5 +169,10 @@ public class MTransform implements MTransformGeneric{
     @Override
     public MMatrix4 getInverseMatrix() {
         return mInv;
+    }
+
+    @Override
+    public MTransformGeneric inverseTransform() {
+        return new MTransform(mInv, m);
     }
 }

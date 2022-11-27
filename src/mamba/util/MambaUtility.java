@@ -5,7 +5,10 @@
  */
 package mamba.util;
 
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.scene.control.TreeItem;
+import javafx.scene.input.KeyCode;
 import mamba.base.MambaEngine2D;
 import mamba.base.MambaShape;
 
@@ -14,6 +17,9 @@ import mamba.base.MambaShape;
  * @author user
  */
 public class MambaUtility {
+    
+    private static long lastClickTime = 0;
+    private static final ObservableList<KeyCode> keyCodes = FXCollections.observableArrayList();
     
    
     public static<E extends MambaEngine2D, T extends MambaShape<E>> TreeItem<T> searchTreeItem(TreeItem<T> parent , T value) 
@@ -43,5 +49,19 @@ public class MambaUtility {
         return null;
     }
     
+    public static boolean isDoubleClick(long intervalRangeMsec)
+    {
+        long currentClickTime = System.currentTimeMillis();
+        long diff = 0;       
+        if(lastClickTime!=0 && currentClickTime!=0)
+            diff = currentClickTime - lastClickTime;        
+        lastClickTime = currentClickTime;
+        
+        return diff < intervalRangeMsec && intervalRangeMsec > 0;
+    }
     
+    public static ObservableList<KeyCode> getKeyCodes()
+    {
+        return keyCodes;
+    }
 }

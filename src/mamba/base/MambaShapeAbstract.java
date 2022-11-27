@@ -39,6 +39,7 @@ import mamba.overlayselect.drag.MDrag;
  * @param <Engine2D>
  */
 public abstract class MambaShapeAbstract<Engine2D extends MambaEngine2D> implements MambaShape<Engine2D> {
+    //World->Local->Object
     private MTransformGeneric localTransform;
     private Engine2D engine2D;
     private GraphicsContext graphicsContext;
@@ -102,8 +103,7 @@ public abstract class MambaShapeAbstract<Engine2D extends MambaEngine2D> impleme
     {
         this.effect = effect;
     }
-    
-    //if this is a child, get local to parent and vice versa
+        
     @Override
     public MTransformGeneric localToParentTransform()
     {
@@ -117,7 +117,7 @@ public abstract class MambaShapeAbstract<Engine2D extends MambaEngine2D> impleme
     public MTransformGeneric parentToLocalTransform()
     {
         MTransformGeneric localToParent = localToParentTransform();
-        return new MTransform(localToParent.getInverseMatrix(), localToParent.getMatrix());
+        return localToParent.inverseTransform();
     }
         
     //get transforms to global and vice versa
@@ -129,14 +129,14 @@ public abstract class MambaShapeAbstract<Engine2D extends MambaEngine2D> impleme
             transform = getLocalTransform().createConcatenation(getParent().localToParentTransform());
         else
             transform = getLocalTransform();        
-        return transform.createConcatenation(this.getEngine2D().getTransform());
+        return transform.createConcatenation(getEngine2D().getTransform());
     }
     
     @Override
     public MTransformGeneric globalToLocalTransform()
     {
         MTransformGeneric transform = localToGlobalTransform();
-        return new MTransform(transform.getInverseMatrix(), transform.getMatrix());
+        return transform.inverseTransform();
     }
     
     public Bounds getGlobalBounds()
