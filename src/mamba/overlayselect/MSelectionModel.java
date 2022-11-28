@@ -88,4 +88,9 @@ public class MSelectionModel {
             selectionOverlay.refresh();           
         }
     }
+    
+    public void disableSelectionOverlay(boolean disable)
+    {
+        selectionOverlay.setDisable(disable);
+    }
 }

@@ -34,7 +34,7 @@ import mamba.base.engine.MEngine;
 import mamba.base.engine.shape.MCircle2;
 import mamba.components.BackgroundPane;
 import mamba.overlayselect.MSelectionModel;
-import mamba.util.MambaUtility;
+import mamba.util.MultipleKeyCombination;
 
 /**
  *
@@ -77,13 +77,9 @@ public class SimpleUI extends Application{
         primaryStage.show();       
         
         //https://stackoverflow.com/questions/29064225/how-to-create-a-javafx-keycombination-with-three-or-more-keys
+        //https://bitbucket.org/kogs/multiplekeycombi/src/master/
         //register keys
-        scene.setOnKeyPressed(e->{
-            MambaUtility.getKeyCodes().add(e.getCode());
-        });
-        scene.setOnKeyReleased(e->{
-            MambaUtility.getKeyCodes().remove(e.getCode());
-        });
+        MultipleKeyCombination.setupMultipleKeyCombination(scene);        
     }
 
     /**

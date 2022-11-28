@@ -27,6 +27,7 @@ import javafx.geometry.Point2D;
 import javafx.scene.Cursor;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.input.KeyCode;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.input.ScrollEvent;
 import javafx.scene.layout.Region;
@@ -34,6 +35,7 @@ import javafx.scene.layout.VBox;
 import mamba.base.MambaCanvas;
 import mamba.base.engine.MEngine;
 import mamba.base.math.MTransform;
+import mamba.util.MultipleKeyCombination;
 
 /**
  *
@@ -101,57 +103,63 @@ public class SimpleCanvas extends Region implements MambaCanvas<MEngine, VBox>{
     
     public void mousePressed(MouseEvent e)
     {            
-        pressed = new Point2D(e.getX(), e.getY());        
+        pressed = new Point2D(e.getX(), e.getY());   
+        if(new MultipleKeyCombination(KeyCode.CONTROL).match())
+        {
+            engine2D.getSelectionModel().disableSelectionOverlay(true);
+        }
     }
     
     public void mouseReleased(MouseEvent e)
     {
         this.setCursor(Cursor.DEFAULT);
+        engine2D.getSelectionModel().disableSelectionOverlay(false);
     }
     
     public void mouseDragged(MouseEvent e)
     {
-        Point2D currentPressed = new Point2D(e.getX(), e.getY());
-        
-        this.setCursor(Cursor.MOVE);
-               
-        MTransform zoom = engine2D.getTransform(). //get existing engine transform first
-                createConcatenation(MTransform.translate(currentPressed.subtract(pressed))).asMTransform();
-        
-        engine2D.setTransform(zoom);
-        
-        if(engine2D.isSelected())
-            engine2D.getSelectionModel().refreshOverlay();
-        engine2D.draw();
-        
+        Point2D currentPressed = new Point2D(e.getX(), e.getY());        
+                      
+        if(new MultipleKeyCombination(KeyCode.CONTROL).match())
+        {
+            engine2D.getSelectionModel().disableSelectionOverlay(true);
+            this.setCursor(Cursor.MOVE);
+            translate(currentPressed.subtract(pressed));
+        }
+       
         pressed = currentPressed;
     }
     
     public void mouseScrolled(ScrollEvent e)
     {
         double deltaY = e.getDeltaY()* 0.1;
-        double scale;
-        if(deltaY > 0)
-            scale = 1.1;
-        else
-            scale = 0.9;
+        double scale = deltaY > 0 ? 1.1 : 0.9;
         
         Point2D mousePoint = new Point2D(e.getX(), e.getY());
         Point2D scalePoint = new Point2D(scale, scale);
         
-        zoom(mousePoint, scalePoint);
-     
-        if(engine2D.isSelected())
-            engine2D.getSelectionModel().refreshOverlay();
-        engine2D.draw();
+        if(new MultipleKeyCombination(KeyCode.CONTROL).match())
+        {
+            engine2D.getSelectionModel().disableSelectionOverlay(true);
+            zoom(mousePoint, scalePoint);
+        }    
+        
     }
     
     //https://medium.com/@benjamin.botto/zooming-at-the-mouse-coordinates-with-affine-transformations-86e7312fd50b
-    public void zoom(Point2D point, Point2D scale)
+    private void zoom(Point2D point, Point2D scale)
     {                
         MTransform zoom = engine2D.getTransform(). //get existing engine transform first
                 createConcatenation(MTransform.scale(scale, point)).asMTransform();
         
         engine2D.setTransform(zoom);             
+    }
+    
+    private void translate(Point2D delta)
+    { 
+        MTransform translate = engine2D.getTransform(). //get existing engine transform first
+                createConcatenation(MTransform.translate(delta)).asMTransform();
+        
+        engine2D.setTransform(translate);
     }
 }

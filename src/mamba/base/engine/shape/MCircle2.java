@@ -135,7 +135,8 @@ public class MCircle2 extends MambaShapeAbstract<MEngine>
             dragHandles.add(c1);
 
             c1.setOnMousePressed(e->{
-               Point2D p = new Point2D(e.getX(), e.getY());                
+               Point2D p = new Point2D(e.getX(), e.getY()); 
+               e.consume();
             });
 
             c1.setOnMouseDragged(e->{
@@ -152,6 +153,7 @@ public class MCircle2 extends MambaShapeAbstract<MEngine>
                 
                 updateDragHandles();                
                 getEngine2D().draw();
+                e.consume();
 
             });
             

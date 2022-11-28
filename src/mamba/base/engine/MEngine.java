@@ -176,6 +176,7 @@ public class MEngine implements MambaEngine2D {
     public void setTransform(MTransformGeneric transform) {
         this.transform = transform;
         if(isSelected())
-            getSelectionModel().refreshOverlay();        
+            getSelectionModel().refreshOverlay();       
+        draw();
     }
 }
