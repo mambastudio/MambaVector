@@ -129,7 +129,7 @@ public class MCircle2 extends MambaShapeAbstract<MEngine>
     public ObservableList<MDrag2> initDragHandles() {
         if(dragHandles.isEmpty())
         {                              
-            MDragC c1 = new MDragC();            
+            MDragC c1 = new MDragC(this);       
             c1.setPosition(getGlobalBounds().getMinX(), getGlobalBounds().getMinY());            
             dragHandles.add(c1);            
 
@@ -148,7 +148,7 @@ public class MCircle2 extends MambaShapeAbstract<MEngine>
                 getEngine2D().draw();               
             });
                         
-            MDragC c2 = new MDragC();
+            MDragC c2 = new MDragC(this);            
             c2.setPosition(getGlobalBounds().getMaxX(), getGlobalBounds().getMaxY());            
             dragHandles.add(c2);
             
@@ -167,7 +167,7 @@ public class MCircle2 extends MambaShapeAbstract<MEngine>
                 getEngine2D().draw();
             });
             
-            MDragC c3 = new MDragC();
+            MDragC c3 = new MDragC(this);            
             c3.setPosition(getGlobalBounds().getMinX(), getGlobalBounds().getMaxY());           
             dragHandles.add(c3);
 
@@ -186,7 +186,7 @@ public class MCircle2 extends MambaShapeAbstract<MEngine>
                 getEngine2D().draw();
             });
             
-            MDragC c4 = new MDragC();
+            MDragC c4 = new MDragC(this);            
             c4.setPosition(getGlobalBounds().getMaxX(), getGlobalBounds().getMinY());           
             dragHandles.add(c4);
             c4.setOnMouseDrag(e->{
@@ -210,10 +210,8 @@ public class MCircle2 extends MambaShapeAbstract<MEngine>
     }
 
     @Override
-    public void updateDragHandles() {     
-        if(true)
-            return;
-       
+    public void updateDragHandles() {    
+        
         MDragShape c1 = dragHandles.get(0);
         c1.setPosition(getGlobalBounds().getMinX(), getGlobalBounds().getMinY());
         

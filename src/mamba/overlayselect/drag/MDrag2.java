@@ -27,6 +27,7 @@ import java.util.function.Consumer;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.scene.input.MouseEvent;
+import mamba.base.MambaShape;
 import mamba.base.MambaShapeAbstract;
 import mamba.base.engine.MEngine;
 
@@ -34,9 +35,17 @@ import mamba.base.engine.MEngine;
  *
  * @author jmburu
  */
-public abstract class MDrag2 extends MambaShapeAbstract<MEngine> implements MDragShape {
+public abstract class MDrag2 extends MambaShapeAbstract<MEngine> implements MDragShape<MEngine> {
     
     private Consumer<MouseEvent> consume;
+    private final MambaShape<MEngine> ownerShape;
+    
+    protected MDrag2(MambaShape<MEngine> ownerShape)
+    {
+        this.ownerShape = ownerShape;
+        this.setEngine(ownerShape.getEngine2D());
+        this.setGraphicContext(ownerShape.getGraphicsContext());
+    }
     
      //for ui editor such as mouse editing (utilises the global transforms) - NOT NEEDED HERE
     @Override
@@ -66,5 +75,11 @@ public abstract class MDrag2 extends MambaShapeAbstract<MEngine> implements MDra
     public Consumer<MouseEvent> getOnMouseDrag()
     {
         return consume;
+    }
+    
+    @Override
+    public MambaShape<MEngine> getOwnerShape()
+    {
+        return ownerShape;
     }
 }

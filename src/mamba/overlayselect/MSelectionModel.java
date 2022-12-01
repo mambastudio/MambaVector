@@ -11,6 +11,7 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import mamba.base.MambaShape;
 import mamba.overlayselect.drag.MDrag2;
+import mamba.overlayselect.drag.MDragShape;
 
 /**
  *
@@ -46,7 +47,11 @@ public class MSelectionModel {
     {       
         if(shape != null)
         {
-            if(shape == this.selectedShapeProperty)
+            if(shape instanceof MDragShape)
+            {
+                
+            }
+            if(shape == this.selectedShapeProperty.get())
                 return;            
             this.selectedShapeProperty.set(shape);            
         }
@@ -87,7 +92,11 @@ public class MSelectionModel {
     public void refreshDragHandles()
     {        
         selectedShapeProperty.get().updateDragHandles();
-        selectedShapeProperty.get().getEngine2D().draw();
+        //selectedShapeProperty.get().getEngine2D().draw();
     }
     
+    public ObservableList<MDrag2> getSelectedShapeDragHandles()
+    {
+        return FXCollections.unmodifiableObservableList(selectedShapeDragHandles);
+    }
 }

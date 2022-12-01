@@ -31,6 +31,8 @@ import javafx.geometry.BoundingBox;
 import javafx.geometry.Bounds;
 import javafx.geometry.Point2D;
 import javafx.scene.paint.Color;
+import mamba.base.MambaShape;
+import mamba.base.engine.MEngine;
 import mamba.base.math.MBound;
 import mamba.util.MIntersection;
 
@@ -45,33 +47,32 @@ public class MDragC extends  MDrag2 {
     private final ObjectProperty<Color> strokeColor;
     private final DoubleProperty width;
     private final DoubleProperty height;
-    public final ObjectProperty<Point2D> position;
+    private final ObjectProperty<Point2D> position;
     
-    public final ObjectProperty<Point2D> location;
+    private final ObjectProperty<Point2D> location;
     
     
-    public MDragC()
+    public MDragC(MambaShape<MEngine> ownerShape)
     {
-        solidColor = new SimpleObjectProperty(Color.BEIGE);
+        super(ownerShape);
+        
+        solidColor = new SimpleObjectProperty(Color.LIGHTBLUE);
         strokeWidth = new SimpleDoubleProperty(1);
         strokeColor = new SimpleObjectProperty(Color.BLACK);    
-        width = new SimpleDoubleProperty(10);
-        height = new SimpleDoubleProperty(10);
+        width = new SimpleDoubleProperty(8);
+        height = new SimpleDoubleProperty(8);
         position = new SimpleObjectProperty(Point2D.ZERO);
         
         location = new SimpleObjectProperty(position.get().subtract(new Point2D(width.doubleValue()/2, height.doubleValue()/2)));
         position.addListener((o, ov, nv)->{
             location.set(nv.subtract(new Point2D(width.doubleValue()/2, height.doubleValue()/2)));
-        });
-        
+        });        
     }
 
     @Override
     public void draw() {
         getGraphicsContext().save();
-        //apply transform first
-        this.localToGlobalTransform().transformGraphicsContext(getGraphicsContext());
-      
+              
         //draw shape, this is just local coordinates 
         getGraphicsContext().setFill(solidColor.get());
         getGraphicsContext().setEffect(getEffect());

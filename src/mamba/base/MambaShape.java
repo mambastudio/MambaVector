@@ -23,17 +23,13 @@
  */
 package mamba.base;
 
-import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.geometry.BoundingBox;
 import javafx.geometry.Bounds;
 import javafx.geometry.Point2D;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.effect.Effect;
 import mamba.base.math.MTransformGeneric;
-import mamba.overlayselect.drag.MDrag;
 import mamba.overlayselect.drag.MDrag2;
-import mamba.overlayselect.drag.MDragShape;
 import mamba.util.MIntersection;
 
 /**

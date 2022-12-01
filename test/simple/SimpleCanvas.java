@@ -35,6 +35,7 @@ import javafx.scene.layout.VBox;
 import mamba.base.MambaCanvas;
 import mamba.base.engine.MEngine;
 import mamba.base.math.MTransform;
+import mamba.overlayselect.drag.MDrag2;
 import mamba.util.MultipleKeyCombination;
 
 /**
@@ -73,7 +74,19 @@ public class SimpleCanvas extends Region implements MambaCanvas<MEngine, VBox>{
         this.setOnMouseDragged(this::mouseDragged);
         this.setOnMousePressed(this::mousePressed);
         this.setOnMouseReleased(this::mouseReleased);
-        this.setOnScroll(this::mouseScrolled);        
+        this.setOnScroll(this::mouseScrolled);   
+        this.setOnMouseMoved(e->{
+            boolean isInDrag = false;
+            
+            if(engine2D.isSelected())
+                for(MDrag2 drag : engine2D.getSelectionModel().getSelectedShapeDragHandles())
+                    isInDrag |= drag.containsGlobalPoint(new Point2D(e.getX(), e.getY()));
+            
+            if(isInDrag)
+                this.setCursor(Cursor.HAND);
+            else
+                this.setCursor(Cursor.DEFAULT);
+        });
        
     }
 

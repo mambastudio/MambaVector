@@ -14,6 +14,7 @@ import mamba.base.engine.shape.groups.MRoot;
 import mamba.base.math.MTransform;
 import mamba.base.math.MTransformGeneric;
 import mamba.overlayselect.MSelectionModel;
+import mamba.overlayselect.drag.MDrag2;
 import mamba.util.MIntersection;
 
 /**
@@ -49,6 +50,16 @@ public class MEngine implements MambaEngine2D {
     public void draw() {
         graphicContext.clearRect(0, 0, Float.MAX_VALUE, Float.MAX_VALUE);                
         rootShape.draw();
+        drawSelection();
+    }
+    
+    private void drawSelection()
+    {
+        if(selectionModel.isSelected())
+        {
+            for(MDrag2 drag : selectionModel.getSelectedShapeDragHandles())
+                drag.draw();
+        }
     }
 
     @Override
