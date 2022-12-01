@@ -101,7 +101,7 @@ public class MPath extends MPathBezier<MPathPoint> implements MambaShape<MEngine
         
         isBezierEdit = new SimpleBooleanProperty(false);
         isBezierEdit.addListener((o, ov, nv)->{
-            getEngine2D().getSelectionModel().refreshOverlay(); //refresh overlay
+            getEngine2D().getSelectionModel().refreshDragHandles(); //refresh overlay
         });
     }
         
@@ -110,7 +110,7 @@ public class MPath extends MPathBezier<MPathPoint> implements MambaShape<MEngine
         Point2D point = new Point2D(x, y);        
         add(new MPathPoint(this, LINE_TO, point));
         getEngine2D().draw();
-        getEngine2D().getSelectionModel().refreshOverlay(); //refresh overlay
+        getEngine2D().getSelectionModel().refreshDragHandles(); //refresh overlay
     }
     
     public void addMoveTo(double x, double y)
@@ -118,7 +118,7 @@ public class MPath extends MPathBezier<MPathPoint> implements MambaShape<MEngine
         Point2D point = new Point2D(x, y);        
         add(new MPathPoint(this, MOVE_TO, point));
         getEngine2D().draw();
-        getEngine2D().getSelectionModel().refreshOverlay(); //refresh overlay
+        getEngine2D().getSelectionModel().refreshDragHandles(); //refresh overlay
     }
     
     @Override

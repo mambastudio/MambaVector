@@ -23,6 +23,7 @@
  */
 package mamba.base;
 
+import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.geometry.BoundingBox;
 import javafx.geometry.Bounds;
@@ -31,6 +32,8 @@ import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.effect.Effect;
 import mamba.base.math.MTransformGeneric;
 import mamba.overlayselect.drag.MDrag;
+import mamba.overlayselect.drag.MDrag2;
+import mamba.overlayselect.drag.MDragShape;
 import mamba.util.MIntersection;
 
 /**
@@ -87,8 +90,9 @@ public interface MambaShape<Engine2D extends MambaEngine2D> extends MambaHierarc
     //some shapes are being edited before fully fledged such as a path that starts with a point
     public boolean isComplete();
     
-    //for ui editor such as mouse editing (utilises the global transforms)
-    public ObservableList<MDrag> initDragHandles();
+   
+     //for ui editor such as mouse editing (utilises the global transforms)
+    public ObservableList<MDrag2> initDragHandles();
     public void updateDragHandles();
     
     //effects to be used here
@@ -96,7 +100,7 @@ public interface MambaShape<Engine2D extends MambaEngine2D> extends MambaHierarc
     public void setEffect(Effect effect);
     
     //bounds of shape
-    public boolean containsGlobalPoint(Point2D p); 
+    public boolean containsGlobalPoint(Point2D globalPoint); 
         
     //clone or copy 
     default MambaShape copy()

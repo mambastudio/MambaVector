@@ -74,6 +74,7 @@ public class SimpleCanvas extends Region implements MambaCanvas<MEngine, VBox>{
         this.setOnMousePressed(this::mousePressed);
         this.setOnMouseReleased(this::mouseReleased);
         this.setOnScroll(this::mouseScrolled);        
+       
     }
 
     @Override
@@ -103,17 +104,12 @@ public class SimpleCanvas extends Region implements MambaCanvas<MEngine, VBox>{
     
     public void mousePressed(MouseEvent e)
     {            
-        pressed = new Point2D(e.getX(), e.getY());   
-        if(new MultipleKeyCombination(KeyCode.CONTROL).match())
-        {
-            engine2D.getSelectionModel().disableSelectionOverlay(true);
-        }
+        pressed = new Point2D(e.getX(), e.getY());          
     }
     
     public void mouseReleased(MouseEvent e)
     {
         this.setCursor(Cursor.DEFAULT);
-        engine2D.getSelectionModel().disableSelectionOverlay(false);
     }
     
     public void mouseDragged(MouseEvent e)
@@ -121,8 +117,7 @@ public class SimpleCanvas extends Region implements MambaCanvas<MEngine, VBox>{
         Point2D currentPressed = new Point2D(e.getX(), e.getY());        
                       
         if(new MultipleKeyCombination(KeyCode.CONTROL).match())
-        {
-            engine2D.getSelectionModel().disableSelectionOverlay(true);
+        {            
             this.setCursor(Cursor.MOVE);
             translate(currentPressed.subtract(pressed));
         }
@@ -139,10 +134,10 @@ public class SimpleCanvas extends Region implements MambaCanvas<MEngine, VBox>{
         Point2D scalePoint = new Point2D(scale, scale);
         
         if(new MultipleKeyCombination(KeyCode.CONTROL).match())
-        {
-            engine2D.getSelectionModel().disableSelectionOverlay(true);
+        {           
             zoom(mousePoint, scalePoint);
         }    
+        e.consume();
         
     }
     

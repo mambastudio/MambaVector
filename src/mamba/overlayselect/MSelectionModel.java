@@ -7,54 +7,57 @@ package mamba.overlayselect;
 
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
-import javafx.scene.Group;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import mamba.base.MambaShape;
+import mamba.overlayselect.drag.MDrag2;
 
 /**
  *
  * @author user
  */
 public class MSelectionModel {
-    
-    //group selection layer is always on top of canvas. 
-    //either remove or add components to it for editing shape
-    Group selectionLayer;    
+    //either remove or add components to it for editing shape   
     ObjectProperty<MambaShape> selectedShapeProperty;
-    
-    //selection overlay, where controls are
-    MSelectionOverlay selectionOverlay;
-    
+    ObservableList<MDrag2> selectedShapeDragHandles;
+        
     //set overlay group for adding editing nodes/components
-    public MSelectionModel(Group layoutBoundsOverlay)
+    public MSelectionModel()
     {
-        this.selectionLayer = layoutBoundsOverlay;
         this.selectedShapeProperty = new SimpleObjectProperty();
+        this.selectedShapeDragHandles = FXCollections.observableArrayList();
+        
+        selectedShapeProperty.addListener((o, ov, nv)->{
+            if(nv != null)
+            {
+                selectedShapeDragHandles.setAll(selectedShapeProperty.get().initDragHandles());
+                nv.getEngine2D().draw();
+            }
+            else
+            {
+                selectedShapeDragHandles.removeAll(selectedShapeDragHandles);
+                if(ov != null)
+                    ov.getEngine2D().draw();
+            }
+        });
     }
     
     public void set(MambaShape shape)
-    {
-       
+    {       
         if(shape != null)
         {
             if(shape == this.selectedShapeProperty)
-                return;
-            selectionOverlay = new MSelectionOverlay(shape);
-            selectionLayer.getChildren().clear();
-            selectionLayer.getChildren().add(selectionOverlay);
-            this.selectedShapeProperty.set(shape);
-            
+                return;            
+            this.selectedShapeProperty.set(shape);            
         }
         else
-            clear();
-             
+            clear();             
     }
     
   
 
     public void clear() {
-
-        selectionLayer.getChildren().clear();
-        selectionOverlay = null;
+        
         selectedShapeProperty.set(null);
     }
     
@@ -81,16 +84,10 @@ public class MSelectionModel {
         return selectedShapeProperty;
     }
     
-    public void refreshOverlay()
-    {
-        if(selectionOverlay != null)
-        {
-            selectionOverlay.refresh();           
-        }
+    public void refreshDragHandles()
+    {        
+        selectedShapeProperty.get().updateDragHandles();
+        selectedShapeProperty.get().getEngine2D().draw();
     }
     
-    public void disableSelectionOverlay(boolean disable)
-    {
-        selectionOverlay.setDisable(disable);
-    }
 }

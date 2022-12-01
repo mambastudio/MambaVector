@@ -9,6 +9,7 @@ import javafx.collections.ObservableList;
 import javafx.scene.Cursor;
 import javafx.scene.Group;
 import javafx.scene.Node;
+import javafx.scene.input.ScrollEvent;
 import javafx.scene.shape.Shape;
 
 /**
@@ -36,9 +37,10 @@ public abstract class MDrag<S extends Shape> extends Group {
     
     public MDrag(Cursor dragCursor)
     {
-        this.setCursor(dragCursor);
+        //this.setCursor(dragCursor);
         ObservableList<S> drag = initDrag();    
         super.getChildren().addAll(drag);
+       
     }
     
     protected abstract ObservableList<S> initDrag();       

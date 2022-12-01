@@ -31,7 +31,7 @@ import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.effect.Effect;
 import mamba.base.math.MTransform;
 import mamba.base.math.MTransformGeneric;
-import mamba.overlayselect.drag.MDrag;
+import mamba.overlayselect.drag.MDrag2;
 
 /**
  *
@@ -45,7 +45,7 @@ public abstract class MambaShapeAbstract<Engine2D extends MambaEngine2D> impleme
     private GraphicsContext graphicsContext;
     protected ObservableList<MambaShape<Engine2D>> children;
     private Effect effect;
-    protected ObservableList<MDrag> dragHandles;
+    protected ObservableList<MDrag2> dragHandles;
     
     protected MambaShapeAbstract()
     {

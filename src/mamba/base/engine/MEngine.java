@@ -8,7 +8,6 @@ package mamba.base.engine;
 import java.util.List;
 import javafx.geometry.Point2D;
 import javafx.scene.canvas.GraphicsContext;
-import javafx.scene.transform.Transform;
 import mamba.base.MambaEngine2D;
 import mamba.base.MambaShape;
 import mamba.base.engine.shape.groups.MRoot;
@@ -22,7 +21,8 @@ import mamba.util.MIntersection;
  * @author user
  */
 public class MEngine implements MambaEngine2D {
-    private GraphicsContext graphicContext = null;        
+    private GraphicsContext graphicContext = null;   
+    
     private MSelectionModel selectionModel = null;
     private MRoot rootShape = null;
     
@@ -176,7 +176,7 @@ public class MEngine implements MambaEngine2D {
     public void setTransform(MTransformGeneric transform) {
         this.transform = transform;
         if(isSelected())
-            getSelectionModel().refreshOverlay();       
+            getSelectionModel().refreshDragHandles();       
         draw();
     }
 }

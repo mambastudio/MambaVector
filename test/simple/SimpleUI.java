@@ -44,26 +44,18 @@ public class SimpleUI extends Application{
     
     private final BackgroundPane background = new BackgroundPane();
     private final SimpleCanvas canvas = new SimpleCanvas();
-    private final Group selectionLayer = new Group();
     private final MEngine engine2D = new MEngine();    
     
     @Override
     public void start(Stage primaryStage) {
         canvas.setEngine2D(engine2D);
         
-        engine2D.setSelectionModel(new MSelectionModel(selectionLayer));       
+        engine2D.setSelectionModel(new MSelectionModel());       
         MCircle2 circle = new MCircle2();
+        circle.setSolidColor(Color.GOLDENROD);
         engine2D.addShape(circle);
-        
-        MCircle2 circle2 = new MCircle2();
-        circle2.setSolidColor(Color.BLUE);
-        
-       // circle2.setLocalTransform(MTransform.scale(2, 2));
-        circle2.setLocation(60, 60);
-        engine2D.addShape(circle2);
-        engine2D.setSelected(circle2);
-             
-        Pane root = new Pane(background, canvas, selectionLayer);     
+                          
+        Pane root = new Pane(background, canvas);     
         
         //ensure they grow according to base draw panel
         background.prefWidthProperty().bind(root.widthProperty());

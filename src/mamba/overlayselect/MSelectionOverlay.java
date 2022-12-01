@@ -12,7 +12,7 @@ import mamba.base.MambaShape;
  *
  * @author user
  */
-public class MSelectionOverlay extends Region{
+public class MSelectionOverlay{
     boolean selectionRectangleVisible = true;
     boolean dragHandlesVisible = true;
     final MambaShape monitoredShape;
@@ -20,12 +20,12 @@ public class MSelectionOverlay extends Region{
     public MSelectionOverlay(MambaShape shape) {
         this.monitoredShape = shape;       
         setPickOnBounds(false);
-        this.getChildren().setAll(shape.initDragHandles());
+//        this.getChildren().setAll(shape.initDragHandles());
     }
     
     public void refresh()
     {
-        this.getChildren().setAll(monitoredShape.initDragHandles());
+//        this.getChildren().setAll(monitoredShape.initDragHandles());
         monitoredShape.updateDragHandles();
     }
 }

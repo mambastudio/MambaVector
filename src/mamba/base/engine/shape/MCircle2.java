@@ -31,14 +31,14 @@ import javafx.collections.ObservableList;
 import javafx.geometry.BoundingBox;
 import javafx.geometry.Bounds;
 import javafx.geometry.Point2D;
-import javafx.scene.Cursor;
 import javafx.scene.paint.Color;
 import mamba.base.MambaShapeAbstract;
 import mamba.base.engine.MEngine;
 import mamba.base.math.MBound;
 import mamba.base.math.MTransform;
-import mamba.overlayselect.drag.MDrag;
-import mamba.overlayselect.drag.MDragSquare;
+import mamba.overlayselect.drag.MDrag2;
+import mamba.overlayselect.drag.MDragC;
+import mamba.overlayselect.drag.MDragShape;
 import mamba.util.MIntersection;
 
 /**
@@ -126,21 +126,14 @@ public class MCircle2 extends MambaShapeAbstract<MEngine>
     }
 
     @Override
-    public ObservableList<MDrag> initDragHandles() {
+    public ObservableList<MDrag2> initDragHandles() {
         if(dragHandles.isEmpty())
         {                              
-            MDragSquare c1 = new MDragSquare();            
-            c1.setX(getGlobalBounds().getMinX());
-            c1.setY(getGlobalBounds().getMinY());
-            dragHandles.add(c1);
+            MDragC c1 = new MDragC();            
+            c1.setPosition(getGlobalBounds().getMinX(), getGlobalBounds().getMinY());            
+            dragHandles.add(c1);            
 
-            c1.setOnMousePressed(e->{
-               Point2D p = new Point2D(e.getX(), e.getY()); 
-               e.consume();
-            });
-
-            c1.setOnMouseDragged(e->{
-
+            c1.setOnMouseDrag(e->{
                 Point2D p = new Point2D(e.getX(), e.getY());
 
                 MBound cBound = new MBound(getShapeBound());
@@ -152,22 +145,14 @@ public class MCircle2 extends MambaShapeAbstract<MEngine>
                 height.set(nShapeBound.getHeight());
                 
                 updateDragHandles();                
-                getEngine2D().draw();
-                e.consume();
-
+                getEngine2D().draw();               
             });
-            
-            MDragSquare c2 = new MDragSquare();
-            c2.setX(getGlobalBounds().getMaxX());
-            c2.setY(getGlobalBounds().getMaxY());
+                        
+            MDragC c2 = new MDragC();
+            c2.setPosition(getGlobalBounds().getMaxX(), getGlobalBounds().getMaxY());            
             dragHandles.add(c2);
-
-            c2.setOnMousePressed(e->{
-               Point2D p = new Point2D(e.getX(), e.getY());                
-            });
             
-            c2.setOnMouseDragged(e->{
-
+            c2.setOnMouseDrag(e->{
                 Point2D p = new Point2D(e.getX(), e.getY());
                 
                 MBound cBound = new MBound(getShapeBound());
@@ -181,22 +166,12 @@ public class MCircle2 extends MambaShapeAbstract<MEngine>
                 updateDragHandles();             
                 getEngine2D().draw();
             });
-
-            c2.setOnMouseMoved(e->{
-                c2.setCursor(Cursor.HAND);
-            });
             
-            MDragSquare c3 = new MDragSquare();
-            c3.setX(getGlobalBounds().getMinX());
-            c3.setY(getGlobalBounds().getMaxY());
+            MDragC c3 = new MDragC();
+            c3.setPosition(getGlobalBounds().getMinX(), getGlobalBounds().getMaxY());           
             dragHandles.add(c3);
 
-            c3.setOnMousePressed(e->{
-               Point2D p = new Point2D(e.getX(), e.getY());               
-            });
-
-            c3.setOnMouseDragged(e->{
-
+            c3.setOnMouseDrag(e->{
                 Point2D p = new Point2D(e.getX(), e.getY());
                 
                 MBound cBound = new MBound(getShapeBound());
@@ -210,21 +185,11 @@ public class MCircle2 extends MambaShapeAbstract<MEngine>
                 updateDragHandles(); 
                 getEngine2D().draw();
             });
-
-            c3.setOnMouseMoved(e->{
-                c3.setCursor(Cursor.HAND);
-            });
             
-            MDragSquare c4 = new MDragSquare();
-            c4.setX(getGlobalBounds().getMaxX());
-            c4.setY(getGlobalBounds().getMinY());
+            MDragC c4 = new MDragC();
+            c4.setPosition(getGlobalBounds().getMaxX(), getGlobalBounds().getMinY());           
             dragHandles.add(c4);
-
-            c4.setOnMousePressed(e->{
-               Point2D p = new Point2D(e.getX(), e.getY());             
-            });
-
-            c4.setOnMouseDragged(e->{
+            c4.setOnMouseDrag(e->{
 
                 Point2D p = new Point2D(e.getX(), e.getY());
 
@@ -239,34 +204,27 @@ public class MCircle2 extends MambaShapeAbstract<MEngine>
                 updateDragHandles();           
                 getEngine2D().draw();
             });
-
-            //c4 on mouse moved
-            c4.setOnMouseMoved(e->{
-                c4.setCursor(Cursor.HAND);
-            });
         }
                 
         return dragHandles;       
     }
 
     @Override
-    public void updateDragHandles() {        
+    public void updateDragHandles() {     
+        if(true)
+            return;
        
-        MDrag c1 = dragHandles.get(0);
-        c1.setX(getGlobalBounds().getMinX());
-        c1.setY(getGlobalBounds().getMinY());
+        MDragShape c1 = dragHandles.get(0);
+        c1.setPosition(getGlobalBounds().getMinX(), getGlobalBounds().getMinY());
         
-        MDrag c2 = dragHandles.get(1);
-        c2.setX(getGlobalBounds().getMaxX());
-        c2.setY(getGlobalBounds().getMaxY());
+        MDragShape c2 = dragHandles.get(1);
+        c2.setPosition(getGlobalBounds().getMaxX(), getGlobalBounds().getMaxY());
         
-        MDrag c3 = dragHandles.get(2);
-        c3.setX(getGlobalBounds().getMinX());
-        c3.setY(getGlobalBounds().getMaxY());
+        MDragShape c3 = dragHandles.get(2);
+        c3.setPosition(getGlobalBounds().getMinX(), getGlobalBounds().getMaxY());
               
-        MDrag c4 = dragHandles.get(3);        
-        c4.setX(getGlobalBounds().getMaxX());
-        c4.setY(getGlobalBounds().getMinY());         
+        MDragShape c4 = dragHandles.get(3);        
+        c4.setPosition(getGlobalBounds().getMaxX(), getGlobalBounds().getMinY());
     }
   
     @Override
