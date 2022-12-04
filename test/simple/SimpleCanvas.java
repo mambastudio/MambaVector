@@ -75,18 +75,7 @@ public class SimpleCanvas extends Region implements MambaCanvas<MEngine, VBox>{
         this.setOnMousePressed(this::mousePressed);
         this.setOnMouseReleased(this::mouseReleased);
         this.setOnScroll(this::mouseScrolled);   
-        this.setOnMouseMoved(e->{
-            boolean isInDrag = false;
-            
-            if(engine2D.isSelected())
-                for(MDrag2 drag : engine2D.getSelectionModel().getSelectedShapeDragHandles())
-                    isInDrag |= drag.containsGlobalPoint(new Point2D(e.getX(), e.getY()));
-            
-            if(isInDrag)
-                this.setCursor(Cursor.HAND);
-            else
-                this.setCursor(Cursor.DEFAULT);
-        });
+        this.setOnMouseMoved(this::mouseMoved);
        
     }
 
@@ -115,9 +104,16 @@ public class SimpleCanvas extends Region implements MambaCanvas<MEngine, VBox>{
        
     }
     
+    public void mouseMoved(MouseEvent e)
+    {
+        //put cursor if over
+        setMouseCursorOnDragHandle(new Point2D(e.getX(), e.getY()));
+    }
+    
     public void mousePressed(MouseEvent e)
     {            
-        pressed = new Point2D(e.getX(), e.getY());          
+        pressed = new Point2D(e.getX(), e.getY());  
+        
     }
     
     public void mouseReleased(MouseEvent e)
@@ -127,7 +123,8 @@ public class SimpleCanvas extends Region implements MambaCanvas<MEngine, VBox>{
     
     public void mouseDragged(MouseEvent e)
     {
-        Point2D currentPressed = new Point2D(e.getX(), e.getY());        
+        Point2D currentPressed = new Point2D(e.getX(), e.getY());
+        
                       
         if(new MultipleKeyCombination(KeyCode.CONTROL).match())
         {            
@@ -145,6 +142,9 @@ public class SimpleCanvas extends Region implements MambaCanvas<MEngine, VBox>{
         
         Point2D mousePoint = new Point2D(e.getX(), e.getY());
         Point2D scalePoint = new Point2D(scale, scale);
+        
+        //put cursor if over
+        setMouseCursorOnDragHandle(mousePoint);
         
         if(new MultipleKeyCombination(KeyCode.CONTROL).match())
         {           
@@ -169,5 +169,19 @@ public class SimpleCanvas extends Region implements MambaCanvas<MEngine, VBox>{
                 createConcatenation(MTransform.translate(delta)).asMTransform();
         
         engine2D.setTransform(translate);
+    }
+    
+    private void setMouseCursorOnDragHandle(Point2D p)
+    {
+        boolean isInDrag = false;
+            
+        if(engine2D.isSelected())
+            for(MDrag2 drag : engine2D.getSelectionModel().getSelectedShapeDragHandles())
+                isInDrag |= drag.containsGlobalPoint(p);
+
+        if(isInDrag)
+            this.setCursor(Cursor.HAND);
+        else
+            this.setCursor(Cursor.DEFAULT);
     }
 }
