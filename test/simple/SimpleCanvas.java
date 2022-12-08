@@ -36,6 +36,7 @@ import mamba.base.MambaCanvas;
 import mamba.base.engine.MEngine;
 import mamba.base.math.MTransform;
 import mamba.overlayselect.drag.MDrag2;
+import mamba.util.MIntersection;
 import mamba.util.MultipleKeyCombination;
 
 /**
@@ -113,12 +114,14 @@ public class SimpleCanvas extends Region implements MambaCanvas<MEngine, VBox>{
     public void mousePressed(MouseEvent e)
     {            
         pressed = new Point2D(e.getX(), e.getY());  
-        
+        Point2D p = new Point2D(e.getX(), e.getY());  
+        System.out.println(engine2D.intersect(p, new MIntersection()));
     }
     
     public void mouseReleased(MouseEvent e)
     {
         this.setCursor(Cursor.DEFAULT);
+        
     }
     
     public void mouseDragged(MouseEvent e)

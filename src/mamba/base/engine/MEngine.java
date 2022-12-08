@@ -31,8 +31,14 @@ public class MEngine implements MambaEngine2D {
     
     public MEngine()
     {
+        init();
+    }
+    
+    private void init()
+    {
         graphicContext = null;
-        rootShape = new MRoot();
+        rootShape = new MRoot();        
+        rootShape.setEngine(this);
         transform = new MTransform();
     }
 
@@ -44,6 +50,7 @@ public class MEngine implements MambaEngine2D {
     @Override
     public void setGraphicsContext(GraphicsContext graphicContext) {
         this.graphicContext = graphicContext;
+        rootShape.setGraphicContext(graphicContext);        
     }
 
     @Override

@@ -63,9 +63,7 @@ public class MCircle2 extends MambaShapeAbstract<MEngine>
         width = new SimpleDoubleProperty(50);
         height = new SimpleDoubleProperty(50);
         
-        location = new SimpleObjectProperty(Point2D.ZERO);
-        
-        //this.setLocalTransform(MTransform.scale(5, 5));
+        location = new SimpleObjectProperty(Point2D.ZERO);        
     }
     
     
@@ -98,7 +96,7 @@ public class MCircle2 extends MambaShapeAbstract<MEngine>
 
     @Override
     public boolean intersect(Point2D parentPoint, MIntersection isect) {
-        Point2D shapeSpacePoint = getLocalTransform().inverseTransform(parentPoint);
+        Point2D shapeSpacePoint = this.getLocalTransform().transform(parentPoint);
         //simple check
         Bounds bound = getShapeBound();
         return bound.contains(shapeSpacePoint);        

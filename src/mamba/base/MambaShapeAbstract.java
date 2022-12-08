@@ -53,6 +53,7 @@ public abstract class MambaShapeAbstract<Engine2D extends MambaEngine2D> impleme
         effect = null;
         children = FXCollections.emptyObservableList();
         dragHandles = FXCollections.observableArrayList();
+        
     }
     
     @Override

@@ -72,8 +72,9 @@ public class MRoot extends MambaShapeAbstract<MEngine>{
     @Override
     public boolean intersect(Point2D p, MIntersection isect)
     {
+        Point2D lp = this.getLocalTransform().transform(p);
         for(MambaShape shape : reversed(children))
-            if(shape.intersect(p, isect)) //return first hit
+            if(shape.intersect(lp, isect)) //return first hit
             {                
                 return true;
             }

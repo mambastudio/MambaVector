@@ -43,7 +43,8 @@ public interface MambaEngine2D<MShape extends MambaShape> {
     public MShape hitSelect(Point2D p); //to be deprecated
     default boolean intersect(Point2D p, MIntersection isect)
     {
-        return getRoot().intersect(p, isect);
+        Point2D lp = getTransform().transform(p);
+        return getRoot().intersect(lp, isect);
     }
     
     default boolean intersect(Bounds localBound, MIntersection isect)
