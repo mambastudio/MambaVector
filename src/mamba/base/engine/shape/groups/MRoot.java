@@ -6,18 +6,16 @@
 package mamba.base.engine.shape.groups;
 
 import java.util.List;
-import javafx.beans.property.SimpleStringProperty;
-import javafx.beans.property.StringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.geometry.BoundingBox;
+import javafx.geometry.Bounds;
 import javafx.geometry.Point2D;
 import javafx.scene.canvas.GraphicsContext;
 import mamba.base.MambaShape;
+import mamba.base.MambaShapeAbstract;
 import mamba.base.engine.MEngine;
-import mamba.base.math.MTransform;
-import mamba.base.math.MTransformGeneric;
-import mamba.overlayselect.drag.MDrag;
+import mamba.base.math.MBound;
+import mamba.overlayselect.drag.MDrag2;
 import mamba.util.MIntersection;
 import static mamba.util.Reversed.reversed;
 
@@ -25,56 +23,21 @@ import static mamba.util.Reversed.reversed;
  *
  * @author jmburu
  */
-public class MRoot implements MambaShape<MEngine>{
-    private MTransformGeneric transform;
+public class MRoot extends MambaShapeAbstract<MEngine>{
     
     private MEngine engine2D;
-    private GraphicsContext graphicContext;
-    
-    private final StringProperty nameProperty;    
-    private final ObservableList<MambaShape<MEngine>> children;
+    private GraphicsContext graphicContext;    
     
     public MRoot()
     {
-        this.transform = MTransform.translate(0, 0); //identity
-        this.nameProperty = new SimpleStringProperty("Root");
         this.children = FXCollections.observableArrayList();
     }
-    @Override
-    public MTransformGeneric getTransform() {
-        return transform;
+    
+    public MRoot(MambaShape<MEngine>... shapes)
+    {
+        this();
     }
-
-    @Override
-    public void setTransform(MTransformGeneric transform) {
-        this.transform = transform;
-    }
-
-    @Override
-    public void translate(Point2D p) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
-    public Point2D getTranslate() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
-    public void setOffset(Point2D offset) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
-    public Point2D getOffset() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
-    public ShapeType getType() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
+   
     @Override
     public MEngine getEngine2D() {
         return engine2D;
@@ -102,31 +65,6 @@ public class MRoot implements MambaShape<MEngine>{
     }
 
     @Override
-    public BoundingBox getBounds() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
-    public boolean contains(Point2D p) {
-        return true;
-    }
-
-    @Override
-    public void updateDragHandles(MDrag referenceHandle) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
-    public StringProperty getNameProperty() {
-        return nameProperty;
-    }
-
-    @Override
-    public String getName() {
-        return nameProperty.get();
-    }
-
-    @Override
     public ObservableList getChildren() {
         return children;
     }
@@ -143,6 +81,23 @@ public class MRoot implements MambaShape<MEngine>{
     }
     
     @Override
+    public boolean intersect(Bounds parentBound, MIntersection isect) {
+        for(MambaShape shape : reversed(children))
+            if(shape.intersect(parentBound, isect)) //return first hit
+            {                
+                return true;
+            }
+        return false;
+    }
+    
+    @Override
+    public Bounds getShapeBound() {
+        MBound bound = new MBound();
+        for(MambaShape shape : reversed(children))
+           bound.include(shape.getShapeBound());
+        return bound.getBoundingBox();
+    }
+    
     public boolean addShape(MambaShape shape)
     {
         return getChildren().add(shape);        
@@ -154,8 +109,32 @@ public class MRoot implements MambaShape<MEngine>{
     }
     
     @Override
+    public boolean isComplete() {
+        return true;
+    }
+    
+    @Override
+    public ObservableList<MDrag2> initDragHandles() {
+        return FXCollections.emptyObservableList();
+    }
+    
+    @Override
+    public void updateDragHandles() {
+        //empty drag handles
+    }
+    
+    @Override
+    public boolean containsGlobalPoint(Point2D globalPoint) {
+        //transform p to shape space coordinates
+        Point2D shapeSpacePoint = globalToLocalTransform(globalPoint);
+        //simple check
+        Bounds bound = getShapeBound();
+        return bound.contains(shapeSpacePoint);
+    }
+    
+    @Override
     public String toString()
     {
         return "Root";
-    }
+    }    
 }

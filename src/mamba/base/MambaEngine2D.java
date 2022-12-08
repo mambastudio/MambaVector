@@ -48,7 +48,7 @@ public interface MambaEngine2D<MShape extends MambaShape> {
     
     default boolean intersect(Bounds localBound, MIntersection isect)
     {
-        return false;
+        return getRoot().intersect(localBound, isect);
     }
     
     //root shape in the hierarchy
