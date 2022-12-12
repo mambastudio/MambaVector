@@ -50,6 +50,8 @@ public interface MambaShape<Engine2D extends MambaEngine2D> extends MambaHierarc
             
     public MTransformGeneric shapeToGlobalTransform();
     public MTransformGeneric globalToShapeTransform();
+    public MTransformGeneric localToGlobalTransform();
+    public MTransformGeneric globalToLocalTransform();
     
     public Engine2D getEngine2D();
     public void setEngine(Engine2D engine2D);
@@ -92,7 +94,6 @@ public interface MambaShape<Engine2D extends MambaEngine2D> extends MambaHierarc
     public Bounds shapeToGlobalTransform(Bounds shapeBoundCoord);    
     public Point2D globalToShapeTransform(Point2D globalPointCoord);    
     public Bounds globalToShapeTransform(Bounds globalBoundCoord);
-        
     
     //some shapes are being edited before fully fledged such as a path that starts with a point
     public boolean isComplete();

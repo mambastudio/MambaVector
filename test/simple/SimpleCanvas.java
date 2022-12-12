@@ -33,6 +33,7 @@ import javafx.scene.input.ScrollEvent;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
 import mamba.base.MambaCanvas;
+import mamba.base.MambaShape;
 import mamba.base.engine.MEngine;
 import mamba.base.math.MTransform;
 import mamba.overlayselect.drag.MDrag2;
@@ -143,12 +144,16 @@ public class SimpleCanvas extends Region implements MambaCanvas<MEngine, VBox>{
         {            
             engine2D.getSelectionModel().getDragHandleSelected().processMouseEvent(e);
         }
-        else if(engine2D.getSelectionModel().isSelected())
+        else if(engine2D.getSelectionModel().isSelected()) //translate shape
         {
-           // MTransform translate = engine2D.getTransform(). //get existing engine transform first
-           //     createConcatenation(MTransform.translate(dragDelta)).asMTransform();
-        
-           // engine2D.setTransform(translate);
+            Point2D deltaVector = dragDelta.getDelta(); //this is a vector
+            MambaShape shape = engine2D.getSelectionModel().getSelected();
+            
+            Point2D deltaScaledVector = shape.globalToLocalTransform().deltaTransform(deltaVector);            
+            shape.setLocalTransform(shape.getLocalTransform().createConcatenation(MTransform.translate(deltaScaledVector)));
+            shape.updateDragHandles();
+            
+            engine2D.draw();           
         }       
     }
     
@@ -183,7 +188,7 @@ public class SimpleCanvas extends Region implements MambaCanvas<MEngine, VBox>{
     private void translate(Point2D delta)
     { 
         MTransform translate = engine2D.getTransform(). //get existing engine transform first
-                createConcatenation(MTransform.translate(delta)).asMTransform(); //delta here is a scalar
+                createConcatenation(MTransform.translate(delta)).asMTransform(); 
         
         engine2D.setTransform(translate);
     }

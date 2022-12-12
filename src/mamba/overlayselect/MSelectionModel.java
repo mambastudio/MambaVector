@@ -24,6 +24,7 @@ public class MSelectionModel {
     ObjectProperty<MambaShape> selectedShapeProperty;
     ObjectProperty<MDrag2> selectedDragHandleProperty;
     
+    //delected shape drag handles
     ObservableList<MDrag2> selectedShapeDragHandleList;
         
     //set overlay group for adding editing nodes/components
@@ -36,8 +37,9 @@ public class MSelectionModel {
         selectedShapeProperty.addListener((o, ov, nv)->{
             if(nv != null)
             {               
-                selectedShapeDragHandleList.setAll(selectedShapeProperty.get().initDragHandles());                
-                nv.getEngine2D().draw();
+                selectedShapeDragHandleList.setAll(selectedShapeProperty.get().initDragHandles());  
+                nv.updateDragHandles();
+                nv.getEngine2D().draw();                
             }
             else
             {
@@ -121,8 +123,13 @@ public class MSelectionModel {
     
     public void refreshDragHandles()
     {        
+        selectedShapeProperty.get().updateDragHandles();        
+    }
+    
+    public void refreshDragHandlesAndDraw()
+    {        
         selectedShapeProperty.get().updateDragHandles();
-        //selectedShapeProperty.get().getEngine2D().draw();
+        selectedShapeProperty.get().getEngine2D().draw();
     }
     
     public ObservableList<MDrag2> getSelectedShapeDragHandles()

@@ -147,10 +147,7 @@ public abstract class MambaShapeAbstract<Engine2D extends MambaEngine2D> impleme
     
     /**
      * (shape -> local) -> parent* -> world
-     * @return 
-     * 
-     * //FIXME: To deal with hierarchy concantenation
-     * 
+     * @return      
      */        
 
     @Override
@@ -158,9 +155,9 @@ public abstract class MambaShapeAbstract<Engine2D extends MambaEngine2D> impleme
     {
         MTransformGeneric transform;
         if(this.hasParent())
-            transform = getLocalTransform().createConcatenation(getParent().getLocalTransform());
+            transform = getLocalTransform().createConcatenation(getParent().shapeToGlobalTransform());
         else
-            transform = getLocalTransform();        
+            transform = getLocalTransform();                
         return transform.createConcatenation(getEngine2D().getTransform());
     }
     
@@ -171,13 +168,20 @@ public abstract class MambaShapeAbstract<Engine2D extends MambaEngine2D> impleme
         return shapeToGlobalTransform.inverseTransform();
     }
     
-    //after shape transformed
+    //after shape transformed or ignore concantenation of local transform
+    @Override
     public MTransformGeneric localToGlobalTransform()
-    {
-        MTransformGeneric transform = new MTransform();
+    {        
         if(this.hasParent())
-            transform = getParent().getLocalTransform();        
-        return transform.createConcatenation(getEngine2D().getTransform());
+            return getParent().shapeToGlobalTransform();       //calls engine transform irregardless 
+        else
+            return getEngine2D().getTransform(); //engine transform is not called anywhere, hence call it here
+    }
+    
+    @Override
+    public MTransformGeneric globalToLocalTransform()
+    {
+        return localToGlobalTransform().inverseTransform();
     }
     
     @Override

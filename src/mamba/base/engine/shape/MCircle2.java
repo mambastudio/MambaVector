@@ -207,11 +207,8 @@ public class MCircle2 extends MambaShapeAbstract<MEngine>
                 updateDragHandles();           
                 getEngine2D().draw();
             });
-        }
-        
-        //just in case scene is scaled or translated
-        updateDragHandles();
-                
+        }       
+      
         return dragHandles;       
     }
 
