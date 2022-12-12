@@ -40,16 +40,16 @@ public interface MambaEngine2D<MShape extends MambaShape> {
     public MSelectionModel getSelectionModel();
     
     //intersection
-    public MShape hitSelect(Point2D p); //to be deprecated
-    default boolean intersect(Point2D p, MIntersection isect)
+    default boolean intersect(Point2D canvasPoint, MIntersection isect)
     {
-        Point2D lp = getTransform().transform(p);
-        return getRoot().intersect(lp, isect);
+        Point2D engineSpacePoint = getTransform().inverseTransform(canvasPoint);
+        return getRoot().intersect(engineSpacePoint, isect);
     }
     
-    default boolean intersect(Bounds localBound, MIntersection isect)
+    default boolean intersect(Bounds canvasWorldBound, MIntersection isect)
     {
-        return getRoot().intersect(localBound, isect);
+        Bounds engineSpaceBound = getTransform().inverseTransform(canvasWorldBound);
+        return getRoot().intersect(engineSpaceBound, isect);
     }
     
     //root shape in the hierarchy

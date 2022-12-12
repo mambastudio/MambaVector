@@ -48,7 +48,7 @@ public class SimpleCanvas extends Region implements MambaCanvas<MEngine, VBox>{
     private MEngine engine2D = null;
     private final Canvas canvas;
     
-    Point2D pressed = new Point2D(0, 0);
+    Delta dragDelta = new Delta();
     
     public SimpleCanvas()
     {
@@ -113,29 +113,43 @@ public class SimpleCanvas extends Region implements MambaCanvas<MEngine, VBox>{
     
     public void mousePressed(MouseEvent e)
     {            
-        pressed = new Point2D(e.getX(), e.getY());  
+        dragDelta.setPoint(new Point2D(e.getX(), e.getY()));  
         Point2D p = new Point2D(e.getX(), e.getY());  
-        System.out.println(engine2D.intersect(p, new MIntersection()));
+      
+        if(!engine2D.getSelectionModel().intersectDragHandles(p))
+        {
+            MIntersection isect = new MIntersection();
+            engine2D.intersect(p, isect);
+            engine2D.setSelected(isect.shape);
+        }        
     }
     
     public void mouseReleased(MouseEvent e)
     {
         this.setCursor(Cursor.DEFAULT);
-        
+        this.engine2D.getSelectionModel().removeDragHandleSelected();
     }
     
     public void mouseDragged(MouseEvent e)
     {
-        Point2D currentPressed = new Point2D(e.getX(), e.getY());
-        
+        dragDelta.setPoint(new Point2D(e.getX(), e.getY()));        
                       
         if(new MultipleKeyCombination(KeyCode.CONTROL).match())
         {            
             this.setCursor(Cursor.MOVE);
-            translate(currentPressed.subtract(pressed));
+            translate(dragDelta.getDelta());
         }
-       
-        pressed = currentPressed;
+        else if(engine2D.getSelectionModel().isDragHandleSelected())
+        {            
+            engine2D.getSelectionModel().getDragHandleSelected().processMouseEvent(e);
+        }
+        else if(engine2D.getSelectionModel().isSelected())
+        {
+           // MTransform translate = engine2D.getTransform(). //get existing engine transform first
+           //     createConcatenation(MTransform.translate(dragDelta)).asMTransform();
+        
+           // engine2D.setTransform(translate);
+        }       
     }
     
     public void mouseScrolled(ScrollEvent e)
@@ -169,7 +183,7 @@ public class SimpleCanvas extends Region implements MambaCanvas<MEngine, VBox>{
     private void translate(Point2D delta)
     { 
         MTransform translate = engine2D.getTransform(). //get existing engine transform first
-                createConcatenation(MTransform.translate(delta)).asMTransform();
+                createConcatenation(MTransform.translate(delta)).asMTransform(); //delta here is a scalar
         
         engine2D.setTransform(translate);
     }
@@ -186,5 +200,23 @@ public class SimpleCanvas extends Region implements MambaCanvas<MEngine, VBox>{
             this.setCursor(Cursor.HAND);
         else
             this.setCursor(Cursor.DEFAULT);
+    }
+    
+    private class Delta
+    {
+        private Point2D pressed = Point2D.ZERO;
+        private Point2D delta = Point2D.ZERO;
+        
+        public void setPoint(Point2D p)
+        {
+            delta = p.subtract(pressed);
+            pressed = p;
+        }
+        
+        public Point2D getDelta()
+        {
+            return delta;
+        }
+        
     }
 }

@@ -71,7 +71,7 @@ public class MCircle2 extends MambaShapeAbstract<MEngine>
     public void draw() {
         getGraphicsContext().save();
         //apply transform first
-        this.localToGlobalTransform().transformGraphicsContext(getGraphicsContext());
+        this.shapeToGlobalTransform().transformGraphicsContext(getGraphicsContext());
       
         //draw shape, this is just local coordinates 
         getGraphicsContext().setFill(solidColor.get());
@@ -96,10 +96,15 @@ public class MCircle2 extends MambaShapeAbstract<MEngine>
 
     @Override
     public boolean intersect(Point2D parentPoint, MIntersection isect) {
-        Point2D shapeSpacePoint = this.getLocalTransform().transform(parentPoint);
+        Point2D shapeSpacePoint = this.getLocalTransform().inverseTransform(parentPoint);
         //simple check
         Bounds bound = getShapeBound();
-        return bound.contains(shapeSpacePoint);        
+        if(bound.contains(shapeSpacePoint))
+        {
+            isect.shape = this;
+            return true;
+        }
+        return false;        
     }
 
     @Override
@@ -135,7 +140,7 @@ public class MCircle2 extends MambaShapeAbstract<MEngine>
                 Point2D p = new Point2D(e.getX(), e.getY());
 
                 MBound cBound = new MBound(getShapeBound());
-                Point2D cShapePoint = this.globalToLocalTransform(p); //to shape coordinates    
+                Point2D cShapePoint = this.globalToShapeTransform(p); //to shape coordinates    
                 MBound nShapeBound = new MBound(cShapePoint, cBound.getMax());
                                 
                 location.set(nShapeBound.getMin());
@@ -154,7 +159,7 @@ public class MCircle2 extends MambaShapeAbstract<MEngine>
                 Point2D p = new Point2D(e.getX(), e.getY());
                 
                 MBound cBound = new MBound(getShapeBound());
-                Point2D cShapePoint = this.globalToLocalTransform(p); //to shape coordinates    
+                Point2D cShapePoint = this.globalToShapeTransform(p); //to shape coordinates    
                 MBound nShapeBound = new MBound(cBound.getUpperLeft(), cShapePoint); //simple reflection of point
                                 
                 location.set(nShapeBound.getMin());
@@ -173,7 +178,7 @@ public class MCircle2 extends MambaShapeAbstract<MEngine>
                 Point2D p = new Point2D(e.getX(), e.getY());
                 
                 MBound cBound = new MBound(getShapeBound());
-                Point2D cShapePoint = this.globalToLocalTransform(p); //to shape coordinates    
+                Point2D cShapePoint = this.globalToShapeTransform(p); //to shape coordinates    
                 MBound nShapeBound = new MBound(cShapePoint, cBound.getUpperRight()); //simple reflection of point
                
                 location.set(nShapeBound.getMin());
@@ -192,7 +197,7 @@ public class MCircle2 extends MambaShapeAbstract<MEngine>
                 Point2D p = new Point2D(e.getX(), e.getY());
 
                 MBound cBound = new MBound(getShapeBound());
-                Point2D cShapePoint = this.globalToLocalTransform(p); //to shape coordinates    
+                Point2D cShapePoint = this.globalToShapeTransform(p); //to shape coordinates    
                 MBound nShapeBound = new MBound(cShapePoint, cBound.getLowerLeft()); //simple reflection of point
                
                 location.set(nShapeBound.getMin());
@@ -203,6 +208,9 @@ public class MCircle2 extends MambaShapeAbstract<MEngine>
                 getEngine2D().draw();
             });
         }
+        
+        //just in case scene is scaled or translated
+        updateDragHandles();
                 
         return dragHandles;       
     }
@@ -226,7 +234,7 @@ public class MCircle2 extends MambaShapeAbstract<MEngine>
     @Override
     public boolean containsGlobalPoint(Point2D globalPoint) {        
         //transform p to shape space coordinates
-        Point2D shapeSpacePoint = globalToLocalTransform(globalPoint);
+        Point2D shapeSpacePoint = globalToShapeTransform(globalPoint);
         //simple check
         Bounds bound = getShapeBound();
         return bound.contains(shapeSpacePoint);

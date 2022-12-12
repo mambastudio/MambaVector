@@ -23,12 +23,17 @@
  */
 package mamba.base;
 
+import java.util.HashMap;
+import java.util.Map;
+import java.util.function.Consumer;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.event.EventType;
 import javafx.geometry.Bounds;
 import javafx.geometry.Point2D;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.effect.Effect;
+import javafx.scene.input.MouseEvent;
 import mamba.base.math.MTransform;
 import mamba.base.math.MTransformGeneric;
 import mamba.overlayselect.drag.MDrag2;
@@ -37,15 +42,38 @@ import mamba.overlayselect.drag.MDrag2;
  *
  * @author jmburu
  * @param <Engine2D>
+ * 
+ * local< - >shape
+ * parent*< - >local< - >shape
+ * global< - >parent*< - >local< - >shape
+ * 
+ * Shape coordinates are in shape boundary, and if the shape is transformed, the newly transformed
+ * coordinates is the local coordinates; 
+ * Hence 
+ *      - local->shape transform
+ *      - shape->local transform
+ *  
+ * Local coordinates are in local boundary, and if the local space/coordinates are transformed based on parent local transform (layout), if it exists, 
+ * the newly transformed coordinates are in the parent local coordinates;
+ * Hence 
+ *      - local->parent transform
+ *      - parent->local transform
+ * 
+ * Global coordinates don't require much explanation, but they are located in the engine class
+ *      - global->shape transform = global/world coordinates to shape coordinate
+ *      - shape->global transform = shape coordinate to global/world coordinates
+ * 
+ * NB: Local coordinates are the shape coordinates of the parent if any
  */
 public abstract class MambaShapeAbstract<Engine2D extends MambaEngine2D> implements MambaShape<Engine2D> {
-    //World->Local->Object
+       
     private MTransformGeneric localTransform;
     private Engine2D engine2D;
     private GraphicsContext graphicsContext;
     protected ObservableList<MambaShape<Engine2D>> children;
     private Effect effect;
     protected ObservableList<MDrag2> dragHandles;
+    protected final Map<EventType<? extends MouseEvent>, Consumer<MouseEvent>> mouseEventConsumer;
     
     protected MambaShapeAbstract()
     {
@@ -53,7 +81,7 @@ public abstract class MambaShapeAbstract<Engine2D extends MambaEngine2D> impleme
         effect = null;
         children = FXCollections.emptyObservableList();
         dragHandles = FXCollections.observableArrayList();
-        
+        mouseEventConsumer = new HashMap();
     }
     
     @Override
@@ -104,84 +132,99 @@ public abstract class MambaShapeAbstract<Engine2D extends MambaEngine2D> impleme
     {
         this.effect = effect;
     }
-        
-    @Override
-    public MTransformGeneric localToParentTransform()
+    
+    
+    public void setOnMouseDrag(Consumer<MouseEvent> consume)
     {
-        if(this.hasParent())
-            return this.getLocalTransform().createConcatenation(getParent().getLocalTransform());
-        else
-            return this.getLocalTransform();
+        this.mouseEventConsumer.put(MouseEvent.MOUSE_DRAGGED, consume);
+    }
+       
+    public void processMouseEvent(MouseEvent e)
+    {
+        if(this.mouseEventConsumer.containsKey(e.getEventType()))
+            this.mouseEventConsumer.get(e.getEventType()).accept(e);
     }
     
+    /**
+     * (shape -> local) -> parent* -> world
+     * @return 
+     * 
+     * //FIXME: To deal with hierarchy concantenation
+     * 
+     */        
+
     @Override
-    public MTransformGeneric parentToLocalTransform()
-    {
-        MTransformGeneric localToParent = localToParentTransform();
-        return localToParent.inverseTransform();
-    }
-        
-    //get transforms to global and vice versa
-    @Override
-    public MTransformGeneric localToGlobalTransform()
+    public MTransformGeneric shapeToGlobalTransform()
     {
         MTransformGeneric transform;
         if(this.hasParent())
-            transform = getLocalTransform().createConcatenation(getParent().localToParentTransform());
+            transform = getLocalTransform().createConcatenation(getParent().getLocalTransform());
         else
             transform = getLocalTransform();        
         return transform.createConcatenation(getEngine2D().getTransform());
     }
     
     @Override
-    public MTransformGeneric globalToLocalTransform()
+    public MTransformGeneric globalToShapeTransform()
     {
-        MTransformGeneric transform = localToGlobalTransform();
-        return transform.inverseTransform();
+        MTransformGeneric shapeToGlobalTransform = shapeToGlobalTransform();
+        return shapeToGlobalTransform.inverseTransform();
     }
     
-    public Bounds getGlobalBounds()
+    //after shape transformed
+    public MTransformGeneric localToGlobalTransform()
     {
-        return localToGlobalTransform(getShapeBound());
+        MTransformGeneric transform = new MTransform();
+        if(this.hasParent())
+            transform = getParent().getLocalTransform();        
+        return transform.createConcatenation(getEngine2D().getTransform());
     }
     
-    public Point2D localToParentTransform(Point2D point)
+    @Override
+    public Point2D shapeToLocalTransform(Point2D shapePointCoord)
     {
-        return localToParentTransform().transform(point);
+        return localTransform.transform(shapePointCoord);
     }
     
-    public Point2D parentToLocalTransform(Point2D point)
+    @Override
+    public Bounds shapeToLocalTransform(Bounds shapeBoundCoord)
     {
-        return parentToLocalTransform().transform(point);
+        return localTransform.transform(shapeBoundCoord);
     }
     
-    public Bounds localToParentTransform(Bounds bound)
+    @Override
+    public Point2D localToShapeTransform(Point2D localPointCoord)
     {
-        return localToParentTransform().transform(bound);
+        return localTransform.inverseTransform(localPointCoord);
     }
     
-    public Bounds parentToLocalTransform(Bounds bound)
+    @Override
+    public Bounds localToShapeTransform(Bounds localBoundCoord)
     {
-        return parentToLocalTransform().transform(bound);
+        return localTransform.inverseTransform(localBoundCoord);
     }
     
-    public Point2D localToGlobalTransform(Point2D point)
+    @Override
+    public Point2D shapeToGlobalTransform(Point2D shapePointCoord)
     {
-        return localToGlobalTransform().transform(point);
-    }
+        return shapeToGlobalTransform().transform(shapePointCoord);
+    }  
     
-    public Point2D globalToLocalTransform(Point2D point)
+    @Override
+    public Bounds shapeToGlobalTransform(Bounds shapeBoundCoord)
     {
-        return globalToLocalTransform().transform(point);
-    }
+        return shapeToGlobalTransform().transform(shapeBoundCoord);
+    }  
     
-    public Bounds localToGlobalTransform(Bounds bound)
+    @Override
+    public Point2D globalToShapeTransform(Point2D globalPointCoord)
     {
-        return localToGlobalTransform().transform(bound);
-    }
+        return globalToShapeTransform().transform(globalPointCoord);
+    } 
     
-    public Bounds globalToLocalTransform(Bounds bound)
+    @Override
+    public Bounds globalToShapeTransform(Bounds globalBoundCoord)
     {
-        return globalToLocalTransform().transform(bound);
-    }
+        return globalToShapeTransform().transform(globalBoundCoord);
+    } 
 }

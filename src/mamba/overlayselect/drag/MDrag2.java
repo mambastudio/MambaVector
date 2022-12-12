@@ -23,9 +23,12 @@
  */
 package mamba.overlayselect.drag;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.function.Consumer;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.event.EventType;
 import javafx.scene.input.MouseEvent;
 import mamba.base.MambaShape;
 import mamba.base.MambaShapeAbstract;
@@ -35,16 +38,15 @@ import mamba.base.engine.MEngine;
  *
  * @author jmburu
  */
-public abstract class MDrag2 extends MambaShapeAbstract<MEngine> implements MDragShape<MEngine> {
-    
-    private Consumer<MouseEvent> consume;
-    private final MambaShape<MEngine> ownerShape;
+public abstract class MDrag2 extends MambaShapeAbstract<MEngine> implements MDragShape<MEngine> {    
+    private final MambaShape<MEngine> ownerShape;    
     
     protected MDrag2(MambaShape<MEngine> ownerShape)
     {
         this.ownerShape = ownerShape;
         this.setEngine(ownerShape.getEngine2D());
         this.setGraphicContext(ownerShape.getGraphicsContext());
+       
     }
     
      //for ui editor such as mouse editing (utilises the global transforms) - NOT NEEDED HERE
@@ -65,21 +67,12 @@ public abstract class MDrag2 extends MambaShapeAbstract<MEngine> implements MDra
         return true;
     }
     
-    @Override
-    public void setOnMouseDrag(Consumer<MouseEvent> consume)
-    {
-        this.consume = consume;
-    }
-    
-    @Override
-    public Consumer<MouseEvent> getOnMouseDrag()
-    {
-        return consume;
-    }
     
     @Override
     public MambaShape<MEngine> getOwnerShape()
     {
         return ownerShape;
     }
+    
+    
 }

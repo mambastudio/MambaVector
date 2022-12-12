@@ -23,9 +23,7 @@
  */
 package mamba.overlayselect.drag;
 
-import java.util.function.Consumer;
 import javafx.geometry.Point2D;
-import javafx.scene.input.MouseEvent;
 import mamba.base.MambaEngine2D;
 import mamba.base.MambaShape;
 
@@ -41,8 +39,6 @@ public interface MDragShape<Engine2D extends MambaEngine2D> {
        
     public Point2D getPosition();
     public void setPostion(Point2D position);
-    public void setPosition(double x, double y);
-    public void setOnMouseDrag(Consumer<MouseEvent> consume);
-    public Consumer<MouseEvent> getOnMouseDrag();
+    public void setPosition(double x, double y);   
     public MambaShape<Engine2D> getOwnerShape();
 }

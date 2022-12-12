@@ -54,6 +54,7 @@ public class SimpleUI extends Application{
         MCircle2 circle = new MCircle2();
         circle.setSolidColor(Color.GOLDENROD);
         engine2D.addShape(circle);
+        engine2D.addShape(new MCircle2());
         engine2D.setSelected(circle);
                           
         Pane root = new Pane(background, canvas);     

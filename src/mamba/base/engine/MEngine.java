@@ -99,21 +99,7 @@ public class MEngine implements MambaEngine2D {
         }
         draw();
     }
-        
-    @Override
-    public MambaShape hitSelect(Point2D p) {  
-        
-        MIntersection isect = new MIntersection();
-        if(rootShape.intersect(p, isect))
-        {
-            MambaShape shape = isect.shape;
-            selectionModel.set(shape);               
-            return shape;
-        }
-        this.selectionModel.clear();
-        return null;
-    }
-
+            
     @Override
     public MambaShape getSelected() {
         return selectionModel.getSelected();

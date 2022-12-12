@@ -70,11 +70,11 @@ public class MRoot extends MambaShapeAbstract<MEngine>{
     }
     
     @Override
-    public boolean intersect(Point2D p, MIntersection isect)
+    public boolean intersect(Point2D localTransformedPoint, MIntersection isect)
     {
-        Point2D lp = this.getLocalTransform().transform(p);
+        Point2D shapeTransformedPoint = this.getLocalTransform().inverseTransform(localTransformedPoint);
         for(MambaShape shape : reversed(children))
-            if(shape.intersect(lp, isect)) //return first hit
+            if(shape.intersect(shapeTransformedPoint, isect)) //return first hit
             {                
                 return true;
             }
@@ -82,9 +82,10 @@ public class MRoot extends MambaShapeAbstract<MEngine>{
     }
     
     @Override
-    public boolean intersect(Bounds parentBound, MIntersection isect) {
+    public boolean intersect(Bounds localTransformedBound, MIntersection isect) {
+        Bounds shapeTransformedBound = this.getLocalTransform().inverseTransform(localTransformedBound);
         for(MambaShape shape : reversed(children))
-            if(shape.intersect(parentBound, isect)) //return first hit
+            if(shape.intersect(shapeTransformedBound, isect)) //return first hit
             {                
                 return true;
             }
@@ -93,10 +94,10 @@ public class MRoot extends MambaShapeAbstract<MEngine>{
     
     @Override
     public Bounds getShapeBound() {
-        MBound bound = new MBound();
+        MBound shapeBound = new MBound();
         for(MambaShape shape : reversed(children))
-           bound.include(shape.getShapeBound());
-        return bound.getBoundingBox();
+           shapeBound.include(shape.getShapeBound());
+        return shapeBound.getBoundingBox();
     }
     
     public boolean addShape(MambaShape shape)
@@ -127,10 +128,10 @@ public class MRoot extends MambaShapeAbstract<MEngine>{
     @Override
     public boolean containsGlobalPoint(Point2D globalPoint) {
         //transform p to shape space coordinates
-        Point2D shapeSpacePoint = globalToLocalTransform(globalPoint);
+        Point2D shapeTransformedPoint = globalToShapeTransform(globalPoint);
         //simple check
         Bounds bound = getShapeBound();
-        return bound.contains(shapeSpacePoint);
+        return bound.contains(shapeTransformedPoint);
     }
     
     @Override

@@ -47,14 +47,9 @@ public interface MambaShape<Engine2D extends MambaEngine2D> extends MambaHierarc
 {
     public MTransformGeneric getLocalTransform();
     public void setLocalTransform(MTransformGeneric transform);
-    
-    //if this is a child, get local to parent and vice versa
-    public MTransformGeneric localToParentTransform();
-    public MTransformGeneric parentToLocalTransform();
-        
-    //get transforms to global and vice versa
-    public MTransformGeneric localToGlobalTransform();
-    public MTransformGeneric globalToLocalTransform();
+            
+    public MTransformGeneric shapeToGlobalTransform();
+    public MTransformGeneric globalToShapeTransform();
     
     public Engine2D getEngine2D();
     public void setEngine(Engine2D engine2D);
@@ -66,8 +61,8 @@ public interface MambaShape<Engine2D extends MambaEngine2D> extends MambaHierarc
     public void draw();
     
     //intersection of bounds and shape (this applies to the top-down hierarchy intersection)
-    public boolean intersect(Point2D parentPoint, MIntersection isect);
-    public boolean intersect(Bounds parentBound, MIntersection isect);
+    public boolean intersect(Point2D localPoint, MIntersection isect);
+    public boolean intersect(Bounds localSelectBound, MIntersection isect);
     
     public default boolean hasParent()
     {
@@ -82,6 +77,22 @@ public interface MambaShape<Engine2D extends MambaEngine2D> extends MambaHierarc
     
     //local bounds (you can use the transforms above to transform bounds)
     public Bounds getShapeBound();
+    
+    default Bounds getGlobalBounds()
+    {
+        return shapeToGlobalTransform().transform(getShapeBound());
+    }
+    
+    //transform functions
+    public Point2D shapeToLocalTransform(Point2D shapePointCoord);    
+    public Bounds shapeToLocalTransform(Bounds shapeBoundCoord);    
+    public Point2D localToShapeTransform(Point2D localPointCoord);    
+    public Bounds localToShapeTransform(Bounds localBoundCoord);    
+    public Point2D shapeToGlobalTransform(Point2D shapePointCoord);    
+    public Bounds shapeToGlobalTransform(Bounds shapeBoundCoord);    
+    public Point2D globalToShapeTransform(Point2D globalPointCoord);    
+    public Bounds globalToShapeTransform(Bounds globalBoundCoord);
+        
     
     //some shapes are being edited before fully fledged such as a path that starts with a point
     public boolean isComplete();
