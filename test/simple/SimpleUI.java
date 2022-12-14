@@ -33,7 +33,7 @@ import javafx.stage.Stage;
 import mamba.base.engine.MEngine;
 import mamba.base.engine.shape.MCircle2;
 import mamba.components.BackgroundPane;
-import mamba.overlayselect.MSelectionModel;
+import mamba.util.MSelectionModel;
 import mamba.util.MultipleKeyCombination;
 
 /**

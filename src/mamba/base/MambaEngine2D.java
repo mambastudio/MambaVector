@@ -10,7 +10,7 @@ import javafx.geometry.Bounds;
 import javafx.geometry.Point2D;
 import javafx.scene.canvas.GraphicsContext;
 import mamba.base.math.MTransformGeneric;
-import mamba.overlayselect.MSelectionModel;
+import mamba.util.MSelectionModel;
 import mamba.util.MIntersection;
 
 /**

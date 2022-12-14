@@ -14,7 +14,6 @@ import javafx.scene.shape.Circle;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.shape.Shape;
 import mamba.base.MambaShape;
-import mamba.base.MambaShape.ShapeType;
 import mamba.base.MambaHierarchyData;
 
 /**

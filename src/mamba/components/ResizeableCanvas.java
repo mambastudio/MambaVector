@@ -10,6 +10,7 @@ import javafx.beans.value.ChangeListener;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.geometry.Point2D;
+import javafx.scene.Cursor;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.ComboBox;
@@ -24,7 +25,9 @@ import javafx.scene.effect.Glow;
 import javafx.scene.effect.InnerShadow;
 import javafx.scene.effect.MotionBlur;
 import javafx.scene.effect.Reflection;
+import javafx.scene.input.KeyCode;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.input.ScrollEvent;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
 import mamba.BuilderController;
@@ -32,12 +35,17 @@ import mamba.base.MambaCanvas;
 import mamba.base.MambaShape;
 import mamba.base.engine.MEngine;
 import mamba.base.engine.shape.MPath;
+import mamba.base.math.MTransform;
 import mamba.beans.MBeanPropertyItem;
 import mamba.beans.MBeanPropertySheet;
 import mamba.beans.MBeanPropertyUtility;
 import mamba.beans.editors.MDefaultEditorFactory;
+import mamba.overlayselect.drag.MDrag2;
+import mamba.util.MIntersection;
 import mamba.util.MObservableStack;
 import mamba.util.MambaUtility;
+import mamba.util.MouseClick;
+import mamba.util.MultipleKeyCombination;
 
 /**
  *
@@ -47,7 +55,7 @@ public final class ResizeableCanvas extends Region implements MambaCanvas<MEngin
 {
     private final Canvas canvas;
     private MEngine engine2D = null;
-    private long lastClickTime = 0;
+    private MouseClick mouseClick = new MouseClick();
       
     private VBox propertyDisplayPanel = null;
     
@@ -59,7 +67,7 @@ public final class ResizeableCanvas extends Region implements MambaCanvas<MEngin
     
     private final BuilderController controller;   
     
-    
+    Delta dragDelta = new Delta();
         
                
     public ResizeableCanvas(BuilderController controller, double width, double height) 
@@ -67,6 +75,7 @@ public final class ResizeableCanvas extends Region implements MambaCanvas<MEngin
         this.preparatoryStack = new MObservableStack(); 
         this.controller = controller; 
         
+        //set the width and height of this and the canvas as the same
         //set the width and height of this and the canvas as the same
         setWidth(width);
         setHeight(height);
@@ -77,10 +86,12 @@ public final class ResizeableCanvas extends Region implements MambaCanvas<MEngin
         canvas.widthProperty().bind(this.widthProperty());
         canvas.heightProperty().bind(this.heightProperty());
         canvas.widthProperty().addListener((o, oV, nv)->{
-            engine2D.draw();
+            if(engine2D != null)
+                engine2D.draw();
         });
         canvas.heightProperty().addListener((o, oV, nv)->{
-            engine2D.draw();
+            if(engine2D != null)
+                engine2D.draw();
         });
         
         //effect combobox for shape
@@ -89,6 +100,9 @@ public final class ResizeableCanvas extends Region implements MambaCanvas<MEngin
         this.setOnMouseClicked(this::mouseClicked);
         this.setOnMouseDragged(this::mouseDragged);
         this.setOnMousePressed(this::mousePressed);
+        this.setOnMouseReleased(this::mouseReleased);
+        this.setOnScroll(this::mouseScrolled);   
+        this.setOnMouseMoved(this::mouseMoved);
     }
     
     private void setShapeEffect(Effect effect)
@@ -135,53 +149,6 @@ public final class ResizeableCanvas extends Region implements MambaCanvas<MEngin
         return engine2D;
     }
 
-    public void mouseClicked(MouseEvent e)
-    {
-        boolean isDoubleClick = isDoubleClick(500);
-    }
-    
-    public void mousePressed(MouseEvent e)
-    {            
-        if(engine2D.isSelected() && engine2D.getSelectionModel().getSelected() instanceof MPath)
-        {            
-            if(controller.isPenToolSelected())
-            {
-                MPath path = (MPath) engine2D.getSelectionModel().getSelected();
-                path.addLineTo(e.getX(), e.getY());
-                return;
-            }
-        }
-            
-        //new selection
-        Point2D p = new Point2D(e.getX(), e.getY());
-        engine2D.hitSelect(p);
-        
-        //init new shape for dragging 
-        if(engine2D.isSelected())
-        {            
-            engine2D.getSelected().setOffset(p.subtract(engine2D.getSelected().getTranslate()));               
-            engine2D.draw();
-        }
-        else
-            engine2D.draw();
-        
-        
-    }
-    
-    public void mouseDragged(MouseEvent e)
-    {
-        if(e.isPrimaryButtonDown() && engine2D.isSelected())
-        {        
-            if(engine2D.isSelected() && engine2D.getSelectionModel().getSelected() instanceof MPath)
-                if(controller.isPenToolSelected())
-                    return;
-            
-            Point2D p = new Point2D(e.getX(), e.getY());
-            engine2D.getSelected().translate(p);    
-            engine2D.getSelected().updateDragHandles(null);
-            Platform.runLater(()->engine2D.draw());           
-        }        
-    }
     
     public void select(MambaShape shape)
     {
@@ -250,16 +217,6 @@ public final class ResizeableCanvas extends Region implements MambaCanvas<MEngin
         
     }
         
-    private boolean isDoubleClick(long intervalRangeMsec)
-    {
-        long currentClickTime = System.currentTimeMillis();
-        long diff = 0;       
-        if(lastClickTime!=0 && currentClickTime!=0)
-            diff = currentClickTime - lastClickTime;        
-        lastClickTime = currentClickTime;
-        
-        return diff < intervalRangeMsec && intervalRangeMsec > 0;
-    }
 
     @Override
     public void setPropertyDisplayPanel(VBox propertyDisplayPanel) {
@@ -330,5 +287,130 @@ public final class ResizeableCanvas extends Region implements MambaCanvas<MEngin
                 i++;
             }
         }
+    }
+    
+    
+    public void mouseClicked(MouseEvent e)
+    {
+        mouseClick.isDoubleClick(500);
+    }
+    
+    public void mouseMoved(MouseEvent e)
+    {
+        //put cursor if over
+        setMouseCursorOnDragHandle(new Point2D(e.getX(), e.getY()));
+    }
+    
+    public void mousePressed(MouseEvent e)
+    {            
+        dragDelta.setPoint(new Point2D(e.getX(), e.getY()));  
+        Point2D p = new Point2D(e.getX(), e.getY());  
+      
+        if(!engine2D.getSelectionModel().intersectDragHandles(p))
+        {
+            MIntersection isect = new MIntersection();
+            engine2D.intersect(p, isect);
+            engine2D.setSelected(isect.shape);
+        }        
+    }
+    
+    public void mouseReleased(MouseEvent e)
+    {
+        this.setCursor(Cursor.DEFAULT);
+        this.engine2D.getSelectionModel().removeDragHandleSelected();
+    }
+    
+    public void mouseDragged(MouseEvent e)
+    {
+        dragDelta.setPoint(new Point2D(e.getX(), e.getY()));        
+                      
+        if(new MultipleKeyCombination(KeyCode.CONTROL).match())
+        {            
+            this.setCursor(Cursor.MOVE);
+            translate(dragDelta.getDelta());
+        }
+        else if(engine2D.getSelectionModel().isDragHandleSelected())
+        {            
+            engine2D.getSelectionModel().getDragHandleSelected().processMouseEvent(e);
+        }
+        else if(engine2D.getSelectionModel().isSelected()) //translate shape
+        {
+            Point2D deltaVector = dragDelta.getDelta(); //this is a vector
+            MambaShape shape = engine2D.getSelectionModel().getSelected();
+            
+            Point2D deltaScaledVector = shape.globalToLocalTransform().deltaTransform(deltaVector);            
+            shape.setLocalTransform(shape.getLocalTransform().createConcatenation(MTransform.translate(deltaScaledVector)));
+            shape.updateDragHandles();
+            
+            engine2D.draw();           
+        }       
+    }
+    
+    public void mouseScrolled(ScrollEvent e)
+    {
+        double deltaY = e.getDeltaY()* 0.1;
+        double scale = deltaY > 0 ? 1.1 : 0.9;
+        
+        Point2D mousePoint = new Point2D(e.getX(), e.getY());
+        Point2D scalePoint = new Point2D(scale, scale);
+        
+        //put cursor if over
+        setMouseCursorOnDragHandle(mousePoint);
+        
+        if(new MultipleKeyCombination(KeyCode.CONTROL).match())
+        {           
+            zoom(mousePoint, scalePoint);
+        }    
+        e.consume();
+        
+    }
+    
+    //https://medium.com/@benjamin.botto/zooming-at-the-mouse-coordinates-with-affine-transformations-86e7312fd50b
+    private void zoom(Point2D point, Point2D scale)
+    {                
+        MTransform zoom = engine2D.getTransform(). //get existing engine transform first
+                createConcatenation(MTransform.scale(scale, point)).asMTransform();
+        
+        engine2D.setTransform(zoom);             
+    }
+    
+    private void translate(Point2D delta)
+    { 
+        MTransform translate = engine2D.getTransform(). //get existing engine transform first
+                createConcatenation(MTransform.translate(delta)).asMTransform(); 
+        
+        engine2D.setTransform(translate);
+    }
+    
+    private void setMouseCursorOnDragHandle(Point2D p)
+    {
+        boolean isInDrag = false;
+            
+        if(engine2D.isSelected())
+            for(MDrag2 drag : engine2D.getSelectionModel().getSelectedShapeDragHandles())
+                isInDrag |= drag.containsGlobalPoint(p);
+
+        if(isInDrag)
+            this.setCursor(Cursor.HAND);
+        else
+            this.setCursor(Cursor.DEFAULT);
+    }
+    
+    private class Delta
+    {
+        private Point2D pressed = Point2D.ZERO;
+        private Point2D delta = Point2D.ZERO;
+        
+        public void setPoint(Point2D p)
+        {
+            delta = p.subtract(pressed);
+            pressed = p;
+        }
+        
+        public Point2D getDelta()
+        {
+            return delta;
+        }
+        
     }
 }

@@ -13,7 +13,7 @@ import mamba.base.MambaShape;
 import mamba.base.engine.shape.groups.MRoot;
 import mamba.base.math.MTransform;
 import mamba.base.math.MTransformGeneric;
-import mamba.overlayselect.MSelectionModel;
+import mamba.util.MSelectionModel;
 import mamba.overlayselect.drag.MDrag2;
 import mamba.util.MIntersection;
 

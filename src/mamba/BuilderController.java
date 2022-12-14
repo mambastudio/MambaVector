@@ -7,7 +7,6 @@ package mamba;
 
 import java.awt.image.RenderedImage;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.net.URL;
 import java.nio.file.Path;
@@ -32,7 +31,6 @@ import javafx.scene.control.ToggleGroup;
 import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeView;
 import javafx.scene.effect.Effect;
-import javafx.scene.image.Image;
 import javafx.scene.image.WritableImage;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
@@ -54,13 +52,12 @@ import mamba.base.engine.shape.MEllipse;
 import mamba.base.engine.shape.MImage;
 import mamba.base.engine.shape.MLine;
 import mamba.base.engine.shape.MPath;
-import mamba.base.engine.shape.MPath.PathTo;
 import mamba.base.engine.shape.MRectangle;
 import mamba.base.parser.svg.SVGDocument;
 import mamba.base.parser.svg.SVGParser;
 import mamba.components.BackgroundPane;
 import mamba.components.ResizeableCanvas;
-import mamba.overlayselect.MSelectionModel;
+import mamba.util.MSelectionModel;
 import mamba.snapshot.NodeSnapshot;
 import mamba.treeview.RecursiveTreeItem;
 import mamba.util.MDisableStateNodes;
@@ -141,7 +138,7 @@ public class BuilderController implements Initializable {
         //add properties and selection model first
         renderCanvas.setPropertyDisplayPanel(propertyPanel);
         renderCanvas.setEffectPropertyDisplayPanel(effectPropertyDisplayPanel);
-        engine2D.setSelectionModel(new MSelectionModel(selectionLayer));       
+        engine2D.setSelectionModel(new MSelectionModel());       
         renderCanvas.setEngine2D(engine2D);
         
         
