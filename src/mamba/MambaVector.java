@@ -10,6 +10,7 @@ import javafx.scene.Scene;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
 import mamba.snapshot.NodeSnapshot;
+import mamba.util.MultipleKeyCombination;
 
 /*
  * To change this license header, choose License Headers in Project Properties.
@@ -32,6 +33,11 @@ public class MambaVector extends Application{
         //three quarter size of the screen monitor
         Rectangle2D screenBounds = Screen.getPrimary().getBounds();        
         Scene scene = new Scene(root, screenBounds.getWidth() * 0.95, screenBounds.getHeight() * 0.85);
+        
+        //https://stackoverflow.com/questions/29064225/how-to-create-a-javafx-keycombination-with-three-or-more-keys
+        //https://bitbucket.org/kogs/multiplekeycombi/src/master/
+        //register keys
+        MultipleKeyCombination.setupMultipleKeyCombination(scene);        
         
         primaryStage.setScene(scene);
        // primaryStage.setMaximized(true);

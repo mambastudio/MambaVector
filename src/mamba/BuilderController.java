@@ -48,6 +48,7 @@ import jfx.gallery.GalleryDialog;
 import mamba.base.MambaShape;
 import mamba.base.engine.MEngine;
 import mamba.base.engine.shape.MCircle;
+import mamba.base.engine.shape.MCircle;
 import mamba.base.engine.shape.MEllipse;
 import mamba.base.engine.shape.MImage;
 import mamba.base.engine.shape.MLine;

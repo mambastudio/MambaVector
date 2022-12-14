@@ -36,8 +36,6 @@ public class MEllipse implements MambaShape<MEngine>{
     private MEngine engine2D;
     private GraphicsContext graphicContext;
     
-    private Point2D offset;
-    
     //center of ellipse
     private final DoubleProperty centerX;
     private final DoubleProperty centerY;
@@ -64,8 +62,6 @@ public class MEllipse implements MambaShape<MEngine>{
     
     public MEllipse()
     {
-        offset = new Point2D(0, 0);
-        
         centerX = new SimpleDoubleProperty(0);
         centerY = new SimpleDoubleProperty(0);
         
@@ -97,43 +93,7 @@ public class MEllipse implements MambaShape<MEngine>{
     {
         return fillColor;
     }
-
-    @Override
-    public MTransform getTransform() {
-        return transform;
-    }
-
-    @Override
-    public void setTransform(MTransformGeneric transform) {
-        this.transform = (MTransform) transform;
-    }
-
-    @Override
-    public void translate(Point2D p) {
-        Point2D tp = p.subtract(offset);
-        this.transform = MTransform.translate(tp.getX(), tp.getY());
-    }
-
-    @Override
-    public Point2D getTranslate() {
-        return this.transform.transform(new Point2D(0, 0));
-    }
-
-    @Override
-    public void setOffset(Point2D offset) {
-        this.offset = offset;
-    }
-
-    @Override
-    public Point2D getOffset() {
-        return offset;
-    }
-
-    @Override
-    public ShapeType getType() {
-        return ShapeType.SHAPE;
-    }
-
+    
     @Override
     public MEngine getEngine2D() {
         return engine2D;
@@ -180,13 +140,13 @@ public class MEllipse implements MambaShape<MEngine>{
     }
 
     @Override
-    public BoundingBox getBounds() {
+    public BoundingBox getShapeBound() {
         Point2D min = new Point2D(centerX.doubleValue() - radiusX.doubleValue(), centerY.doubleValue() - radiusY.doubleValue());
         Point2D max = new Point2D(centerX.doubleValue() + radiusX.doubleValue(), centerY.doubleValue() + radiusY.doubleValue());
         MBound bound = new MBound();
         bound.include(min);
         bound.include(max);   
-        return (BoundingBox) transform.transform(bound.getBoundingBox());
+        return (BoundingBox) bound.getBoundingBox();
     }
 
     @Override

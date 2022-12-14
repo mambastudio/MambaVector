@@ -11,7 +11,7 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.geometry.Point2D;
 import mamba.base.MambaShape;
-import mamba.overlayselect.drag.MDrag2;
+import mamba.overlayselect.drag.MDrag;
 import mamba.overlayselect.drag.MDragShape;
 import mamba.util.MIntersection;
 
@@ -22,10 +22,10 @@ import mamba.util.MIntersection;
 public class MSelectionModel {
     //either remove or add components to it for editing shape   
     ObjectProperty<MambaShape> selectedShapeProperty;
-    ObjectProperty<MDrag2> selectedDragHandleProperty;
+    ObjectProperty<MDrag> selectedDragHandleProperty;
     
     //delected shape drag handles
-    ObservableList<MDrag2> selectedShapeDragHandleList;
+    ObservableList<MDrag> selectedShapeDragHandleList;
         
     //set overlay group for adding editing nodes/components
     public MSelectionModel()
@@ -68,10 +68,10 @@ public class MSelectionModel {
             return false;
         
         MIntersection isect = new MIntersection();
-        for(MDrag2 drag: selectedShapeDragHandleList)
+        for(MDrag drag: selectedShapeDragHandleList)
             if(drag.intersect(canvasPoint, isect))
             {
-                selectedDragHandleProperty.set((MDrag2)isect.shape);
+                selectedDragHandleProperty.set((MDrag)isect.shape);
                 return true;
             }
         selectedDragHandleProperty.set(null);        
@@ -88,7 +88,7 @@ public class MSelectionModel {
         selectedDragHandleProperty.set(null);
     }
     
-    public MDrag2 getDragHandleSelected()
+    public MDrag getDragHandleSelected()
     {
         return selectedDragHandleProperty.get();
     }
@@ -132,7 +132,7 @@ public class MSelectionModel {
         selectedShapeProperty.get().getEngine2D().draw();
     }
     
-    public ObservableList<MDrag2> getSelectedShapeDragHandles()
+    public ObservableList<MDrag> getSelectedShapeDragHandles()
     {
         return FXCollections.unmodifiableObservableList(selectedShapeDragHandleList);
     }

@@ -1,84 +1,73 @@
 /*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
+ * The MIT License
+ *
+ * Copyright 2022 jmburu.
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ * THE SOFTWARE.
  */
 package mamba.overlayselect.drag;
 
+import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.scene.Cursor;
-import javafx.scene.Group;
-import javafx.scene.Node;
-import javafx.scene.input.ScrollEvent;
-import javafx.scene.shape.Shape;
+import mamba.base.MambaShape;
+import mamba.base.MambaShapeAbstract;
+import mamba.base.engine.MEngine;
 
 /**
  *
- * @author user
- * @param <S>
+ * @author jmburu
  */
-public abstract class MDrag<S extends Shape> extends Group {
-           
-    /**
-     * Offset coordinates below are not used directly for position (use getPosition instead).
-     * This is used in some calculation for editing purpose and hence have no meaning across all shapes.
-     * For example, the rectangle use these coordinate but not circle.
-     * 
-     * Drags such as mouse drag and mouse pressed are handle in shape
-     * 
-    **/
-    private double offsetX, offsetY;
-    private double offset_percX, offset_percY; //(0 - 1 range), store current state if possible but not usually assured this is current - just use offsetX
-           
-    public MDrag()
-    {
-        this(Cursor.HAND);        
-    }
+public abstract class MDrag extends MambaShapeAbstract<MEngine> implements MDragShape<MEngine> {    
+    private final MambaShape<MEngine> ownerShape;    
     
-    public MDrag(Cursor dragCursor)
+    protected MDrag(MambaShape<MEngine> ownerShape)
     {
-        //this.setCursor(dragCursor);
-        ObservableList<S> drag = initDrag();    
-        super.getChildren().addAll(drag);
+        this.ownerShape = ownerShape;
+        this.setEngine(ownerShape.getEngine2D());
+        this.setGraphicContext(ownerShape.getGraphicsContext());
        
     }
     
-    protected abstract ObservableList<S> initDrag();       
-    
-    //required to use directly to underlying shapes to avoid use of transforms
-    public abstract double getWidth();
-    public abstract double getHeight();
-    public abstract double getX();
-    public abstract void setX(double x);
-    public abstract double getY();
-    public abstract void setY(double y);
+     //for ui editor such as mouse editing (utilises the global transforms) - NOT NEEDED HERE
+    @Override
+    public ObservableList<MDrag> initDragHandles()
+    {
+        return FXCollections.emptyObservableList();
+    }
     
     @Override
-    public ObservableList<Node> getChildren()
+    public void updateDragHandles()
     {
-        return this.getChildrenUnmodifiable();
+       
+    }
+
+    @Override
+    public boolean isComplete() {
+        return true;
     }
     
-    public void setOffsetX(double offsetX, double widthBound)
+    
+    @Override
+    public MambaShape<MEngine> getOwnerShape()
     {
-        this.offsetX = offsetX;
-        this.offset_percX = offsetX/widthBound;
+        return ownerShape;
     }
     
-    public double getOffsetPercentX()
-    {
-        return offset_percX;
-    }
-    
-    public void setOffsetY(double offsetY, double heightBound)
-    {
-        this.offsetY = offsetY;
-        this.offset_percY = offsetY/heightBound;
-    }
-    
-    public double getOffsetPercentY()
-    {
-        return offset_percY;
-    }
     
 }

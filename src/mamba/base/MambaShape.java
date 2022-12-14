@@ -29,7 +29,7 @@ import javafx.geometry.Point2D;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.effect.Effect;
 import mamba.base.math.MTransformGeneric;
-import mamba.overlayselect.drag.MDrag2;
+import mamba.overlayselect.drag.MDrag;
 import mamba.util.MIntersection;
 
 /**
@@ -63,8 +63,8 @@ public interface MambaShape<Engine2D extends MambaEngine2D> extends MambaHierarc
     public void draw();
     
     //intersection of bounds and shape (this applies to the top-down hierarchy intersection)
-    public boolean intersect(Point2D localPoint, MIntersection isect);
-    public boolean intersect(Bounds localSelectBound, MIntersection isect);
+    public boolean intersect(Point2D parentPoint, MIntersection isect);
+    public boolean intersect(Bounds parentBound, MIntersection isect);
     
     public default boolean hasParent()
     {
@@ -76,6 +76,8 @@ public interface MambaShape<Engine2D extends MambaEngine2D> extends MambaHierarc
     {
         return null;
     }
+    
+    public String getName();
     
     //local bounds (you can use the transforms above to transform bounds)
     public Bounds getShapeBound();
@@ -100,7 +102,7 @@ public interface MambaShape<Engine2D extends MambaEngine2D> extends MambaHierarc
     
    
      //for ui editor such as mouse editing (utilises the global transforms)
-    public ObservableList<MDrag2> initDragHandles();
+    public ObservableList<MDrag> initDragHandles();
     public void updateDragHandles();
     
     //effects to be used here
@@ -121,4 +123,5 @@ public interface MambaShape<Engine2D extends MambaEngine2D> extends MambaHierarc
     {
         return false;
     }
+    
 }

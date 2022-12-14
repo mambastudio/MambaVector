@@ -49,7 +49,7 @@ public class MambaShapeData implements MambaHierarchyData
 
     public void add(MambaShape shape)
     {
-        if(this.shape.getType() == ShapeType.CONTAINER)
+        if(this.shape.canHaveChildren())
             getChildren().add(new MambaShapeData(shape));
         else
             throw new UnsupportedOperationException("cannot add child to");

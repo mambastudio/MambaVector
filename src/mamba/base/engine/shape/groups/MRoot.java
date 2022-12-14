@@ -15,7 +15,7 @@ import mamba.base.MambaShape;
 import mamba.base.MambaShapeAbstract;
 import mamba.base.engine.MEngine;
 import mamba.base.math.MBound;
-import mamba.overlayselect.drag.MDrag2;
+import mamba.overlayselect.drag.MDrag;
 import mamba.util.MIntersection;
 import static mamba.util.Reversed.reversed;
 
@@ -116,7 +116,7 @@ public class MRoot extends MambaShapeAbstract<MEngine>{
     }
     
     @Override
-    public ObservableList<MDrag2> initDragHandles() {
+    public ObservableList<MDrag> initDragHandles() {
         return FXCollections.emptyObservableList();
     }
     
@@ -132,6 +132,12 @@ public class MRoot extends MambaShapeAbstract<MEngine>{
         //simple check
         Bounds bound = getShapeBound();
         return bound.contains(shapeTransformedPoint);
+    }
+    
+    @Override
+    public boolean canHaveChildren()
+    {
+        return true;
     }
     
     @Override

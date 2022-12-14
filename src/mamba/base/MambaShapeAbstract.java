@@ -26,6 +26,8 @@ package mamba.base;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Consumer;
+import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.property.StringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.EventType;
@@ -36,7 +38,7 @@ import javafx.scene.effect.Effect;
 import javafx.scene.input.MouseEvent;
 import mamba.base.math.MTransform;
 import mamba.base.math.MTransformGeneric;
-import mamba.overlayselect.drag.MDrag2;
+import mamba.overlayselect.drag.MDrag;
 
 /**
  *
@@ -72,8 +74,9 @@ public abstract class MambaShapeAbstract<Engine2D extends MambaEngine2D> impleme
     private GraphicsContext graphicsContext;
     protected ObservableList<MambaShape<Engine2D>> children;
     private Effect effect;
-    protected ObservableList<MDrag2> dragHandles;
+    protected ObservableList<MDrag> dragHandles;
     protected final Map<EventType<? extends MouseEvent>, Consumer<MouseEvent>> mouseEventConsumer;
+    protected final StringProperty nameProperty;
     
     protected MambaShapeAbstract()
     {
@@ -82,6 +85,7 @@ public abstract class MambaShapeAbstract<Engine2D extends MambaEngine2D> impleme
         children = FXCollections.emptyObservableList();
         dragHandles = FXCollections.observableArrayList();
         mouseEventConsumer = new HashMap();
+        nameProperty = new SimpleStringProperty();
     }
     
     @Override
@@ -119,6 +123,15 @@ public abstract class MambaShapeAbstract<Engine2D extends MambaEngine2D> impleme
     @Override
     public ObservableList<MambaShape<Engine2D>> getChildren() {
         return children;
+    }
+    
+    public StringProperty getNameProperty() {
+        return nameProperty;
+    }
+    
+    @Override
+    public String getName() {
+        return nameProperty.get();
     }
     
     @Override
@@ -231,4 +244,13 @@ public abstract class MambaShapeAbstract<Engine2D extends MambaEngine2D> impleme
     {
         return globalToShapeTransform().transform(globalBoundCoord);
     } 
+    
+    @Override
+    public String toString()
+    {
+        if(getName() == null || getName().isEmpty())
+            return this.getClass().getSimpleName();
+        else
+            return getName();
+    }
 }

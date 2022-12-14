@@ -31,7 +31,7 @@ import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 import mamba.base.engine.MEngine;
-import mamba.base.engine.shape.MCircle2;
+import mamba.base.engine.shape.MCircle;
 import mamba.components.BackgroundPane;
 import mamba.util.MSelectionModel;
 import mamba.util.MultipleKeyCombination;
@@ -51,10 +51,10 @@ public class SimpleUI extends Application{
         canvas.setEngine2D(engine2D);
         
         engine2D.setSelectionModel(new MSelectionModel());       
-        MCircle2 circle = new MCircle2();
+        MCircle circle = new MCircle();
         circle.setSolidColor(Color.GOLDENROD);
         engine2D.addShape(circle);
-        engine2D.addShape(new MCircle2());
+        engine2D.addShape(new MCircle());
         engine2D.setSelected(circle);
                           
         Pane root = new Pane(background, canvas);     

@@ -32,5 +32,8 @@ public interface MambaHierarchyData<T extends MambaHierarchyData> {
         return display.getChildren();
     }
     
-    
+    default boolean canHaveChildren()
+    {
+        return false;
+    }
 }

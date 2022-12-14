@@ -40,7 +40,7 @@ import mamba.util.MIntersection;
  *
  * @author jmburu
  */
-public class MDragC extends  MDrag2 {
+public class MDragC extends  MDrag {
     
     private final ObjectProperty<Color> solidColor;
     private final DoubleProperty strokeWidth;

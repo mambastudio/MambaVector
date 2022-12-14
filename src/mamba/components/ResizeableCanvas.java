@@ -40,7 +40,7 @@ import mamba.beans.MBeanPropertyItem;
 import mamba.beans.MBeanPropertySheet;
 import mamba.beans.MBeanPropertyUtility;
 import mamba.beans.editors.MDefaultEditorFactory;
-import mamba.overlayselect.drag.MDrag2;
+import mamba.overlayselect.drag.MDrag;
 import mamba.util.MIntersection;
 import mamba.util.MObservableStack;
 import mamba.util.MambaUtility;
@@ -387,7 +387,7 @@ public final class ResizeableCanvas extends Region implements MambaCanvas<MEngin
         boolean isInDrag = false;
             
         if(engine2D.isSelected())
-            for(MDrag2 drag : engine2D.getSelectionModel().getSelectedShapeDragHandles())
+            for(MDrag drag : engine2D.getSelectionModel().getSelectedShapeDragHandles())
                 isInDrag |= drag.containsGlobalPoint(p);
 
         if(isInDrag)

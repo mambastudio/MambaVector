@@ -1,7 +1,25 @@
 /*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
+ * The MIT License
+ *
+ * Copyright 2022 jmburu.
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ * THE SOFTWARE.
  */
 package mamba.base.engine.shape;
 
@@ -9,118 +27,214 @@ import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleDoubleProperty;
 import javafx.beans.property.SimpleObjectProperty;
-import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.geometry.BoundingBox;
 import javafx.geometry.Bounds;
 import javafx.geometry.Point2D;
-import javafx.scene.Cursor;
-import javafx.scene.canvas.GraphicsContext;
-import javafx.scene.effect.Effect;
 import javafx.scene.paint.Color;
-import mamba.base.MambaShape;
 import mamba.base.MambaShapeAbstract;
 import mamba.base.engine.MEngine;
-import mamba.overlayselect.drag.MDrag;
-import mamba.overlayselect.drag.MDragSquare;
 import mamba.base.math.MBound;
 import mamba.base.math.MTransform;
+import mamba.overlayselect.drag.MDrag;
+import mamba.overlayselect.drag.MDragC;
+import mamba.overlayselect.drag.MDragShape;
 import mamba.util.MIntersection;
 
 /**
  *
- * @author user
+ * @author jmburu
  */
-public class MCircle extends MambaShapeAbstract<MEngine>{
-    
-    private GraphicsContext graphicContext;
-        
-    private final DoubleProperty radius;
+public class MCircle extends MambaShapeAbstract<MEngine>
+{
     private final ObjectProperty<Color> solidColor;
     private final DoubleProperty strokeWidth;
     private final ObjectProperty<Color> strokeColor;
-        
-    private Effect effect = null;
+    private final DoubleProperty width;
+    private final DoubleProperty height;
     
-    
-    
-    private final ObservableList<MambaShape<MEngine>> children = FXCollections.emptyObservableList();
+    public final ObjectProperty<Point2D> location;
     
     public MCircle()
-    {        
-        radius = new SimpleDoubleProperty(45);
+    {
         solidColor = new SimpleObjectProperty(Color.YELLOW);
         strokeWidth = new SimpleDoubleProperty(0.001);
         strokeColor = new SimpleObjectProperty(Color.BLACK);    
-        this.setLocalTransform(MTransform.translate(50, 50));
+        width = new SimpleDoubleProperty(50);
+        height = new SimpleDoubleProperty(50);
+        
+        location = new SimpleObjectProperty(Point2D.ZERO);        
     }
     
-
-    @Override
-    public void setGraphicContext(GraphicsContext context) {
-        this.graphicContext = context;
-    }
-
-    @Override
-    public GraphicsContext getGraphicsContext() {
-        return this.graphicContext;
-    }
-
+    
     @Override
     public void draw() {
-        
-        graphicContext.save();
+        getGraphicsContext().save();
         //apply transform first
-        getLocalTransform().transformGraphicsContext(graphicContext);
-        
+        this.shapeToGlobalTransform().transformGraphicsContext(getGraphicsContext());
+      
         //draw shape, this is just local coordinates 
-        graphicContext.setFill(solidColor.get());
-        graphicContext.setEffect(effect);
-        graphicContext.fillOval(
-                -radius.doubleValue() + strokeWidth.doubleValue()/2, 
-                -radius.doubleValue() + strokeWidth.doubleValue()/2, 
-                radius.doubleValue() * 2 - strokeWidth.doubleValue(), 
-                radius.doubleValue() * 2 - strokeWidth.doubleValue());
+        getGraphicsContext().setFill(solidColor.get());
+        getGraphicsContext().setEffect(getEffect());
+        getGraphicsContext().fillOval(
+                location.get().getX() + strokeWidth.doubleValue()/2, 
+                location.get().getY() + strokeWidth.doubleValue()/2, 
+                width.doubleValue() - strokeWidth.doubleValue(), 
+                height.doubleValue() - strokeWidth.doubleValue());
         
-        graphicContext.setStroke(strokeColor.get());
-        graphicContext.setLineWidth(strokeWidth.doubleValue());
-        graphicContext.strokeOval(-radius.doubleValue() + strokeWidth.doubleValue()/2, 
-                                  -radius.doubleValue() + strokeWidth.doubleValue()/2, 
-                                  radius.doubleValue()*2  - strokeWidth.doubleValue(), 
-                                  radius.doubleValue()*2 - strokeWidth.doubleValue());
+        getGraphicsContext().setStroke(strokeColor.get());
+        getGraphicsContext().setLineWidth(strokeWidth.doubleValue());
+        getGraphicsContext().strokeOval(
+                location.get().getX() + strokeWidth.doubleValue()/2, 
+                location.get().getY() + strokeWidth.doubleValue()/2, 
+                width.doubleValue()  - strokeWidth.doubleValue(), 
+                height.doubleValue() - strokeWidth.doubleValue());
         
-        graphicContext.setEffect(null);
-        graphicContext.restore(); //reset transforms and any other configurations
+        getGraphicsContext().setEffect(null);
+        getGraphicsContext().restore(); //reset transforms and any other configurations
     }
 
     @Override
-    public boolean containsGlobalPoint(Point2D p) {
-       
-        //transform p to local coordinates
-        Point2D invP = getLocalTransform().inverseTransform(p);
-        Point2D min = new Point2D(-radius.doubleValue(), -radius.doubleValue());
-        Point2D max = new Point2D(radius.doubleValue(), radius.doubleValue());
+    public boolean intersect(Point2D parentPoint, MIntersection isect) {
+        Point2D shapeSpacePoint = this.getLocalTransform().inverseTransform(parentPoint);
+        //simple check
+        Bounds bound = getShapeBound();
+        if(bound.contains(shapeSpacePoint))
+        {
+            isect.shape = this;
+            return true;
+        }
+        return false;        
+    }
+
+    @Override
+    public boolean intersect(Bounds parentBound, MIntersection isect) {
+        Bounds shapeSpaceBound = getLocalTransform().inverseTransform(parentBound);        
+        return getShapeBound().contains(shapeSpaceBound);
+    }
+
+    @Override
+    public Bounds getShapeBound() {
+        Point2D min = new Point2D(location.get().getX(), location.get().getY());
+        Point2D max = new Point2D(location.get().getX() + width.doubleValue(), location.get().getY() + height.doubleValue());
         MBound bound = new MBound();
         bound.include(min);
-        bound.include(max);
-        return bound.contains(invP);
+        bound.include(max);       
+        return bound.getBoundingBox();
+    }
+
+    @Override
+    public boolean isComplete() {
+        return true;
+    }
+
+    @Override
+    public ObservableList<MDrag> initDragHandles() {
+        if(dragHandles.isEmpty())
+        {                              
+            MDragC c1 = new MDragC(this);       
+            c1.setPosition(getGlobalBounds().getMinX(), getGlobalBounds().getMinY());            
+            dragHandles.add(c1);            
+
+            c1.setOnMouseDrag(e->{
+                Point2D p = new Point2D(e.getX(), e.getY());
+
+                MBound cBound = new MBound(getShapeBound());
+                Point2D cShapePoint = this.globalToShapeTransform(p); //to shape coordinates    
+                MBound nShapeBound = new MBound(cShapePoint, cBound.getMax());
+                                
+                location.set(nShapeBound.getMin());
+                width.set(nShapeBound.getWidth());
+                height.set(nShapeBound.getHeight());
+                
+                updateDragHandles();                
+                getEngine2D().draw();               
+            });
+                        
+            MDragC c2 = new MDragC(this);            
+            c2.setPosition(getGlobalBounds().getMaxX(), getGlobalBounds().getMaxY());            
+            dragHandles.add(c2);
+            
+            c2.setOnMouseDrag(e->{
+                Point2D p = new Point2D(e.getX(), e.getY());
+                
+                MBound cBound = new MBound(getShapeBound());
+                Point2D cShapePoint = this.globalToShapeTransform(p); //to shape coordinates    
+                MBound nShapeBound = new MBound(cBound.getUpperLeft(), cShapePoint); //simple reflection of point
+                                
+                location.set(nShapeBound.getMin());
+                width.set(nShapeBound.getWidth());
+                height.set(nShapeBound.getHeight());
+                
+                updateDragHandles();             
+                getEngine2D().draw();
+            });
+            
+            MDragC c3 = new MDragC(this);            
+            c3.setPosition(getGlobalBounds().getMinX(), getGlobalBounds().getMaxY());           
+            dragHandles.add(c3);
+
+            c3.setOnMouseDrag(e->{
+                Point2D p = new Point2D(e.getX(), e.getY());
+                
+                MBound cBound = new MBound(getShapeBound());
+                Point2D cShapePoint = this.globalToShapeTransform(p); //to shape coordinates    
+                MBound nShapeBound = new MBound(cShapePoint, cBound.getUpperRight()); //simple reflection of point
+               
+                location.set(nShapeBound.getMin());
+                width.set(nShapeBound.getWidth());
+                height.set(nShapeBound.getHeight());
+
+                updateDragHandles(); 
+                getEngine2D().draw();
+            });
+            
+            MDragC c4 = new MDragC(this);            
+            c4.setPosition(getGlobalBounds().getMaxX(), getGlobalBounds().getMinY());           
+            dragHandles.add(c4);
+            c4.setOnMouseDrag(e->{
+
+                Point2D p = new Point2D(e.getX(), e.getY());
+
+                MBound cBound = new MBound(getShapeBound());
+                Point2D cShapePoint = this.globalToShapeTransform(p); //to shape coordinates    
+                MBound nShapeBound = new MBound(cShapePoint, cBound.getLowerLeft()); //simple reflection of point
+               
+                location.set(nShapeBound.getMin());
+                width.set(nShapeBound.getWidth());
+                height.set(nShapeBound.getHeight());
+                
+                updateDragHandles();           
+                getEngine2D().draw();
+            });
+        }       
+      
+        return dragHandles;       
+    }
+
+    @Override
+    public void updateDragHandles() {    
         
+        MDragShape c1 = dragHandles.get(0);
+        c1.setPosition(getGlobalBounds().getMinX(), getGlobalBounds().getMinY());
+        
+        MDragShape c2 = dragHandles.get(1);
+        c2.setPosition(getGlobalBounds().getMaxX(), getGlobalBounds().getMaxY());
+        
+        MDragShape c3 = dragHandles.get(2);
+        c3.setPosition(getGlobalBounds().getMinX(), getGlobalBounds().getMaxY());
+              
+        MDragShape c4 = dragHandles.get(3);        
+        c4.setPosition(getGlobalBounds().getMaxX(), getGlobalBounds().getMinY());
     }
-    
-    public double getRadius()
-    {
-        return radius.doubleValue();
-    }
-    
-    public void setRadius(double radius)
-    {
-        this.radius.set(radius);        
-        updateDragHandles();
-    }
-    
-    public DoubleProperty radiusProperty()
-    {
-        return radius;
+  
+    @Override
+    public boolean containsGlobalPoint(Point2D globalPoint) {        
+        //transform p to shape space coordinates
+        Point2D shapeSpacePoint = globalToShapeTransform(globalPoint);
+        //simple check
+        Bounds bound = getShapeBound();
+        return bound.contains(shapeSpacePoint);
     }
     
     public double getStrokeWidth()
@@ -130,9 +244,7 @@ public class MCircle extends MambaShapeAbstract<MEngine>{
     
     public void setStrokeWidth(double strokeWidth)
     {       
-        this.strokeWidth.set(strokeWidth);
-        
-      
+        this.strokeWidth.set(strokeWidth);  
     }
     
     public DoubleProperty strokeWidthProperty()
@@ -143,8 +255,7 @@ public class MCircle extends MambaShapeAbstract<MEngine>{
     public void setStrokeColor(Color strokeColor)
     {       
         this.strokeColor.set(strokeColor);
-        this.getEngine2D().draw();
-        
+        this.getEngine2D().draw();        
     }
     
     public Color getStrokeColor()
@@ -152,14 +263,14 @@ public class MCircle extends MambaShapeAbstract<MEngine>{
         return this.strokeColor.get();
     }
     
-    public ObjectProperty<Color> strokeColorProperty(){
+    public ObjectProperty<Color> strokeColorProperty()
+    {
         return strokeColor;
     }
     
     public void setSolidColor(Color solidColor)
     {       
-        this.solidColor.set(solidColor);        
-        
+        this.solidColor.set(solidColor);    
     }
     
     public Color getSolidColor()
@@ -167,222 +278,14 @@ public class MCircle extends MambaShapeAbstract<MEngine>{
         return this.solidColor.get();
     }
     
-    public ObjectProperty<Color> solidColorProperty(){
+    public ObjectProperty<Color> solidColorProperty()
+    {
         return solidColor;
     }
     
-    /*
-        - when mouse pressed
-            - set current pressed point //not of any use here
-        - when mouse dragging
-            - get current bounds
-            - calculate new bounds based on new drag position and current bounds
-            - modify shape based on new bounds/or user defined modification
-            - updated drag nodes based on new bounds
-            - draw shape
-    */
-    
-    @Override
-    public ObservableList<MDrag> initDragHandles()
+    public void setLocation(double x, double y)
     {
-        if(dragHandles.isEmpty())
-        {       
-            MDragSquare c1 = new MDragSquare();            
-            c1.setX(getGlobalBounds().getMinX());
-            c1.setY(getGlobalBounds().getMinY());
-            dragHandles.add(c1);
-
-            c1.setOnMousePressed(e->{
-               Point2D p = new Point2D(e.getX(), e.getY());                
-            });
-
-            c1.setOnMouseDragged(e->{
-
-                Point2D p = new Point2D(e.getX(), e.getY());
-
-                MBound nbound = new MBound();
-                MBound cbound = new MBound();
-
-                cbound.include(getGlobalBounds());          //current bounds 
-                nbound.include(p, cbound.getPoint(2));      //new bounds
-                double nRadius = nbound.getMaxExtentHalf(); //new radius
-                
-                setRadius((int)nRadius);  
-                
-                updateDragHandles();                
-                getEngine2D().draw();
-
-            });
-
-            c1.setOnMouseMoved(e->{
-                c1.setCursor(Cursor.HAND);
-            });
-            
-            MDragSquare c2 = new MDragSquare();
-            c2.setX(getGlobalBounds().getMaxX());
-            c2.setY(getGlobalBounds().getMaxY());
-            dragHandles.add(c2);
-
-            c2.setOnMousePressed(e->{
-               Point2D p = new Point2D(e.getX(), e.getY());                
-            });
-
-            c2.setOnMouseDragged(e->{
-
-                Point2D p = new Point2D(e.getX(), e.getY());
-
-                MBound nbound = new MBound();
-                MBound cbound = new MBound();
-
-                cbound.include(getGlobalBounds());          //current bounds 
-                nbound.include(p, cbound.getPoint(0));      //new bounds
-                double nRadius = nbound.getMaxExtentHalf(); //new radius
-               
-                setRadius((int)nRadius);    
-                
-                updateDragHandles();       
-                
-                getEngine2D().draw();
-            });
-
-            c2.setOnMouseMoved(e->{
-                c2.setCursor(Cursor.HAND);
-            });
-            
-            MDragSquare c3 = new MDragSquare();
-            c3.setX(getGlobalBounds().getMinX());
-            c3.setY(getGlobalBounds().getMaxY());
-            dragHandles.add(c3);
-
-            c3.setOnMousePressed(e->{
-               Point2D p = new Point2D(e.getX(), e.getY());               
-            });
-
-            c3.setOnMouseDragged(e->{
-
-                Point2D p = new Point2D(e.getX(), e.getY());
-
-                MBound nbound = new MBound();
-                MBound cbound = new MBound();
-
-                cbound.include(getGlobalBounds());       //current bounds             
-                nbound.include(p, cbound.getPoint(1));      //new bounds
-                double nRadius = nbound.getMaxExtentHalf(); //new radius
-               
-                setRadius((int)nRadius);
-
-                updateDragHandles();            
-
-                getEngine2D().draw();
-            });
-
-            c3.setOnMouseMoved(e->{
-                c3.setCursor(Cursor.HAND);
-            });
-
-            MDragSquare c4 = new MDragSquare();
-            c4.setX(getGlobalBounds().getMaxX());
-            c4.setY(getGlobalBounds().getMinY());
-            dragHandles.add(c4);
-
-            c4.setOnMousePressed(e->{
-               Point2D p = new Point2D(e.getX(), e.getY());             
-            });
-
-            c4.setOnMouseDragged(e->{
-
-                Point2D p = new Point2D(e.getX(), e.getY());
-
-                MBound nbound = new MBound();
-                MBound cbound = new MBound();
-
-                cbound.include(getGlobalBounds());       //current bounds             
-                nbound.include(p, cbound.getPoint(3));      //new bounds
-                double nRadius = nbound.getMaxExtentHalf(); //new radius
-               
-                setRadius((int)nRadius);
-
-                updateDragHandles();             
-
-                getEngine2D().draw();
-            });
-
-            //c4 on mouse moved
-            c4.setOnMouseMoved(e->{
-                c4.setCursor(Cursor.HAND);
-            });
-        }
-                
-        return dragHandles;       
-        
-    }
-
-    @Override
-    public void updateDragHandles() {
-        
-        //TODO
-        MDrag c1 = dragHandles.get(0);
-        c1.setX(getGlobalBounds().getMinX());
-        c1.setY(getGlobalBounds().getMinY());
-                
-        MDrag c2 = dragHandles.get(1);
-        c2.setX(getGlobalBounds().getMaxX());
-        c2.setY(getGlobalBounds().getMaxY());
-              
-        MDrag c3 = dragHandles.get(2);
-        c3.setX(getGlobalBounds().getMinX());
-        c3.setY(getGlobalBounds().getMaxY());
-        
-        MDrag c4 = dragHandles.get(3);        
-        c4.setX(getGlobalBounds().getMaxX());
-        c4.setY(getGlobalBounds().getMinY());          
+        this.setLocalTransform(MTransform.translate(x, y));
     }
     
-    @Override
-    public Effect getEffect()
-    {
-        return effect;
-    }
-    
-    @Override
-    public void setEffect(Effect effect)
-    {
-        this.effect = effect;
-    }
-
-    @Override
-    public ObservableList<MambaShape<MEngine>> getChildren() {
-        return children;
-    }
-
-    @Override
-    public String toString()
-    {
-        return "Circle";
-    }
-    
-    @Override
-    public boolean intersect(Point2D localPoint, MIntersection isect) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
-    public boolean intersect(Bounds localBound, MIntersection isect) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
-    public BoundingBox getShapeBound() {
-        Point2D min = new Point2D(-radius.doubleValue(), -radius.doubleValue());
-        Point2D max = new Point2D(radius.doubleValue(), radius.doubleValue());
-        MBound bound = new MBound();
-        bound.include(min);
-        bound.include(max);       
-        return (BoundingBox)(bound.getBoundingBox());
-    }
-
-    @Override
-    public boolean isComplete() {
-        return true;
-    }
 }

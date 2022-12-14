@@ -5,8 +5,6 @@
  */
 package mamba.base.engine.shape;
 
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.ObjectProperty;
@@ -18,6 +16,7 @@ import javafx.beans.property.StringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.geometry.BoundingBox;
+import javafx.geometry.Bounds;
 import javafx.geometry.Point2D;
 import javafx.scene.Cursor;
 import javafx.scene.canvas.GraphicsContext;
@@ -25,28 +24,28 @@ import javafx.scene.effect.Effect;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.StrokeLineCap;
 import static javafx.scene.shape.StrokeLineCap.BUTT;
-import javafx.scene.transform.NonInvertibleTransformException;
 import mamba.base.MambaShape;
+import mamba.base.MambaShapeAbstract;
 import mamba.base.engine.MEngine;
 import mamba.overlayselect.drag.MDrag;
 import mamba.overlayselect.drag.MDragSquare;
 import mamba.base.math.MBound;
 import mamba.base.math.MTransform;
 import mamba.base.math.MTransformGeneric;
+import mamba.overlayselect.drag.MDrag;
+import mamba.overlayselect.drag.MDragC;
 import mamba.util.MIntersection;
 
 /**
  *
  * @author user
  */
-public class MLine implements MambaShape<MEngine>{
+public class MLine extends MambaShapeAbstract<MEngine>{
   
     private MEngine engine2D;
     private GraphicsContext graphicContext;
     
-    private Point2D offset;
-    
-    //line end points always in local coordinates
+    //line end points always in shape coordinates
     private Point2D p1;   
     private Point2D p2;
     
@@ -58,7 +57,6 @@ public class MLine implements MambaShape<MEngine>{
     private final DoubleProperty dashSize;
     private final DoubleProperty gapSize;
     
-    private MTransformGeneric transform;    
     private Effect effect;
     
     private final ObservableList<MDrag> dragHandles = FXCollections.observableArrayList();
@@ -69,17 +67,12 @@ public class MLine implements MambaShape<MEngine>{
     
     public MLine()
     {
-        offset = new Point2D(0, 0);
-        
         p1 = new Point2D(10, 10);
         p2 = new Point2D(60, 60);
         
         strokeWidth = new SimpleDoubleProperty(4);
         strokeColor = new SimpleObjectProperty(Color.BLACK);
-        
-        //to be at positon (p1, p2)
-        transform = MTransform.translate(0, 0); 
-        
+                
         nameProperty = new SimpleStringProperty("Line");
         dashedLine = new SimpleBooleanProperty(false);
         dashSize = new SimpleDoubleProperty(5);
@@ -161,43 +154,7 @@ public class MLine implements MambaShape<MEngine>{
     {
         return this.gapSize;
     }
-
-    @Override
-    public MTransformGeneric getTransform() {
-        return transform;
-    }
-
-    @Override
-    public void setTransform(MTransformGeneric transform) {
-        this.transform = transform;
-    }
-
-    @Override
-    public void translate(Point2D p) {
-        Point2D tp = p.subtract(offset);
-        this.transform = MTransform.translate(tp.getX(), tp.getY());
-    }
-
-    @Override
-    public Point2D getTranslate() {
-        return this.transform.transform(new Point2D(0, 0));
-    }
-
-    @Override
-    public void setOffset(Point2D offset) {
-        this.offset = offset;
-    }
-
-    @Override
-    public Point2D getOffset() {
-        return offset;
-    }
-
-    @Override
-    public ShapeType getType() {
-        return ShapeType.SHAPE;
-    }
-
+   
     @Override
     public MEngine getEngine2D() {
         return engine2D;
@@ -222,7 +179,7 @@ public class MLine implements MambaShape<MEngine>{
     public void draw() {
         graphicContext.save();
         //apply transform first
-        transform.transformGraphicsContext(graphicContext);
+        this.shapeToGlobalTransform().transformGraphicsContext(getGraphicsContext());
                 
         //draw shape, this is just local coordinates         
         graphicContext.setLineCap(lineCap.get());        
@@ -240,17 +197,17 @@ public class MLine implements MambaShape<MEngine>{
     }
 
     @Override
-    public BoundingBox getBounds() {
+    public BoundingBox getShapeBound() {
         MBound bound = new MBound();
         bound.include(p1);
         bound.include(p2);   
-        return (BoundingBox) transform.transform(bound.getBoundingBox());
+        return bound.getBoundingBox();
     }
 
     @Override
-    public boolean contains(Point2D p) {       
-        //transform p to local coordinates
-        Point2D invP = transform.inverseTransform(p);            
+    public boolean containsGlobalPoint(Point2D globalPoint) {       
+        //transform p to local coordinates        
+        Point2D shapeSpacePoint = globalToShapeTransform(globalPoint);
         MBound bound = new MBound();
 
         //expand a bit to maximum 5 on x and y in order to have minimum bound that is not less than 5
@@ -259,57 +216,45 @@ public class MLine implements MambaShape<MEngine>{
         bound.include(new Point2D(p2.getX()-5, p2.getY()-5), new Point2D(p2.getX() + 5, p2.getY() + 5));
         bound.include(p1);
         bound.include(p2);       
-        return bound.contains(invP);       
+        return bound.contains(shapeSpacePoint);       
     }
 
     @Override
-    public void updateDragHandles(MDrag referenceHandle) {
+    public void updateDragHandles() {
         
         MDrag c1 = dragHandles.get(0);   
-        c1.setX(getGlobalP1().getX());
-        c1.setY(getGlobalP1().getY());    
-              
+        c1.setPosition(getGlobalP1().getX(), getGlobalP1().getY());
+       
         MDrag c2 = dragHandles.get(1);    
-        c2.setX(getGlobalP2().getX());
-        c2.setY(getGlobalP2().getY());     
+        c2.setPosition(getGlobalP2().getX(), getGlobalP2().getY());        
     }
     
-     @Override
-    public ObservableList<MDrag> getDragHandles()
+    @Override
+    public ObservableList<MDrag> initDragHandles()
     {
         if(dragHandles.isEmpty())
         {
-            MDrag c1 = new MDragSquare(6);       
-            c1.setX(getGlobalP1().getX());
-            c1.setY(getGlobalP1().getY());           
+            MDrag c1 = new MDragC(this);       
+            c1.setPosition(getGlobalP1().getX(), getGlobalP1().getY());
             dragHandles.add(c1);
             
-            c1.setOnMouseDragged(e->{
+            c1.setOnMouseDrag(e->{
                 Point2D p = new Point2D(e.getX(), e.getY());   //in global coordinates             
-                p1 = this.pointInvTransform(p);   //transform to local coordinates
+                p1 = this.globalToShapeTransform(p);   //transform to local coordinates
                 
-                updateDragHandles(null);                
+                updateDragHandles();                
                 engine2D.draw();
             });
-            
-            c1.setOnMouseMoved(e->{
-                c1.setCursor(Cursor.HAND);
-            });
-            
-            MDrag c2 = new MDragSquare(6);       
-            c2.setX(getGlobalP2().getX());
-            c2.setY(getGlobalP2().getY());            
+                        
+            MDrag c2 = new MDragC(this);       
+            c2.setPosition(getGlobalP2().getX(), getGlobalP2().getY());
             dragHandles.add(c2);
             
-            c2.setOnMouseDragged(e->{
+            c2.setOnMouseDrag(e->{
                 Point2D p = new Point2D(e.getX(), e.getY());
-                p2 = this.pointInvTransform(p); //transform to local coordinates
-                updateDragHandles(null);                
+                p2 = this.globalToShapeTransform(p); //transform to local coordinates
+                updateDragHandles();                
                 engine2D.draw();
-            });
-            
-            c2.setOnMouseMoved(e->{
-                c2.setCursor(Cursor.HAND);
             });
         }
         
@@ -317,14 +262,15 @@ public class MLine implements MambaShape<MEngine>{
     }
     
     @Override
-    public boolean intersect(Point2D p, MIntersection isect)
+    public boolean intersect(Point2D parentPoint, MIntersection isect)
     {        
-        boolean boundIntersect = MambaShape.super.intersect(p, isect);
+        Point2D shapeSpacePoint = this.getLocalTransform().inverseTransform(parentPoint);
+        boolean boundIntersect = this.getShapeBound().contains(shapeSpacePoint);
         
         //https://en.wikipedia.org/wiki/Distance_from_a_point_to_a_line#Line_defined_by_two_points
         if(boundIntersect)
         {
-            Point2D p0 = pointInvTransform(p); //to local coordinates
+            Point2D p0 = shapeSpacePoint; //to local coordinates
             double lengthLine = p1.distance(p2);
             double numerator = (p2.getX()-p1.getX())*(p1.getY()-p0.getY()) - 
                     (p1.getX()-p0.getX())*(p2.getY()-p1.getY());
@@ -332,31 +278,30 @@ public class MLine implements MambaShape<MEngine>{
             
             double distance = numerator/lengthLine;
             if(distance < 5)
-                return true;            
+            {
+                isect.shape = this;
+                return true;
+            }            
         }
         
         return false;
     }
     
-    private Point2D pointTransform(Point2D point)
-    {
-        return transform.transform(point);
+     @Override
+    public boolean intersect(Bounds parentBound, MIntersection isect) {
+        Bounds shapeSpaceBound = getLocalTransform().inverseTransform(parentBound);        
+        return getShapeBound().contains(shapeSpaceBound);
     }
-    
-    private Point2D pointInvTransform(Point2D point)
-    {       
-        return transform.inverseTransform(point);       
-    }    
     
     private Point2D getGlobalP1()
     {
-        return pointTransform(p1);
+        return this.shapeToGlobalTransform(p1);
     }
     
     private Point2D getGlobalP2()
     {
-        return pointTransform(p2);
-    }    
+        return this.shapeToGlobalTransform(p2);
+    }
     
     public void setDashedLine(boolean dashedLine)
     {       
@@ -370,16 +315,6 @@ public class MLine implements MambaShape<MEngine>{
     public BooleanProperty dashedLineProperty()
     {
         return dashedLine;
-    }
-
-    @Override
-    public StringProperty getNameProperty() {
-        return nameProperty;
-    }
-
-    @Override
-    public String getName() {
-        return nameProperty.get();
     }
 
     @Override
@@ -406,5 +341,11 @@ public class MLine implements MambaShape<MEngine>{
             return "Line";
         else
             return getName();
+    }
+
+
+    @Override
+    public boolean isComplete() {
+        return true;
     }
 }

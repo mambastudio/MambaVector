@@ -1,7 +1,7 @@
 /*
  * The MIT License
  *
- * Copyright 2022 jmburu.
+ * Copyright 2022 user.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -23,56 +23,17 @@
  */
 package mamba.overlayselect.drag;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.function.Consumer;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
-import javafx.event.EventType;
-import javafx.scene.input.MouseEvent;
 import mamba.base.MambaShape;
-import mamba.base.MambaShapeAbstract;
 import mamba.base.engine.MEngine;
 
 /**
  *
- * @author jmburu
+ * @author user
  */
-public abstract class MDrag2 extends MambaShapeAbstract<MEngine> implements MDragShape<MEngine> {    
-    private final MambaShape<MEngine> ownerShape;    
+public class MDragC_Offset extends MDragC{
     
-    protected MDrag2(MambaShape<MEngine> ownerShape)
-    {
-        this.ownerShape = ownerShape;
-        this.setEngine(ownerShape.getEngine2D());
-        this.setGraphicContext(ownerShape.getGraphicsContext());
-       
+    public MDragC_Offset(MambaShape<MEngine> ownerShape) {
+        super(ownerShape);
     }
-    
-     //for ui editor such as mouse editing (utilises the global transforms) - NOT NEEDED HERE
-    @Override
-    public ObservableList<MDrag2> initDragHandles()
-    {
-        return FXCollections.emptyObservableList();
-    }
-    
-    @Override
-    public void updateDragHandles()
-    {
-       
-    }
-
-    @Override
-    public boolean isComplete() {
-        return true;
-    }
-    
-    
-    @Override
-    public MambaShape<MEngine> getOwnerShape()
-    {
-        return ownerShape;
-    }
-    
     
 }

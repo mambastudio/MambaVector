@@ -14,7 +14,7 @@ import mamba.base.engine.shape.groups.MRoot;
 import mamba.base.math.MTransform;
 import mamba.base.math.MTransformGeneric;
 import mamba.util.MSelectionModel;
-import mamba.overlayselect.drag.MDrag2;
+import mamba.overlayselect.drag.MDrag;
 import mamba.util.MIntersection;
 
 /**
@@ -64,7 +64,7 @@ public class MEngine implements MambaEngine2D {
     {
         if(selectionModel.isSelected())
         {
-            for(MDrag2 drag : selectionModel.getSelectedShapeDragHandles())
+            for(MDrag drag : selectionModel.getSelectedShapeDragHandles())
                 drag.draw();
         }
     }

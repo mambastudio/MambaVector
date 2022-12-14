@@ -36,7 +36,7 @@ import mamba.base.MambaCanvas;
 import mamba.base.MambaShape;
 import mamba.base.engine.MEngine;
 import mamba.base.math.MTransform;
-import mamba.overlayselect.drag.MDrag2;
+import mamba.overlayselect.drag.MDrag;
 import mamba.util.MIntersection;
 import mamba.util.MultipleKeyCombination;
 
@@ -198,7 +198,7 @@ public class SimpleCanvas extends Region implements MambaCanvas<MEngine, VBox>{
         boolean isInDrag = false;
             
         if(engine2D.isSelected())
-            for(MDrag2 drag : engine2D.getSelectionModel().getSelectedShapeDragHandles())
+            for(MDrag drag : engine2D.getSelectionModel().getSelectedShapeDragHandles())
                 isInDrag |= drag.containsGlobalPoint(p);
 
         if(isInDrag)
