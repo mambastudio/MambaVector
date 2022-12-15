@@ -50,6 +50,7 @@ public class MDragC extends  MDrag {
     private final ObjectProperty<Point2D> position;
     
     private final ObjectProperty<Point2D> location;
+    private final ObjectProperty<Point2D> fraction;
     
     
     public MDragC(MambaShape<MEngine> ownerShape)
@@ -61,7 +62,9 @@ public class MDragC extends  MDrag {
         strokeColor = new SimpleObjectProperty(Color.BLACK);    
         width = new SimpleDoubleProperty(8);
         height = new SimpleDoubleProperty(8);
+        
         position = new SimpleObjectProperty(Point2D.ZERO);
+        fraction = new SimpleObjectProperty(Point2D.ZERO);
         
         location = new SimpleObjectProperty(position.get().subtract(new Point2D(width.doubleValue()/2, height.doubleValue()/2)));
         position.addListener((o, ov, nv)->{
@@ -131,13 +134,28 @@ public class MDragC extends  MDrag {
     }
 
     @Override
-    public void setPostion(Point2D position) {
+    public void setPosition(Point2D position) {
         this.position.set(position);
     }
 
     @Override
     public void setPosition(double x, double y) {
         this.position.set(new Point2D(x, y));
+    }
+
+    @Override
+    public Point2D getFraction() {
+        return fraction.get();
+    }
+
+    @Override
+    public void setFraction(Point2D fraction) {
+        this.fraction.set(fraction);
+    }
+
+    @Override
+    public void setFraction(double fractionX, double fractionY) {
+        this.fraction.set(new Point2D(fractionX, fractionY));
     }
     
 }

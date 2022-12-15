@@ -38,7 +38,20 @@ import mamba.base.MambaShape;
 public interface MDragShape<Engine2D extends MambaEngine2D> {
        
     public Point2D getPosition();
-    public void setPostion(Point2D position);
+    public void setPosition(Point2D position);
     public void setPosition(double x, double y);   
+    public Point2D getFraction();
+    public void setFraction(Point2D fraction);
+    public void setFraction(double x, double y);
+    default double getFractionX()
+    {
+        return getFraction().getX();
+    }
+    default double getFractionY()
+    {
+        return getFraction().getY();
+    }
+    
+    
     public MambaShape<Engine2D> getOwnerShape();
 }

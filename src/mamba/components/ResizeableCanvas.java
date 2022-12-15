@@ -44,7 +44,7 @@ import mamba.overlayselect.drag.MDrag;
 import mamba.util.MIntersection;
 import mamba.util.MObservableStack;
 import mamba.util.MambaUtility;
-import mamba.util.MouseClick;
+import mamba.util.MouseActivity;
 import mamba.util.MultipleKeyCombination;
 
 /**
@@ -55,7 +55,7 @@ public final class ResizeableCanvas extends Region implements MambaCanvas<MEngin
 {
     private final Canvas canvas;
     private MEngine engine2D = null;
-    private MouseClick mouseClick = new MouseClick();
+    private MouseActivity mouseClick = new MouseActivity();
       
     private VBox propertyDisplayPanel = null;
     

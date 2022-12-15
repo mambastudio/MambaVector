@@ -23,10 +23,14 @@
  */
 package mamba.base.engine.shape.attributes;
 
+import mamba.base.MambaEngine2D;
+import mamba.overlayselect.drag.MDragShape;
+
 /**
  *
  * @author user
+ * @param <Engine2D>
  */
-public interface MPathTypeGeneric {
+public interface MPathTypeGeneric<Engine2D extends MambaEngine2D> extends MDragShape<Engine2D>{
     
 }

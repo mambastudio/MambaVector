@@ -292,15 +292,17 @@ public final class MRectangle extends MambaShapeAbstract<MEngine>{
         MDragShape c4 = dragHandles.get(3);        
         c4.setPosition(getGlobalBounds().getMaxX(), getGlobalBounds().getMinY());
         
-        //MDrag c5 = dragHandles.get(4);         
-        //double c5_new_offset_x  = c5.getOffsetPercentX() * getBounds().getWidth();  //offset from right boundary
-        
+        MDrag c5 = dragHandles.get(4);         
+        double c5_x_offset  = c5.getFractionX() * getShapeBound().getWidth();  //offset from right boundary        
         //apply arc size
-        //arcWidth.set(Math.abs(c5_new_offset_x));
-        //arcHeight.set(Math.abs(c5_new_offset_x));
+        arcWidth.set(Math.abs(c5_x_offset));
+        arcHeight.set(Math.abs(c5_x_offset));        
+        Point2D c5position = new Point2D(
+                getShapeBound().getMaxX() + c5_x_offset,          //right side of rectangle
+                getShapeBound().getMinY() + this.getHeight()/2    //never changes along y-axis in terms of proportion
+        );        
+        c5.setPosition(this.shapeToGlobalTransform(c5position));      //apply scale transforms
         
-        //c5.setX(getBounds().getMaxX() + c5_new_offset_x); //variable along x-axis
-        //c5.setY(getBounds().getMinY() + this.getHeight()/2); //never changes along y-axis in terms of proportion
     }
     
     @Override
@@ -382,46 +384,39 @@ public final class MRectangle extends MambaShapeAbstract<MEngine>{
                 
                 updateDragHandles();           
                 getEngine2D().draw();
+                
             });
-        }       
-      
-        return dragHandles;       
-          /*  
             //not that rounded corners or arcs are edited as equal size, whic needs to be independent arc width and arc heigh editing
             //TODO
-            MDrag c5 = new MDragCircle();            
-            c5.setX(this.getBounds().getMaxX() + arcWidth.doubleValue());
-            c5.setY(this.getBounds().getMinY() + this.getHeight()/2);
-            
-            c5.setOffsetX(arcWidth.doubleValue(), this.getBounds().getWidth());
-            
-            dragHandles.add(c5);
+            MDrag c5 = new MDragC(this);            
+            c5.setPosition(
+                    this.getGlobalBounds().getMaxX() + arcWidth.doubleValue(),
+                    this.getGlobalBounds().getMinY() + this.getHeight()/2);
+            dragHandles.add(c5);            
             
             //for arc size calculations
-            c5.setOnMouseDragged(e->{
-                Point2D p = new Point2D(e.getX(), e.getY());           
+            c5.setOnMouseDrag(e->{
+                Point2D gp = new Point2D(e.getX(), e.getY());       
+                Point2D sp = this.globalToShapeTransform(gp);
                 
-                double offsetXFromRightBoundary = p.getX() - this.getBounds().getMaxX();  //positive or negative size depending on relative position
-                double limitXFromRightBoundary  = this.getBounds().getWidth()/2; //limit, which is 1/2 width of the rectangle
+                double offsetXFromRightBoundary = sp.getX() - this.getShapeBound().getMaxX();  //positive or negative size depending on relative position
+                double deltaFractionX = offsetXFromRightBoundary/this.getShapeBound().getWidth();
                 
-                if(Math.abs(offsetXFromRightBoundary) < limitXFromRightBoundary) //notice we use abs(...)              
-                    c5.setOffsetX(offsetXFromRightBoundary, this.getBounds().getWidth()); //set offset and xOffset percentage along x-axis
+                double limitXFromRightBoundary  = 1; //limit, which is the fraction is a whole number
+                
+                if(Math.abs(deltaFractionX) < limitXFromRightBoundary) //notice we use abs(...)              
+                    c5.setFraction(deltaFractionX, 0); //set offset and xOffset percentage along x-axis
                 else
-                    c5.setOffsetX(Math.copySign(limitXFromRightBoundary, offsetXFromRightBoundary), this.getBounds().getWidth()); //shouldn't be greater than absolute limit
+                    c5.setFraction(Math.copySign(limitXFromRightBoundary, deltaFractionX), 0); //shouldn't be greater than absolute limit
                 
-                updateDragHandles(null);             
-
+                updateDragHandles();        
                 engine2D.draw();
             });
 
-            //c5 on mouse moved
-            c5.setOnMouseMoved(e->{
-                c5.setCursor(Cursor.HAND);
-            });
-        }
-        
-        return dragHandles;  
-        */
+            
+        }       
+      
+        return dragHandles;     
     }
     
     @Override

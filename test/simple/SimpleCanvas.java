@@ -30,6 +30,8 @@ import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.input.ScrollEvent;
+import javafx.scene.input.TouchEvent;
+import javafx.scene.input.ZoomEvent;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
 import mamba.base.MambaCanvas;
@@ -38,6 +40,7 @@ import mamba.base.engine.MEngine;
 import mamba.base.math.MTransform;
 import mamba.overlayselect.drag.MDrag;
 import mamba.util.MIntersection;
+import mamba.util.MouseActivity;
 import mamba.util.MultipleKeyCombination;
 
 /**
@@ -49,7 +52,7 @@ public class SimpleCanvas extends Region implements MambaCanvas<MEngine, VBox>{
     private MEngine engine2D = null;
     private final Canvas canvas;
     
-    Delta dragDelta = new Delta();
+    MouseActivity mouseActivity = new MouseActivity();
     
     public SimpleCanvas()
     {
@@ -78,7 +81,9 @@ public class SimpleCanvas extends Region implements MambaCanvas<MEngine, VBox>{
         this.setOnMouseReleased(this::mouseReleased);
         this.setOnScroll(this::mouseScrolled);   
         this.setOnMouseMoved(this::mouseMoved);
-       
+        this.setOnZoom(this::zoom);
+        this.setOnTouchPressed(this::onTouchPressed);
+        this.setOnTouchReleased(this::onTouchReleased);
     }
 
     @Override
@@ -113,8 +118,8 @@ public class SimpleCanvas extends Region implements MambaCanvas<MEngine, VBox>{
     }
     
     public void mousePressed(MouseEvent e)
-    {            
-        dragDelta.setPoint(new Point2D(e.getX(), e.getY()));  
+    {     
+        mouseActivity.setPoint(new Point2D(e.getX(), e.getY()));  
         Point2D p = new Point2D(e.getX(), e.getY());  
       
         if(!engine2D.getSelectionModel().intersectDragHandles(p))
@@ -132,13 +137,13 @@ public class SimpleCanvas extends Region implements MambaCanvas<MEngine, VBox>{
     }
     
     public void mouseDragged(MouseEvent e)
-    {
-        dragDelta.setPoint(new Point2D(e.getX(), e.getY()));        
+    {                
+        mouseActivity.setPoint(new Point2D(e.getX(), e.getY()));        
                       
         if(new MultipleKeyCombination(KeyCode.CONTROL).match())
         {            
             this.setCursor(Cursor.MOVE);
-            translate(dragDelta.getDelta());
+            translate(mouseActivity.getDelta());
         }
         else if(engine2D.getSelectionModel().isDragHandleSelected())
         {            
@@ -146,7 +151,7 @@ public class SimpleCanvas extends Region implements MambaCanvas<MEngine, VBox>{
         }
         else if(engine2D.getSelectionModel().isSelected()) //translate shape
         {
-            Point2D deltaVector = dragDelta.getDelta(); //this is a vector
+            Point2D deltaVector = mouseActivity.getDelta(); //this is a vector
             MambaShape shape = engine2D.getSelectionModel().getSelected();
             
             Point2D deltaScaledVector = shape.globalToLocalTransform().deltaTransform(deltaVector);            
@@ -159,6 +164,9 @@ public class SimpleCanvas extends Region implements MambaCanvas<MEngine, VBox>{
     
     public void mouseScrolled(ScrollEvent e)
     {
+        if(mouseActivity.isTouchPressed()) //prevent zoom using mouse if event is from touch
+            return;
+        
         double deltaY = e.getDeltaY()* 0.1;
         double scale = deltaY > 0 ? 1.1 : 0.9;
         
@@ -170,10 +178,38 @@ public class SimpleCanvas extends Region implements MambaCanvas<MEngine, VBox>{
         
         if(new MultipleKeyCombination(KeyCode.CONTROL).match())
         {           
-            zoom(mousePoint, scalePoint);
+            zoom(mousePoint, scalePoint);            
         }    
         e.consume();
         
+    }
+    
+    //touch event if available
+    public void zoom(ZoomEvent e)
+    {        
+        double scale = e.getZoomFactor();
+        
+        Point2D mousePoint = new Point2D(e.getX(), e.getY());
+        Point2D scalePoint = new Point2D(scale, scale);
+        
+        //put cursor if over
+        setMouseCursorOnDragHandle(mousePoint);
+        
+        if(new MultipleKeyCombination(KeyCode.CONTROL).match())
+        {           
+            zoom(mousePoint, scalePoint);          
+        }    
+        e.consume();
+    }
+    
+    public void onTouchPressed(TouchEvent e)
+    {
+        mouseActivity.setTouchPressed(true);
+    }
+    
+    public void onTouchReleased(TouchEvent e)
+    {
+        mouseActivity.setTouchPressed(false);
     }
     
     //https://medium.com/@benjamin.botto/zooming-at-the-mouse-coordinates-with-affine-transformations-86e7312fd50b
@@ -207,21 +243,4 @@ public class SimpleCanvas extends Region implements MambaCanvas<MEngine, VBox>{
             this.setCursor(Cursor.DEFAULT);
     }
     
-    private class Delta
-    {
-        private Point2D pressed = Point2D.ZERO;
-        private Point2D delta = Point2D.ZERO;
-        
-        public void setPoint(Point2D p)
-        {
-            delta = p.subtract(pressed);
-            pressed = p;
-        }
-        
-        public Point2D getDelta()
-        {
-            return delta;
-        }
-        
-    }
 }

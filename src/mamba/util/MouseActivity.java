@@ -23,12 +23,26 @@
  */
 package mamba.util;
 
+import javafx.beans.property.BooleanProperty;
+import javafx.beans.property.SimpleBooleanProperty;
+import javafx.geometry.Point2D;
+
 /**
  *
  * @author jmburu
  */
-public class MouseClick {
+public class MouseActivity {
     private long lastClickTime = 0;
+    
+    private BooleanProperty isTouchPressed = null;
+    
+    private Point2D pressed = Point2D.ZERO;
+    private Point2D delta = Point2D.ZERO;
+    
+    public MouseActivity()
+    {
+        isTouchPressed = new SimpleBooleanProperty();
+    }
     
     public boolean isDoubleClick(long intervalRangeMsec)
     {
@@ -39,5 +53,26 @@ public class MouseClick {
         lastClickTime = currentClickTime;
         
         return diff < intervalRangeMsec && intervalRangeMsec > 0;
+    }
+    
+    public void setTouchPressed(boolean touchPressed)
+    {
+        isTouchPressed.set(touchPressed);
+    }
+    
+    public boolean isTouchPressed()
+    {
+        return isTouchPressed.get();
+    }
+    
+    public void setPoint(Point2D p)
+    {
+        delta = p.subtract(pressed);
+        pressed = p;
+    }
+
+    public Point2D getDelta()
+    {
+        return delta;
     }
 }
