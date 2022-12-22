@@ -34,24 +34,26 @@ public interface MambaEngine2D<MShape extends MambaShape> {
     public void setAll(List<MShape> shapes);
     
     //shape selection and selection model
-    public MShape getSelected();    
+    public MShape getSelected();        
     public void setSelected(MShape shape);
     public void setSelectionModel(MSelectionModel selectionModel);
     public MSelectionModel getSelectionModel();
     
     //intersection
     default boolean intersect(Point2D canvasPoint, MIntersection isect)
-    {
-        Point2D engineSpacePoint = getTransform().inverseTransform(canvasPoint);
+    {        
+        Point2D engineSpacePoint = getTransform().inverseTransform(canvasPoint);      
         return getRoot().intersect(engineSpacePoint, isect);
+       
     }
     
     default boolean intersect(Bounds canvasWorldBound, MIntersection isect)
     {
-        Bounds engineSpaceBound = getTransform().inverseTransform(canvasWorldBound);
-        return getRoot().intersect(engineSpaceBound, isect);
+        Bounds engineSpaceBound = getTransform().inverseTransform(canvasWorldBound);       
+        return getRoot().intersect(engineSpaceBound, isect);        
     }
     
     //root shape in the hierarchy
-    public MShape getRoot();       
+    public MShape getRoot();      
+    
 }

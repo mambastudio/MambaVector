@@ -39,7 +39,7 @@ public abstract class MDrag extends MambaShapeAbstract<MEngine> implements MDrag
     protected MDrag(MambaShape<MEngine> ownerShape)
     {
         this.ownerShape = ownerShape;
-        this.setEngine(ownerShape.getEngine2D());
+        this.setEngine2D(ownerShape.getEngine2D());
         this.setGraphicContext(ownerShape.getGraphicsContext());
        
     }

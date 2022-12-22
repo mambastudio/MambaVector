@@ -11,19 +11,14 @@ import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleDoubleProperty;
 import javafx.beans.property.SimpleObjectProperty;
-import javafx.beans.property.SimpleStringProperty;
-import javafx.beans.property.StringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.geometry.BoundingBox;
+import javafx.geometry.Bounds;
 import javafx.geometry.Point2D;
-import javafx.scene.canvas.GraphicsContext;
-import javafx.scene.effect.Effect;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.StrokeLineCap;
 import static javafx.scene.shape.StrokeLineCap.BUTT;
-import mamba.base.MambaShape;
-import mamba.base.engine.MEngine;
 import static mamba.base.engine.shape.MPath.PathTo.LINE_TO;
 import static mamba.base.engine.shape.MPath.PathToMove.MOVE_TO;
 import mamba.base.engine.shape.attributes.MPathBezier;
@@ -31,15 +26,14 @@ import mamba.base.engine.shape.attributes.MPathPoint;
 import mamba.base.engine.shape.attributes.MPathTypeGeneric;
 import mamba.overlayselect.drag.MDrag;
 import mamba.base.math.MBound;
-import mamba.base.math.MTransform;
-import mamba.base.math.MTransformGeneric;
+import mamba.util.MIntersection;
 
 /**
  *
  * @author user
  */
-public class MPath extends MPathBezier<MPathPoint> implements MambaShape<MEngine>{
-
+public class MPath extends MPathBezier<MPathPoint>{
+    
     public static enum PathTo implements MPathTypeGeneric{
         LINE_TO, QUADRATIC_CURVE_TO, BEZIER_CURVE_TO, ARC_TO;
     };
@@ -48,11 +42,6 @@ public class MPath extends MPathBezier<MPathPoint> implements MambaShape<MEngine
         MOVE_TO;
     }
     
-    private MEngine engine2D;
-    private GraphicsContext graphicContext;
-    
-    private Point2D offset;
-        
     private final ObjectProperty<Color> lineColor;
     private final DoubleProperty lineWidth;
     private final BooleanProperty isClosed;
@@ -64,29 +53,15 @@ public class MPath extends MPathBezier<MPathPoint> implements MambaShape<MEngine
     private final DoubleProperty gapSize;
     
     
-    private MTransformGeneric transform;
-    
-    private Effect effect = null;
-    
-    private final StringProperty nameProperty;
-    
-    private final ObservableList<MambaShape<MEngine>> children = FXCollections.emptyObservableList();
-    
     private final ObjectProperty<PathTo> pathToProperty;
     
     private final BooleanProperty isBezierEdit;
     
     public MPath()
-    {
-        //to be at positon (p1, p2)
-        transform = MTransform.translate(0, 0); 
-        
+    {        
         add(new MPathPoint(this));
         add(new MPathPoint(this, LINE_TO, new Point2D(150, 150)));
-        
-        offset = new Point2D(0, 0);        
-         
-        nameProperty = new SimpleStringProperty();
+              
         pathToProperty = new SimpleObjectProperty(LINE_TO);
         
         lineColor = new SimpleObjectProperty(Color.BLACK);
@@ -101,7 +76,7 @@ public class MPath extends MPathBezier<MPathPoint> implements MambaShape<MEngine
         
         isBezierEdit = new SimpleBooleanProperty(false);
         isBezierEdit.addListener((o, ov, nv)->{
-            getEngine2D().getSelectionModel().refreshDragHandles(); //refresh overlay
+            getEngine2D().getSelectionModel().refreshDragHandlesAndDraw(); //refresh overlay
         });
     }
         
@@ -109,198 +84,137 @@ public class MPath extends MPathBezier<MPathPoint> implements MambaShape<MEngine
     {
         Point2D point = new Point2D(x, y);        
         add(new MPathPoint(this, LINE_TO, point));
-        getEngine2D().draw();
-        getEngine2D().getSelectionModel().refreshDragHandles(); //refresh overlay
+        getEngine2D().getSelectionModel().refreshDragHandlesAndDraw(); //refresh overlay        
     }
     
     public void addMoveTo(double x, double y)
     {
         Point2D point = new Point2D(x, y);        
-        add(new MPathPoint(this, MOVE_TO, point));
-        getEngine2D().draw();
-        getEngine2D().getSelectionModel().refreshDragHandles(); //refresh overlay
+        add(new MPathPoint(this, MOVE_TO, point));        
+        getEngine2D().getSelectionModel().refreshDragHandlesAndDraw(); //refresh overlay
     }
     
-    @Override
-    public MTransformGeneric getTransform() {
-        return transform;
+    public void removePoint(MPathPoint point)
+    {
+        remove(point);
+        getEngine2D().getSelectionModel().refreshDragHandlesAndDraw(); //refresh overlay        
     }
-
-    @Override
-    public void setTransform(MTransformGeneric transform) {
-        this.transform = transform;
-    }
-
-    @Override
-    public void translate(Point2D p) {
-        Point2D tp = p.subtract(offset); 
-        this.transform = MTransform.translate(tp.getX(), tp.getY());
-    }
-
-    @Override
-    public Point2D getTranslate() {
-        return this.transform.transform(new Point2D(0, 0));
-    }
-
-    @Override
-    public void setOffset(Point2D offset) {
-        this.offset = offset;
-    }
-
-    @Override
-    public Point2D getOffset() {
-        return offset;
-    }
-
-    @Override
-    public ShapeType getType() {
-        return ShapeType.SHAPE_POLY;
-    }
-
-    @Override
-    public MEngine getEngine2D() {
-        return engine2D;
-    }
-
-    @Override
-    public void setEngine(MEngine engine2D) {
-        this.engine2D = engine2D;
-    }
-
-    @Override
-    public void setGraphicContext(GraphicsContext context) {
-        this.graphicContext = context;
-    }
-
-    @Override
-    public GraphicsContext getGraphicsContext() {
-        return this.graphicContext;
-    }
-
+    
+   
     @Override
     public void draw() {
-        graphicContext.save();
+        getGraphicsContext().save();
         //apply transform first
-        transform.transformGraphicsContext(graphicContext);
+        this.shapeToGlobalTransform().transformGraphicsContext(getGraphicsContext());
         
-        graphicContext.setLineWidth(lineWidth.get());
+        getGraphicsContext().setLineWidth(lineWidth.get());
         // Set the Color
-        graphicContext.setStroke(lineColor.get());  
+        getGraphicsContext().setStroke(lineColor.get());  
         
         //draw shape, this is just local coordinates         
-        graphicContext.setLineCap(lineCap.get());   
+        getGraphicsContext().setLineCap(lineCap.get());   
         
         if(dashedLine.get())
-            graphicContext.setLineDashes(dashSize.get(), gapSize.get());
+            getGraphicsContext().setLineDashes(dashSize.get(), gapSize.get());
         
-        graphicContext.setFill(fillColor.get());
+        getGraphicsContext().setFill(fillColor.get());
         
-        graphicContext.beginPath(); 
+        getGraphicsContext().beginPath(); 
                         
         for(MPathPoint point : getList())
         {
             boolean isFirst = isFirst(point);
             if(isFirst)
-                graphicContext.moveTo(
-                        point.getPoint().getX(), 
-                        point.getPoint().getY());            
+                getGraphicsContext().moveTo(
+                        point.getShapePoint().getX(), 
+                        point.getShapePoint().getY());            
             else if(point.isInBezierRange())
             {
                 MPathPoint previousPoint = getPrevious(point);
-                graphicContext.bezierCurveTo(
-                        previousPoint.getMirrorControl().getX(), 
-                        previousPoint.getMirrorControl().getY(), 
-                        point.getControl().getX(), 
-                        point.getControl().getY(), 
-                        point.getPoint().getX(), 
-                        point.getPoint().getY());
+                getGraphicsContext().bezierCurveTo(
+                        previousPoint.getMirrorShapeControl().getX(), 
+                        previousPoint.getMirrorShapeControl().getY(), 
+                        point.getShapeControl().getX(), 
+                        point.getShapeControl().getY(), 
+                        point.getShapePoint().getX(), 
+                        point.getShapePoint().getY());
             }
             else
-                graphicContext.lineTo(
-                        point.getPoint().getX(), 
-                        point.getPoint().getY());       
+                getGraphicsContext().lineTo(
+                        point.getShapePoint().getX(), 
+                        point.getShapePoint().getY());       
         }   
         if(getIsClosed())
-            graphicContext.closePath();
+            getGraphicsContext().closePath();
         
-        graphicContext.setEffect(effect);     
+        getGraphicsContext().setEffect(getEffect());     
         if(getFillPath())
-            graphicContext.fill();
-        graphicContext.setEffect(null);
+            getGraphicsContext().fill();
+        getGraphicsContext().setEffect(null);        
+        getGraphicsContext().stroke();
         
-        graphicContext.stroke();
         
-        
-        graphicContext.restore(); //reset transforms and any other configurations
+        getGraphicsContext().restore(); //reset transforms and any other configurations
     }
 
     @Override
-    public BoundingBox getBounds() {
-        MBound bound = new MBound();
+    public BoundingBox getShapeBound() {
+        MBound shapeBound = new MBound();
         for(MPathPoint point : getList())
         {
-            bound.include(point.getPoint());
+            shapeBound.include(point.getShapePoint());
         }
-        return (BoundingBox) transform.transform(bound.getBoundingBox());
+        return shapeBound.getBoundingBox();
     }
 
     @Override
-    public boolean contains(Point2D p) {
+    public boolean intersect(Point2D parentPoint, MIntersection isect) {
        
         //transform p to local coordinates
-        Point2D invP = transform.inverseTransform(p);
-        MBound bound = new MBound();
-        for(MPathPoint point : getList())
+        Point2D invP = this.localToShapeTransform(parentPoint);
+        Bounds bound = getShapeBound();
+        if(bound.contains(invP))
         {
-            bound.include(point.getPoint());
+            isect.shape = this;
+            return true;
         }
-        return bound.contains(invP);        
+        else 
+            return false;
+    }
+    
+    @Override
+    public boolean intersect(Bounds parentBound, MIntersection isect) {
+        //transform p to local coordinates
+        Bounds invBound = this.localToShapeTransform(parentBound);
+        Bounds bound = getShapeBound();        
+        if(bound.contains(invBound))
+        {
+            isect.shape = this;
+            return true;
+        }
+        else 
+            return false;
     }
 
     @Override
-    public void updateDragHandles(MDrag referenceHandle) {
+    public void updateDragHandles() {
         for(MPathPoint point: getList())
         {
             point.updateDragHandles();
         }        
     }
     
-     @Override
-    public ObservableList<MDrag> getDragHandles()
+    @Override
+    public ObservableList<MDrag> initDragHandles()
     {
         ObservableList<MDrag> handles = FXCollections.observableArrayList();
-        //if(points.isEmpty())
+        for(MPathPoint point: getList())
         {
-            for(MPathPoint point: getList())
-            {
-                handles.addAll(point.getDragHandles());
-            }
+            handles.addAll(point.initDragHandles());
         }
-        
         return handles;
     }
 
-    @Override
-    public StringProperty getNameProperty() {
-        return nameProperty;
-    }
-
-    @Override
-    public String getName() {
-        return nameProperty.get();
-    }
-    
-    @Override
-    public Effect getEffect()
-    {
-        return effect;
-    }
-    
-    @Override
-    public void setEffect(Effect effect)
-    {
-        this.effect = effect;
-    }
     
     public PathTo getPathTo()
     {
@@ -472,13 +386,16 @@ public class MPath extends MPathBezier<MPathPoint> implements MambaShape<MEngine
     }
 
     @Override
-    public ObservableList<MambaShape<MEngine>> getChildren() {
-        return children;
-    }
-   
-    @Override
     public String toString()
     {
         return "Path";
     }    
+    
+    
+
+    @Override
+    public boolean containsGlobalPoint(Point2D globalPoint) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
 }

@@ -54,7 +54,7 @@ public interface MambaShape<Engine2D extends MambaEngine2D> extends MambaHierarc
     public MTransformGeneric globalToLocalTransform();
     
     public Engine2D getEngine2D();
-    public void setEngine(Engine2D engine2D);
+    public void setEngine2D(Engine2D engine2D);
     
     public void setGraphicContext(GraphicsContext context);
     public GraphicsContext getGraphicsContext();

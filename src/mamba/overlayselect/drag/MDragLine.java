@@ -23,97 +23,73 @@
  */
 package mamba.overlayselect.drag;
 
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
+import javafx.beans.property.DoubleProperty;
+import javafx.beans.property.ObjectProperty;
+import javafx.beans.property.SimpleDoubleProperty;
+import javafx.beans.property.SimpleObjectProperty;
 import javafx.geometry.Point2D;
-import javafx.scene.Cursor;
-import javafx.scene.shape.Line;
-import javafx.scene.shape.Shape;
-import mamba.base.math.MBound;
+import javafx.scene.paint.Color;
+import mamba.base.MambaShape;
+import mamba.base.engine.MEngine;
 
 /**
  *
  * @author jmburu
  */
-public class MDragLine extends MDrag{
-    private Line dashedLine;
-
-    @Override
-    protected ObservableList<Shape> initDrag() {
-        dashedLine = new Line();
-        dashedLine.setStrokeWidth(1.5);
-        dashedLine.getStrokeDashArray().addAll(3d, 5d);
-        this.setCursor(Cursor.DEFAULT);
-        return FXCollections.observableArrayList(dashedLine);
-    }
-
-    @Override
-    public double getWidth() {
-        MBound bound = new MBound();
-        bound.include(new Point2D(dashedLine.getStartX(), dashedLine.getStartY()));
-        bound.include(new Point2D(dashedLine.getEndX(), dashedLine.getEndY()));
-        return bound.getWidth();
-    }
-
-    @Override
-    public double getHeight() {
-        MBound bound = new MBound();
-        bound.include(new Point2D(dashedLine.getStartX(), dashedLine.getStartY()));
-        bound.include(new Point2D(dashedLine.getEndX(), dashedLine.getEndY()));
-        return bound.getHeight();
-    }
-
-    @Override
-    public double getX() {
-        return dashedLine.getStartX();
-    }
+public class MDragLine extends MDragVoid{
+    
+    private final DoubleProperty strokeWidth;
+    private final ObjectProperty<Color> strokeColor;  
+    private final DoubleProperty dashSize;
+    private final DoubleProperty gapSize;
+    
+    private Point2D start = Point2D.ZERO;
+    private Point2D end = Point2D.ZERO;
+    
+    public MDragLine(MambaShape<MEngine> ownerShape)
+    {
+        super(ownerShape);
         
-    @Override
-    public void setX(double x) {
-        dashedLine.setStartX(x);
-    }
-    
-    public double getEndX()
-    {
-        return dashedLine.getEndX();
-    }
-    
-    public void setEndX(double x)
-    {
-        dashedLine.setEndX(x);
-    }
-
-    @Override
-    public double getY() 
-    {
-        return dashedLine.getStartY();
-    }
-
-    @Override
-    public void setY(double y) 
-    {
-        dashedLine.setStartY(y);
-    }
-    
-    public double getEndY()
-    {
-        return dashedLine.getEndY();
-    }
-
-    public void setEndY(double y)
-    {
-        dashedLine.setEndY(y);
+        strokeWidth = new SimpleDoubleProperty(1.5);
+        strokeColor = new SimpleObjectProperty(Color.BLACK);           
+        dashSize = new SimpleDoubleProperty(3);
+        gapSize = new SimpleDoubleProperty(5);
     }
     
     public void setStart(double x, double y)
     {
-        setX(x);
-        setY(y);
-    }    
+        start = new Point2D(x, y);
+    }  
+    
+    public void setStart(Point2D start)
+    {
+        this.start = start;
+    }  
     
     public void setEnd(double x, double y)
     {
-        setEndX(x);
-        setEndY(y);
+        end = new Point2D(x, y);
     }
+    
+    public void setEnd(Point2D end)
+    {
+        this.end = end;
+    }
+
+    @Override
+    public void draw() {
+        getGraphicsContext().save();
+        //apply transform first
+        this.shapeToGlobalTransform().transformGraphicsContext(getGraphicsContext());
+                
+        //draw shape, this is just local coordinates           
+        getGraphicsContext().setStroke(strokeColor.get());
+        getGraphicsContext().setLineWidth(strokeWidth.doubleValue());
+        
+        getGraphicsContext().setLineDashes(dashSize.get(), gapSize.get());        
+        getGraphicsContext().strokeLine(start.getX(), start.getY(), end.getX(), end.getY());
+                
+        getGraphicsContext().restore(); //reset transforms and any other configurations
+    }
+
 }

@@ -3,10 +3,15 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-            <file>file:/C:/Users/jmburu/Documents/GitHub/MambaVector/src/mamba/treeview/MambaShapeData.java</file>
-            <file>file:/C:/Users/jmburu/Documents/GitHub/MambaVector/src/mamba/components/ResizeableCanvas.java</file>
-            <file>file:/C:/Users/jmburu/Documents/GitHub/MambaVector/src/mamba/util/MouseClick.java</file>
-            <file>file:/C:/Users/jmburu/Documents/GitHub/MambaVector/test/simple/SimpleCanvas.java</file>
+            <file>file:/C:/Users/user/Documents/GitHub/MambaVector/src/mamba/base/engine/shape/attributes/MPathPointGeneric.java</file>
+            <file>file:/C:/Users/user/Documents/GitHub/MambaVector/src/mamba/components/ResizeableCanvas.java</file>
+            <file>file:/C:/Users/user/Documents/GitHub/MambaVector/src/mamba/base/engine/shape/MPath.java</file>
+            <file>file:/C:/Users/user/Documents/GitHub/MambaVector/src/mamba/base/engine/shape/attributes/MPathBezier.java</file>
+            <file>file:/C:/Users/user/Documents/GitHub/MambaVector/src/mamba/base/engine/MEngine.java</file>
+            <file>file:/C:/Users/user/Documents/GitHub/MambaVector/src/mamba/base/engine/shape/attributes/MPathPoint.java</file>
+            <file>file:/C:/Users/user/Documents/GitHub/MambaVector/src/mamba/BuilderController.java</file>
+            <file>file:/C:/Users/user/Documents/GitHub/MambaVector/src/mamba/util/MSelectionModel.java</file>
+            <file>file:/C:/Users/user/Documents/GitHub/MambaVector/src/mamba/base/engine/shape/attributes/MPathEditing.java</file>
         </group>
     </open-files>
 </project-private>

@@ -21,40 +21,73 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package mamba.base.engine.shape.attributes;
+package mamba.overlayselect.drag;
 
-import javafx.collections.ObservableList;
+import javafx.geometry.Bounds;
 import javafx.geometry.Point2D;
-import mamba.overlayselect.drag.MDrag;
+import mamba.base.MambaShape;
+import mamba.base.engine.MEngine;
+import mamba.base.math.MBound;
+import mamba.util.MIntersection;
 
 /**
  *
  * @author user
- * @param <Bezier>
  */
-public interface MPathPointGeneric<Bezier extends MPathBezier> 
-{
-    public MPathTypeGeneric getPathType();
-    public ObservableList<MDrag> initDragHandles();
-    public void updateDragHandles();
+public abstract class MDragVoid extends MDrag{
     
-    public default Bezier getBezier()
-    {
-        return null;
+    public MDragVoid(MambaShape<MEngine> ownerShape) {
+        super(ownerShape);
     }
     
-    public default Point2D getShapePoint()
-    {
-        return null;
+    @Override
+    public boolean intersect(Point2D parentPoint, MIntersection isect) {
+        return false;
     }
-    
-    public default void setShapePoint(Point2D point)
-    {
+
+    @Override
+    public boolean intersect(Bounds parentBound, MIntersection isect) {
+        return false;
+    }
+
+    @Override
+    public Bounds getShapeBound() {
+        return new MBound().getBoundingBox();
+    }
+
+    @Override
+    public boolean containsGlobalPoint(Point2D globalPoint) {
+        return false;
+    }
+
+    @Override
+    public Point2D getPosition() {
+        return Point2D.ZERO;
+    }
+
+    @Override
+    public void setPosition(Point2D position) {
+      
+    }
+
+    @Override
+    public void setPosition(double x, double y) {
+        
+    }
+
+    @Override
+    public Point2D getFraction() {
+        return Point2D.ZERO;
+    }
+
+    @Override
+    public void setFraction(Point2D fraction) {
+        
+    }
+
+    @Override
+    public void setFraction(double x, double y) {
         
     }
     
-    public Point2D getShapeControl();  
-    public Point2D getMirrorShapeControl();
-    
-    public boolean contains(MDrag drag);
 }

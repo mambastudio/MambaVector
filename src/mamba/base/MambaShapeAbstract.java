@@ -26,6 +26,8 @@ package mamba.base;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Consumer;
+import javafx.beans.property.ObjectProperty;
+import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 import javafx.collections.FXCollections;
@@ -70,7 +72,7 @@ import mamba.overlayselect.drag.MDrag;
 public abstract class MambaShapeAbstract<Engine2D extends MambaEngine2D> implements MambaShape<Engine2D> {
        
     private MTransformGeneric localTransform;
-    private Engine2D engine2D;
+    private final ObjectProperty<Engine2D> propertyEngine2D;
     private GraphicsContext graphicsContext;
     protected ObservableList<MambaShape<Engine2D>> children;
     private Effect effect;
@@ -86,6 +88,7 @@ public abstract class MambaShapeAbstract<Engine2D extends MambaEngine2D> impleme
         dragHandles = FXCollections.observableArrayList();
         mouseEventConsumer = new HashMap();
         nameProperty = new SimpleStringProperty();
+        propertyEngine2D = new SimpleObjectProperty();
     }
     
     @Override
@@ -102,12 +105,12 @@ public abstract class MambaShapeAbstract<Engine2D extends MambaEngine2D> impleme
     
     @Override
     public Engine2D getEngine2D() {
-        return engine2D;
+        return propertyEngine2D.get();
     }
 
     @Override
-    public void setEngine(Engine2D engine2D) {
-        this.engine2D = engine2D;
+    public void setEngine2D(Engine2D engine2D) {
+        propertyEngine2D.set(engine2D);
     }
     
     @Override

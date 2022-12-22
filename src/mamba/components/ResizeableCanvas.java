@@ -5,7 +5,6 @@
  */
 package mamba.components;
 
-import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -35,6 +34,7 @@ import mamba.base.MambaCanvas;
 import mamba.base.MambaShape;
 import mamba.base.engine.MEngine;
 import mamba.base.engine.shape.MPath;
+import mamba.base.engine.shape.attributes.MPathEditing;
 import mamba.base.math.MTransform;
 import mamba.beans.MBeanPropertyItem;
 import mamba.beans.MBeanPropertySheet;
@@ -55,7 +55,7 @@ public final class ResizeableCanvas extends Region implements MambaCanvas<MEngin
 {
     private final Canvas canvas;
     private MEngine engine2D = null;
-    private MouseActivity mouseClick = new MouseActivity();
+    private final MouseActivity mouseClick = new MouseActivity();
       
     private VBox propertyDisplayPanel = null;
     
@@ -66,6 +66,8 @@ public final class ResizeableCanvas extends Region implements MambaCanvas<MEngin
     private MObservableStack preparatoryStack = null;
     
     private final BuilderController controller;   
+    
+    private MPathEditing pathEditing;
     
     Delta dragDelta = new Delta();
         
@@ -103,6 +105,7 @@ public final class ResizeableCanvas extends Region implements MambaCanvas<MEngin
         this.setOnMouseReleased(this::mouseReleased);
         this.setOnScroll(this::mouseScrolled);   
         this.setOnMouseMoved(this::mouseMoved);
+        
     }
     
     private void setShapeEffect(Effect effect)
@@ -127,6 +130,7 @@ public final class ResizeableCanvas extends Region implements MambaCanvas<MEngin
     public void setEngine2D(MEngine engine2D) {
         this.engine2D = engine2D;
         this.engine2D.setGraphicsContext(getGraphicsContext2D());
+        this.pathEditing = new MPathEditing(engine2D);
         //what happens if shape is selected -> init properties, effect editors
         this.engine2D.getSelectionModel().getSelectionProperty().addListener((o, ov, nv)->{
             if(nv != null)
@@ -290,6 +294,9 @@ public final class ResizeableCanvas extends Region implements MambaCanvas<MEngin
     }
     
     
+    
+    
+    
     public void mouseClicked(MouseEvent e)
     {
         mouseClick.isDoubleClick(500);
@@ -304,14 +311,31 @@ public final class ResizeableCanvas extends Region implements MambaCanvas<MEngin
     public void mousePressed(MouseEvent e)
     {            
         dragDelta.setPoint(new Point2D(e.getX(), e.getY()));  
-        Point2D p = new Point2D(e.getX(), e.getY());  
+        Point2D globalPoint = new Point2D(e.getX(), e.getY());  
+        
+        //this is the initialisation of drag
+        if(new MultipleKeyCombination(KeyCode.CONTROL).match())
+            return;
+        
+        //add line if pen tool is selected
+        if(pathEditing.addLine(globalPoint, controller.isPenToolSelected()))            
+            return;        
       
-        if(!engine2D.getSelectionModel().intersectDragHandles(p))
-        {
-            MIntersection isect = new MIntersection();
-            engine2D.intersect(p, isect);
-            engine2D.setSelected(isect.shape);
-        }        
+        //intersect scene if drag handles are not intersected and not in path editing mode
+        if(!engine2D.getSelectionModel().intersectDragHandles(globalPoint))
+        {            
+            if(!engine2D.getSelectionModel().isPathEditingMode())
+            {
+                MIntersection isect = new MIntersection();
+                engine2D.intersect(globalPoint, isect);
+                engine2D.setSelected(isect.shape);    
+                return;
+            }
+        }   
+        
+        //remove point from path
+        pathEditing.removePoint(globalPoint, controller.isEraserToolSelected());            
+             
     }
     
     public void mouseReleased(MouseEvent e)
@@ -324,12 +348,17 @@ public final class ResizeableCanvas extends Region implements MambaCanvas<MEngin
     {
         dragDelta.setPoint(new Point2D(e.getX(), e.getY()));        
                       
+        //if scene drag is activated or path editing is activated
         if(new MultipleKeyCombination(KeyCode.CONTROL).match())
         {            
             this.setCursor(Cursor.MOVE);
             translate(dragDelta.getDelta());
-        }
-        else if(engine2D.getSelectionModel().isDragHandleSelected())
+            return;
+        }        
+        
+        
+        //else deal with drag on selections of draghandles and shapes
+        if(engine2D.getSelectionModel().isDragHandleSelected())
         {            
             engine2D.getSelectionModel().getDragHandleSelected().processMouseEvent(e);
         }

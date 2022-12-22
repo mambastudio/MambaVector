@@ -48,7 +48,6 @@ import jfx.gallery.GalleryDialog;
 import mamba.base.MambaShape;
 import mamba.base.engine.MEngine;
 import mamba.base.engine.shape.MCircle;
-import mamba.base.engine.shape.MCircle;
 import mamba.base.engine.shape.MEllipse;
 import mamba.base.engine.shape.MImage;
 import mamba.base.engine.shape.MLine;
@@ -234,12 +233,14 @@ public class BuilderController implements Initializable {
                 this.applyCursorEdit(nv.getUserData());
                 vShapeBox.setDisable(true);
                 hEditBox.setDisable(true);
+                engine2D.getSelectionModel().setPathEditingMode(true);  //init path edit mode
             }
             else
             {
                 this.applyCursorEdit(null);
                 vShapeBox.setDisable(false);
                 hEditBox.setDisable(false);
+                engine2D.getSelectionModel().setPathEditingMode(false); //remove path edit mode
             }
         });
         
@@ -323,15 +324,15 @@ public class BuilderController implements Initializable {
     
     public void saveImage(ActionEvent e)
     {
-        FileChooser fileChooser = new FileChooser();
+        FileChooser imageFileChooser = new FileChooser();
                 
         //Set extension filter
         FileChooser.ExtensionFilter extFilter = 
                 new FileChooser.ExtensionFilter("png files (*.png)", "*.png");
-        fileChooser.getExtensionFilters().add(extFilter);
+        imageFileChooser.getExtensionFilters().add(extFilter);
 
         //Show save file dialog
-        File file = fileChooser.showSaveDialog(renderCanvas.getScene().getWindow());
+        File file = imageFileChooser.showSaveDialog(renderCanvas.getScene().getWindow());
 
         if(file != null){
             try {

@@ -11,15 +11,10 @@ import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleDoubleProperty;
 import javafx.beans.property.SimpleObjectProperty;
-import javafx.beans.property.SimpleStringProperty;
-import javafx.beans.property.StringProperty;
-import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.geometry.BoundingBox;
 import javafx.geometry.Bounds;
 import javafx.geometry.Point2D;
-import javafx.scene.Cursor;
-import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.effect.Effect;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.StrokeLineCap;
@@ -27,11 +22,7 @@ import static javafx.scene.shape.StrokeLineCap.BUTT;
 import mamba.base.MambaShape;
 import mamba.base.MambaShapeAbstract;
 import mamba.base.engine.MEngine;
-import mamba.overlayselect.drag.MDrag;
-import mamba.overlayselect.drag.MDragSquare;
 import mamba.base.math.MBound;
-import mamba.base.math.MTransform;
-import mamba.base.math.MTransformGeneric;
 import mamba.overlayselect.drag.MDrag;
 import mamba.overlayselect.drag.MDragC;
 import mamba.util.MIntersection;
@@ -40,11 +31,7 @@ import mamba.util.MIntersection;
  *
  * @author user
  */
-public class MLine extends MambaShapeAbstract<MEngine>{
-  
-    private MEngine engine2D;
-    private GraphicsContext graphicContext;
-    
+public class MLine extends MambaShapeAbstract<MEngine>{  
     //line end points always in shape coordinates
     private Point2D p1;   
     private Point2D p2;
@@ -59,11 +46,6 @@ public class MLine extends MambaShapeAbstract<MEngine>{
     
     private Effect effect;
     
-    private final ObservableList<MDrag> dragHandles = FXCollections.observableArrayList();
-    
-    private final ObservableList<MambaShape<MEngine>> children = FXCollections.emptyObservableList();
-    
-    private final StringProperty nameProperty;
     
     public MLine()
     {
@@ -73,7 +55,7 @@ public class MLine extends MambaShapeAbstract<MEngine>{
         strokeWidth = new SimpleDoubleProperty(4);
         strokeColor = new SimpleObjectProperty(Color.BLACK);
                 
-        nameProperty = new SimpleStringProperty("Line");
+        nameProperty.set("Line");
         dashedLine = new SimpleBooleanProperty(false);
         dashSize = new SimpleDoubleProperty(5);
         gapSize = new SimpleDoubleProperty(5);
@@ -155,45 +137,26 @@ public class MLine extends MambaShapeAbstract<MEngine>{
         return this.gapSize;
     }
    
-    @Override
-    public MEngine getEngine2D() {
-        return engine2D;
-    }
-
-    @Override
-    public void setEngine(MEngine engine2D) {
-        this.engine2D = engine2D;
-    }
-
-    @Override
-    public void setGraphicContext(GraphicsContext context) {
-        this.graphicContext = context;
-    }
-
-    @Override
-    public GraphicsContext getGraphicsContext() {
-        return this.graphicContext;
-    }
 
     @Override
     public void draw() {
-        graphicContext.save();
+        getGraphicsContext().save();
         //apply transform first
         this.shapeToGlobalTransform().transformGraphicsContext(getGraphicsContext());
                 
         //draw shape, this is just local coordinates         
-        graphicContext.setLineCap(lineCap.get());        
-        graphicContext.setStroke(strokeColor.get());
-        graphicContext.setLineWidth(strokeWidth.doubleValue());
+        getGraphicsContext().setLineCap(lineCap.get());        
+        getGraphicsContext().setStroke(strokeColor.get());
+        getGraphicsContext().setLineWidth(strokeWidth.doubleValue());
         
         if(dashedLine.get())
-            graphicContext.setLineDashes(dashSize.get(), gapSize.get());
+            getGraphicsContext().setLineDashes(dashSize.get(), gapSize.get());
         
-        graphicContext.strokeLine(p1.getX(), p1.getY(), p2.getX(), p2.getY());
+        getGraphicsContext().strokeLine(p1.getX(), p1.getY(), p2.getX(), p2.getY());
         
         
-        graphicContext.setEffect(null);
-        graphicContext.restore(); //reset transforms and any other configurations
+        getGraphicsContext().setEffect(null);
+        getGraphicsContext().restore(); //reset transforms and any other configurations
     }
 
     @Override
@@ -243,7 +206,7 @@ public class MLine extends MambaShapeAbstract<MEngine>{
                 p1 = this.globalToShapeTransform(p);   //transform to local coordinates
                 
                 updateDragHandles();                
-                engine2D.draw();
+                getEngine2D().draw();
             });
                         
             MDrag c2 = new MDragC(this);       
@@ -254,7 +217,7 @@ public class MLine extends MambaShapeAbstract<MEngine>{
                 Point2D p = new Point2D(e.getX(), e.getY());
                 p2 = this.globalToShapeTransform(p); //transform to local coordinates
                 updateDragHandles();                
-                engine2D.draw();
+                getEngine2D().draw();
             });
         }
         

@@ -23,16 +23,20 @@
  */
 package mamba.base.engine.shape.attributes;
 
+import java.util.Optional;
 import javafx.beans.property.BooleanProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import mamba.base.MambaShapeAbstract;
+import mamba.base.engine.MEngine;
+import mamba.overlayselect.drag.MDrag;
 
 /**
  *
  * @author user
  * @param <P>
  */
-public abstract class MPathBezier<P extends MPathPointGeneric> {
+public abstract class MPathBezier<P extends MPathPointGeneric> extends MambaShapeAbstract<MEngine>{
     private final ObservableList<P> points;
     
     protected MPathBezier()
@@ -128,4 +132,16 @@ public abstract class MPathBezier<P extends MPathPointGeneric> {
         else return null;
     }
     
+    public Optional<P> getPoint(MDrag drag)
+    {
+        for(int i = 0; i<points.size(); i++)
+            if(points.get(i).contains(drag))
+                return Optional.ofNullable(points.get(i));
+        return Optional.empty();
+    }
+    
+    protected void remove(P p)
+    {
+        points.remove(p);
+    }
 }
