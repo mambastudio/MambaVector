@@ -21,7 +21,7 @@ import javafx.scene.shape.StrokeLineCap;
 import static javafx.scene.shape.StrokeLineCap.BUTT;
 import static mamba.base.engine.shape.MPath.PathTo.LINE_TO;
 import static mamba.base.engine.shape.MPath.PathToMove.MOVE_TO;
-import mamba.base.engine.shape.attributes.MPathBezier;
+import mamba.base.engine.shape.attributes.MPathSpline;
 import mamba.base.engine.shape.attributes.MPathPoint;
 import mamba.base.engine.shape.attributes.MPathTypeGeneric;
 import mamba.overlayselect.drag.MDrag;
@@ -32,7 +32,7 @@ import mamba.util.MIntersection;
  *
  * @author user
  */
-public class MPath extends MPathBezier<MPathPoint>{
+public class MPath extends MPathSpline<MPathPoint>{
     
     public static enum PathTo implements MPathTypeGeneric{
         LINE_TO, QUADRATIC_CURVE_TO, BEZIER_CURVE_TO, ARC_TO;
@@ -128,7 +128,7 @@ public class MPath extends MPathBezier<MPathPoint>{
                 getGraphicsContext().moveTo(
                         point.getShapePoint().getX(), 
                         point.getShapePoint().getY());            
-            else if(point.isInBezierRange())
+            else
             {
                 MPathPoint previousPoint = getPrevious(point);
                 getGraphicsContext().bezierCurveTo(
@@ -138,11 +138,7 @@ public class MPath extends MPathBezier<MPathPoint>{
                         point.getShapeControl().getY(), 
                         point.getShapePoint().getX(), 
                         point.getShapePoint().getY());
-            }
-            else
-                getGraphicsContext().lineTo(
-                        point.getShapePoint().getX(), 
-                        point.getShapePoint().getY());       
+            }           
         }   
         if(getIsClosed())
             getGraphicsContext().closePath();

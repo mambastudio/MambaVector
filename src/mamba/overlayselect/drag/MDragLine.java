@@ -78,9 +78,7 @@ public class MDragLine extends MDragVoid{
 
     @Override
     public void draw() {
-        getGraphicsContext().save();
-        //apply transform first
-        this.shapeToGlobalTransform().transformGraphicsContext(getGraphicsContext());
+        getGraphicsContext().save();       
                 
         //draw shape, this is just local coordinates           
         getGraphicsContext().setStroke(strokeColor.get());

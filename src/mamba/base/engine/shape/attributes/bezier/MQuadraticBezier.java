@@ -21,40 +21,52 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package mamba.base.engine.shape.attributes;
+package mamba.base.engine.shape.attributes.bezier;
 
-import javafx.collections.ObservableList;
 import javafx.geometry.Point2D;
-import mamba.overlayselect.drag.MDrag;
+import mamba.base.engine.shape.MPath2;
 
 /**
  *
  * @author user
- * @param <Bezier>
  */
-public interface MPathPointGeneric<Bezier extends MPathSpline> 
-{
-    public MPathTypeGeneric getPathType();
-    public ObservableList<MDrag> initDragHandles();
-    public void updateDragHandles();
+public class MQuadraticBezier implements MBezier<MPath2>{
+
+    private Point2D point;    
+    private Point2D control;
     
-    public default Bezier getBezier()
+    public MQuadraticBezier()
     {
-        return null;
+        point = Point2D.ZERO;              
+        control = Point2D.ZERO;
     }
     
-    public default Point2D getShapePoint()
+    public MQuadraticBezier(Point2D point, Point2D control)
     {
-        return null;
+        this.point = point;              
+        this.control = control;
     }
     
-    public default void setShapePoint(Point2D point)
+    public Point2D getPoint()
     {
-        
+        return point;
     }
     
-    public Point2D getShapeControl();  
-    public Point2D getMirrorShapeControl();
+    public void setPoint(Point2D point)
+    {
+        this.point = point;
+    }
     
-    public boolean contains(MDrag drag);
+    public Point2D getControl()
+    {
+        return control;
+    }
+    
+    public void setControl(Point2D control)
+    {
+        this.control = control;
+    }
+    
+    
+    
 }

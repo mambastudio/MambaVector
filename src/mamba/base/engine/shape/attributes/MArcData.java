@@ -23,38 +23,29 @@
  */
 package mamba.base.engine.shape.attributes;
 
-import javafx.collections.ObservableList;
 import javafx.geometry.Point2D;
-import mamba.overlayselect.drag.MDrag;
 
 /**
  *
  * @author user
- * @param <Bezier>
  */
-public interface MPathPointGeneric<Bezier extends MPathSpline> 
-{
-    public MPathTypeGeneric getPathType();
-    public ObservableList<MDrag> initDragHandles();
-    public void updateDragHandles();
+public class MArcData {
+    public Point2D currentPoint, radius;
+    //xAxisRotation -> rotate in degrees clockwise
+    public double xAxisRotation, largeArcFlag, sweepFlag;
     
-    public default Bezier getBezier()
+    public MArcData(
+            Point2D currentPoint,
+            Point2D radius,
+            double xAxisRotation,       //rotate in degrees clockwise
+            double largeArcFlag,        
+            double sweepFlag
+    )
     {
-        return null;
+        this.currentPoint = currentPoint;
+        this.radius = radius;
+        this.xAxisRotation = xAxisRotation;
+        this.largeArcFlag = largeArcFlag;
+        this.sweepFlag = sweepFlag;
     }
-    
-    public default Point2D getShapePoint()
-    {
-        return null;
-    }
-    
-    public default void setShapePoint(Point2D point)
-    {
-        
-    }
-    
-    public Point2D getShapeControl();  
-    public Point2D getMirrorShapeControl();
-    
-    public boolean contains(MDrag drag);
 }

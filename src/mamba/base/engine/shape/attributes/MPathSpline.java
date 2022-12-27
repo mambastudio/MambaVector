@@ -36,10 +36,10 @@ import mamba.overlayselect.drag.MDrag;
  * @author user
  * @param <P>
  */
-public abstract class MPathBezier<P extends MPathPointGeneric> extends MambaShapeAbstract<MEngine>{
+public abstract class MPathSpline<P extends MPathPointGeneric> extends MambaShapeAbstract<MEngine>{
     private final ObservableList<P> points;
     
-    protected MPathBezier()
+    protected MPathSpline()
     {
         points = FXCollections.observableArrayList();
     }

@@ -21,40 +21,28 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package mamba.base.engine.shape.attributes;
+package mamba.base.engine.shape.attributes.bezier;
 
-import javafx.collections.ObservableList;
-import javafx.geometry.Point2D;
-import mamba.overlayselect.drag.MDrag;
+import mamba.base.engine.shape.attributes.MSpline;
 
 /**
  *
  * @author user
- * @param <Bezier>
+ * @param <Spline>
  */
-public interface MPathPointGeneric<Bezier extends MPathSpline> 
-{
-    public MPathTypeGeneric getPathType();
-    public ObservableList<MDrag> initDragHandles();
-    public void updateDragHandles();
-    
-    public default Bezier getBezier()
+public interface MBezier<Spline extends MSpline<? extends MBezier>> {
+    default void set(Spline spline)
     {
-        return null;
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+    default Spline getSpline()
+    {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
     
-    public default Point2D getShapePoint()
+    default boolean hasParentSpline()
     {
-        return null;
+        return getSpline() != null;
     }
     
-    public default void setShapePoint(Point2D point)
-    {
-        
-    }
-    
-    public Point2D getShapeControl();  
-    public Point2D getMirrorShapeControl();
-    
-    public boolean contains(MDrag drag);
 }

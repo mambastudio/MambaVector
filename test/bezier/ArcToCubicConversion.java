@@ -21,40 +21,21 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package mamba.base.engine.shape.attributes;
+package bezier;
 
-import javafx.collections.ObservableList;
-import javafx.geometry.Point2D;
-import mamba.overlayselect.drag.MDrag;
+import java.util.ArrayList;
+import mamba.base.engine.shape.attributes.bezier.MCubicBezier;
+import mamba.util.MSplineUtility;
 
 /**
  *
  * @author user
- * @param <Bezier>
  */
-public interface MPathPointGeneric<Bezier extends MPathSpline> 
-{
-    public MPathTypeGeneric getPathType();
-    public ObservableList<MDrag> initDragHandles();
-    public void updateDragHandles();
-    
-    public default Bezier getBezier()
-    {
-        return null;
+public class ArcToCubicConversion {
+    public static void main(String... args)
+    {        
+        ArrayList<MCubicBezier> curves = MSplineUtility.convertArcToCubic(10, 4000, 700, 100, 300, 200, 0, 30, 0);
+        for(MCubicBezier b : curves)
+            System.out.println(b);
     }
-    
-    public default Point2D getShapePoint()
-    {
-        return null;
-    }
-    
-    public default void setShapePoint(Point2D point)
-    {
-        
-    }
-    
-    public Point2D getShapeControl();  
-    public Point2D getMirrorShapeControl();
-    
-    public boolean contains(MDrag drag);
 }
