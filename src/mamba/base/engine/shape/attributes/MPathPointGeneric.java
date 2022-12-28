@@ -32,10 +32,10 @@ import mamba.overlayselect.drag.MDrag;
  * @author user
  * @param <Bezier>
  */
-public interface MPathPointGeneric<Bezier extends MPathBezier> 
+public interface MPathPointGeneric<Bezier extends MPathSpline> 
 {
     public MPathTypeGeneric getPathType();
-    public ObservableList<MDrag> getDragHandles();
+    public ObservableList<MDrag> initDragHandles();
     public void updateDragHandles();
     
     public default Bezier getBezier()
@@ -43,16 +43,18 @@ public interface MPathPointGeneric<Bezier extends MPathBezier>
         return null;
     }
     
-    public default Point2D getPoint()
+    public default Point2D getShapePoint()
     {
         return null;
     }
     
-    public default void setPoint(Point2D point)
+    public default void setShapePoint(Point2D point)
     {
         
     }
     
-    public Point2D getControl();  
-    public Point2D getMirrorControl();
+    public Point2D getShapeControl();  
+    public Point2D getMirrorShapeControl();
+    
+    public boolean contains(MDrag drag);
 }

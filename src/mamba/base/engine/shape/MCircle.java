@@ -28,7 +28,6 @@ import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleDoubleProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.collections.ObservableList;
-import javafx.geometry.BoundingBox;
 import javafx.geometry.Bounds;
 import javafx.geometry.Point2D;
 import javafx.scene.paint.Color;
@@ -96,7 +95,7 @@ public class MCircle extends MambaShapeAbstract<MEngine>
 
     @Override
     public boolean intersect(Point2D parentPoint, MIntersection isect) {
-        Point2D shapeSpacePoint = this.getLocalTransform().inverseTransform(parentPoint);
+        Point2D shapeSpacePoint = this.localToShapeTransform(parentPoint);
         //simple check
         Bounds bound = getShapeBound();
         if(bound.contains(shapeSpacePoint))
@@ -109,7 +108,7 @@ public class MCircle extends MambaShapeAbstract<MEngine>
 
     @Override
     public boolean intersect(Bounds parentBound, MIntersection isect) {
-        Bounds shapeSpaceBound = getLocalTransform().inverseTransform(parentBound);        
+        Bounds shapeSpaceBound = this.localToShapeTransform(parentBound);        
         return getShapeBound().contains(shapeSpaceBound);
     }
 

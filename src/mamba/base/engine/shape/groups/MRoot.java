@@ -44,7 +44,7 @@ public class MRoot extends MambaShapeAbstract<MEngine>{
     }
 
     @Override
-    public void setEngine(MEngine engine2D) {
+    public void setEngine2D(MEngine engine2D) {
         this.engine2D = engine2D;
     }
 

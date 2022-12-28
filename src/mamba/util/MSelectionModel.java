@@ -5,15 +5,16 @@
  */
 package mamba.util;
 
+import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.ObjectProperty;
+import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.geometry.Point2D;
 import mamba.base.MambaShape;
+import mamba.base.engine.shape.MPath;
 import mamba.overlayselect.drag.MDrag;
-import mamba.overlayselect.drag.MDragShape;
-import mamba.util.MIntersection;
 
 /**
  *
@@ -26,6 +27,9 @@ public class MSelectionModel {
     
     //delected shape drag handles
     ObservableList<MDrag> selectedShapeDragHandleList;
+    
+    //if path is selected and in editing mode
+    BooleanProperty isPathEditingMode;
         
     //set overlay group for adding editing nodes/components
     public MSelectionModel()
@@ -48,6 +52,8 @@ public class MSelectionModel {
                     ov.getEngine2D().draw();
             }
         });
+        
+        isPathEditingMode = new SimpleBooleanProperty(false);
     }
     
     public void set(MambaShape shape)
@@ -121,13 +127,9 @@ public class MSelectionModel {
         return selectedShapeProperty;
     }
     
-    public void refreshDragHandles()
-    {        
-        selectedShapeProperty.get().updateDragHandles();        
-    }
-    
     public void refreshDragHandlesAndDraw()
     {        
+        selectedShapeDragHandleList.setAll(selectedShapeProperty.get().initDragHandles());  
         selectedShapeProperty.get().updateDragHandles();
         selectedShapeProperty.get().getEngine2D().draw();
     }
@@ -135,5 +137,25 @@ public class MSelectionModel {
     public ObservableList<MDrag> getSelectedShapeDragHandles()
     {
         return FXCollections.unmodifiableObservableList(selectedShapeDragHandleList);
+    }
+       
+    public boolean isPathEditingMode() {
+        return isPathEditingMode.get();
+    }
+
+    public BooleanProperty pathEditingModeProperty() {
+        return isPathEditingMode;
+    }
+
+    public void setPathEditingMode(boolean isPathEditingMode) {
+        this.isPathEditingMode.set(isPathEditingMode);
+    }
+    
+    public MPath getSelectedPath()
+    {
+        if(getSelected() instanceof MPath)
+            return (MPath)getSelected();
+        else
+            return null;
     }
 }

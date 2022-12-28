@@ -12,7 +12,6 @@ import javafx.beans.property.SimpleObjectProperty;
 import javafx.collections.ObservableList;
 import javafx.geometry.Bounds;
 import javafx.geometry.Point2D;
-import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.effect.Effect;
 import javafx.scene.paint.Color;
 import mamba.base.MambaShape;
@@ -29,12 +28,7 @@ import mamba.util.MIntersection;
  * @author jmburu
  */
 public final class MRectangle extends MambaShapeAbstract<MEngine>{
-
-    private MEngine engine2D;
-    private GraphicsContext graphicContext;
-    
-    private Point2D offset;
-    
+        
     private final DoubleProperty width;
     private final DoubleProperty height;
     
@@ -50,9 +44,7 @@ public final class MRectangle extends MambaShapeAbstract<MEngine>{
     private Effect effect = null;
     
     public MRectangle()
-    {
-        offset = new Point2D(0, 0);
-        
+    {        
         width = new SimpleDoubleProperty(50);
         height = new SimpleDoubleProperty(50);
         
@@ -99,39 +91,19 @@ public final class MRectangle extends MambaShapeAbstract<MEngine>{
         this.strokeColor.set(stroke);
         this.strokeWidth.set(stroke_width);
     }
-        
-    @Override
-    public MEngine getEngine2D() {
-        return engine2D;
-    }
-
-    @Override
-    public void setEngine(MEngine engine2D) {
-        this.engine2D = engine2D;
-    }
-
-    @Override
-    public void setGraphicContext(GraphicsContext context) {
-        this.graphicContext = context;
-    }
-
-    @Override
-    public GraphicsContext getGraphicsContext() {
-        return this.graphicContext;
-    }
-
+   
     @Override
     public void draw() {
-        graphicContext.save();
+        getGraphicsContext().save();
         //apply transform first
         this.shapeToGlobalTransform().transformGraphicsContext(getGraphicsContext());
         
         //draw shape, this is just local coordinates 
-        graphicContext.setFill(solidColor.get());
+        getGraphicsContext().setFill(solidColor.get());
         //stroke line
-        graphicContext.setStroke(strokeColor.get());
-        graphicContext.setLineWidth(strokeWidth.doubleValue());
-        graphicContext.strokeRoundRect(
+        getGraphicsContext().setStroke(strokeColor.get());
+        getGraphicsContext().setLineWidth(strokeWidth.doubleValue());
+        getGraphicsContext().strokeRoundRect(
                 location.get().getX() + strokeWidth.doubleValue()/2, 
                 location.get().getY() + strokeWidth.doubleValue()/2, 
                 width.doubleValue() - strokeWidth.doubleValue(), 
@@ -139,8 +111,8 @@ public final class MRectangle extends MambaShapeAbstract<MEngine>{
                 arcWidth.doubleValue(), 
                 arcHeight.doubleValue());
         
-        graphicContext.setEffect(effect);                
-        graphicContext.fillRoundRect(
+        getGraphicsContext().setEffect(effect);                
+        getGraphicsContext().fillRoundRect(
                 location.get().getX() + strokeWidth.doubleValue()/2, 
                 location.get().getY() + strokeWidth.doubleValue()/2, 
                 width.doubleValue()  - strokeWidth.doubleValue(), 
@@ -148,8 +120,8 @@ public final class MRectangle extends MambaShapeAbstract<MEngine>{
                 arcWidth.doubleValue(), 
                 arcHeight.doubleValue());                
         
-        graphicContext.setEffect(null);
-        graphicContext.restore(); //reset transforms and any other configurations
+        getGraphicsContext().setEffect(null);
+        getGraphicsContext().restore(); //reset transforms and any other configurations
     }
 
     @Override
@@ -410,7 +382,7 @@ public final class MRectangle extends MambaShapeAbstract<MEngine>{
                     c5.setFraction(Math.copySign(limitXFromRightBoundary, deltaFractionX), 0); //shouldn't be greater than absolute limit
                 
                 updateDragHandles();        
-                engine2D.draw();
+                getEngine2D().draw();
             });
 
             

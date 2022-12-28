@@ -6,7 +6,6 @@
 package mamba.base.engine;
 
 import java.util.List;
-import javafx.geometry.Point2D;
 import javafx.scene.canvas.GraphicsContext;
 import mamba.base.MambaEngine2D;
 import mamba.base.MambaShape;
@@ -15,7 +14,6 @@ import mamba.base.math.MTransform;
 import mamba.base.math.MTransformGeneric;
 import mamba.util.MSelectionModel;
 import mamba.overlayselect.drag.MDrag;
-import mamba.util.MIntersection;
 
 /**
  *
@@ -38,8 +36,8 @@ public class MEngine implements MambaEngine2D {
     {
         graphicContext = null;
         rootShape = new MRoot();        
-        rootShape.setEngine(this);
-        transform = new MTransform();
+        rootShape.setEngine2D(this);
+        transform = new MTransform();     
     }
 
     @Override
@@ -73,7 +71,7 @@ public class MEngine implements MambaEngine2D {
     public void addShape(MambaShape shape) {
         rootShape.addShape(shape);
         shape.setGraphicContext(graphicContext);
-        shape.setEngine(this);
+        shape.setEngine2D(this);
         this.selectionModel.set(shape);
         draw();
     }
@@ -94,7 +92,7 @@ public class MEngine implements MambaEngine2D {
         for(MambaShape shape : listShapes)
         {
             shape.setGraphicContext(graphicContext);
-            shape.setEngine(this);
+            shape.setEngine2D(this);
             rootShape.addShape(shape);
         }
         draw();
@@ -180,7 +178,8 @@ public class MEngine implements MambaEngine2D {
     public void setTransform(MTransformGeneric transform) {
         this.transform = transform;
         if(isSelected())
-            getSelectionModel().refreshDragHandles();       
-        draw();
+            getSelectionModel().refreshDragHandlesAndDraw();   
+        else
+            draw();
     }
 }

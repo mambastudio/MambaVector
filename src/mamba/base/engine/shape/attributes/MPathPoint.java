@@ -8,12 +8,10 @@ package mamba.base.engine.shape.attributes;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.geometry.Point2D;
-import javafx.scene.Cursor;
-import javafx.scene.paint.Color;
 import mamba.base.engine.shape.MPath;
 import static mamba.base.engine.shape.MPath.PathToMove.MOVE_TO;
 import mamba.overlayselect.drag.MDrag;
-import mamba.overlayselect.drag.MDragCircle;
+import mamba.overlayselect.drag.MDragC;
 import mamba.overlayselect.drag.MDragLine;
 
 /**
@@ -24,14 +22,15 @@ public class MPathPoint implements MPathPointGeneric{
     MPath path;
     MPathTypeGeneric pathType;
     
-    Point2D point;
+    Point2D shapePoint;
     
     MDrag drag;
     MDrag dragC1;
     MDrag dragC2; //mirror or reflection of dragC1
     MDragLine dragLine;
     
-    //for calculating control points (control drags too) relative to drag point
+    //for calculating control points (control drags too) relative to drag shapePoint
+    //To delete
     double tC;
     Point2D dirC;
     
@@ -39,22 +38,23 @@ public class MPathPoint implements MPathPointGeneric{
     {
         this.path = path;
         this.pathType = MOVE_TO;
-        this.point = Point2D.ZERO;
-        initControlDrags();
+        this.shapePoint = Point2D.ZERO;
+        initShapeControlDrags();
     }
     
-    public MPathPoint(MPath path, MPathTypeGeneric pathType, Point2D point)
+    public MPathPoint(MPath path, MPathTypeGeneric pathType, Point2D shapePoint)
     {
         this.path = path;
-        this.pathType = pathType;
-        this.point = pointInvTransform(point);
-        initControlDrags();
+        this.pathType = pathType;        
+        this.shapePoint = shapePoint;
+        initShapeControlDrags();
     }
     
-    private void initControlDrags()
+    private void initShapeControlDrags()
     {
         tC = 0;
         dirC = Point2D.ZERO;        
+        
     }
     
     @Override
@@ -64,146 +64,124 @@ public class MPathPoint implements MPathPointGeneric{
     }
     
     @Override
-    public Point2D getPoint()
+    public Point2D getShapePoint()
     {
-        return point;
+        return shapePoint;
     }
     
     @Override
-    public void setPoint(Point2D point)
+    public void setShapePoint(Point2D point)
     {
-        this.point = point;
+        this.shapePoint = point;
     }
     
-    private Point2D pointInvTransform(Point2D point)
-    {
-        Point2D p = path.getTransform().inverseTransform(point);      
-        return p;
-    }
-    
-    private Point2D pointTransform(Point2D point)
-    {
-        return path.getTransform().transform(point);
-    }
     
     @Override
-    public void updateDragHandles() {                
-        drag.setX(pointTransform(point).getX());
-        drag.setY(pointTransform(point).getY());        
+    public void updateDragHandles() {         
+        if(drag == null) //if drag handles have not been initialised for the first time
+           initDragHandles();
         
-        Point2D pC1 = getControl();
-        Point2D pC2 = getMirrorControl();
+        drag.setPosition(path.shapeToGlobalTransform(shapePoint));        
+        Point2D pC1 = getShapeControl();
+        Point2D pC2 = getMirrorShapeControl();
         
         //if editing bezier control points
         if(path.isBezierEdit())
         {
-            dragC1.setX(pointTransform(pC1).getX());
-            dragC1.setY(pointTransform(pC1).getY());
-            dragC2.setX(pointTransform(pC2).getX());
-            dragC2.setY(pointTransform(pC2).getY());
-
-            dragLine.setStart(dragC1.getX(), dragC1.getY());
-            dragLine.setEnd(dragC2.getX(), dragC2.getY());
+            dragC1.setPosition(path.shapeToGlobalTransform(pC1));
+            dragC2.setPosition(path.shapeToGlobalTransform(pC2));
+            
+            dragLine.setStart(dragC1.getPosition());
+            dragLine.setEnd(dragC2.getPosition());
         }
     }
 
     @Override
-    public ObservableList<MDrag> getDragHandles() {
-        MDragCircle pointDrag = new MDragCircle(Color.GREENYELLOW);
-        pointDrag.setX(pointTransform(point).getX());
-        pointDrag.setY(pointTransform(point).getY());     
+    public ObservableList<MDrag> initDragHandles() {
+        MDrag pointDrag = new MDragC(path);
+        pointDrag.setPosition(path.shapeToGlobalTransform(shapePoint));        
         drag = pointDrag;
-        pointDrag.setOnMouseDragged(e->{
+        pointDrag.setOnMouseDrag(e->{
             Point2D p = new Point2D(e.getX(), e.getY());   //in global coordinates             
-            point = this.pointInvTransform(p);   //transform to local coordinates
+            shapePoint = path.globalToShapeTransform(p);   //transform to local coordinates
 
-            path.updateDragHandles(null);                
+            path.updateDragHandles();                
             path.getEngine2D().draw();
         });
 
-        pointDrag.setOnMouseMoved(e->{
-            pointDrag.setCursor(Cursor.HAND);
-        });
         ObservableList<MDrag> drags = FXCollections.observableArrayList(pointDrag);
         
         //if editing bezier control points
         if(path.isBezierEdit())
-            drags.addAll(getControlDragHandles());
+        {
+            drags.setAll(initDragControlHandles());
+            drags.add(pointDrag);
+        }
         
         return drags;
     }
     
-    private ObservableList<MDrag> getControlDragHandles()
+    private ObservableList<MDrag> initDragControlHandles()
     {
         //color
-        MDragCircle c1 = new MDragCircle(Color.CHOCOLATE);
+        MDrag c1 = new MDragC(path);
         //O + tD and when you initialise drag position
-        Point2D ctrl_1 = getControl();
-        c1.setX(pointTransform(ctrl_1).getX()); 
-        c1.setY(pointTransform(ctrl_1).getY());     
+        Point2D ctrl_1 = getShapeControl();
+        c1.setPosition(path.shapeToGlobalTransform(ctrl_1)); 
         dragC1 = c1;
         
-        c1.setOnMouseDragged(e->{
+        c1.setOnMouseDrag(e->{
             Point2D p = new Point2D(e.getX(), e.getY());   //in global coordinates             
-            Point2D ep = this.pointInvTransform(p);   //transform to local coordinates
+            Point2D ep = path.globalToShapeTransform(p);   //transform to local coordinates
             
             //update relative control points data
             this.updateControlPointData(ep, false);
             
-            path.updateDragHandles(null);                
+            path.updateDragHandles();                
             path.getEngine2D().draw();
-        });
-
-        c1.setOnMouseMoved(e->{
-            c1.setCursor(Cursor.HAND);
         });
         
         //color
-        MDragCircle c2 = new MDragCircle(Color.CHOCOLATE);
+        MDrag c2 = new MDragC(path);
         //O + tD
-        Point2D ctrl_2 = getMirrorControl();
-        c2.setX(pointTransform(ctrl_2).getX()); 
-        c2.setY(pointTransform(ctrl_2).getY());     
+        Point2D ctrl_2 = getMirrorShapeControl();
+        c2.setPosition(path.shapeToGlobalTransform(ctrl_2));               
         dragC2 = c2;
         
-        c2.setOnMouseDragged(e->{
+        c2.setOnMouseDrag(e->{
             Point2D p = new Point2D(e.getX(), e.getY());   //in global coordinates             
-            Point2D ep = this.pointInvTransform(p);   //transform to local coordinates
+            Point2D ep = this.path.globalToShapeTransform(p);   //transform to local coordinates
             
             //update relative control points data
             this.updateControlPointData(ep, true);
             
-            path.updateDragHandles(null);                
+            path.updateDragHandles();                
             path.getEngine2D().draw();
         });
-
-        c2.setOnMouseMoved(e->{
-            c2.setCursor(Cursor.HAND);
-        });
         
-        dragLine = new MDragLine();
-        dragLine.setStart(c1.getX(), c1.getY());
-        dragLine.setEnd(c2.getX(), c2.getY());
+        dragLine = new MDragLine(path);
+        dragLine.setStart(c1.getPosition());
+        dragLine.setEnd(c2.getPosition());
         return FXCollections.observableArrayList(dragLine, c1, c2);
     }
     
     @Override
-    public Point2D getControl()
+    public Point2D getShapeControl()
     {
-        return point.add(dirC.multiply(tC));
+        return shapePoint.add(dirC.multiply(tC));
     }
     
     @Override
-    public Point2D getMirrorControl()
+    public Point2D getMirrorShapeControl()
     {
-        return point.add(dirC.multiply(-1d).multiply(tC)); //opposite
+        return shapePoint.add(dirC.multiply(-1d).multiply(tC)); //opposite
     }
     
     public void updateControlPointData(Point2D ep, boolean isMirror)
     {
         //update relative control points data
-        tC = ep.distance(point);
-        dirC = (tC > 0) ? ep.subtract(point).normalize() : Point2D.ZERO;  
+        tC = ep.distance(shapePoint);
+        dirC = (tC > 0) ? ep.subtract(shapePoint).normalize() : Point2D.ZERO;  
         //negate if it's mirror
         dirC = isMirror ? dirC.multiply(-1) : dirC;
     }
@@ -211,5 +189,11 @@ public class MPathPoint implements MPathPointGeneric{
     public boolean isInBezierRange()
     {
         return tC > 0.5;
+    }
+    
+    @Override
+    public boolean contains(MDrag drag)
+    {
+        return this.drag == drag;
     }
 }
