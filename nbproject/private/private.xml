@@ -5,6 +5,34 @@
         <group>
             <file>file:/C:/Users/user/Documents/GitHub/MambaVector/src/mamba/util/MambaUtility.java</file>
             <file>file:/C:/Users/user/Documents/GitHub/MambaVector/src/mamba/MambaVector.java</file>
+            <file>file:/C:/Users/jmburu/Documents/GitHub/MambaVector/src/mamba/base/MambaShape.java</file>
+            <file>file:/C:/Users/jmburu/Documents/GitHub/MambaVector/src/mamba/overlayselect/drag/MDragC.java</file>
+            <file>file:/C:/Users/jmburu/Documents/GitHub/MambaVector/src/mamba/base/engine/shape/MRectangle.java</file>
+            <file>file:/C:/Users/jmburu/Documents/GitHub/MambaVector/src/mamba/overlayselect/drag/MDragLine.java</file>
+            <file>file:/C:/Users/jmburu/Documents/GitHub/MambaVector/src/mamba/overlayselect/drag/MDragShape.java</file>
+            <file>file:/C:/Users/jmburu/Documents/GitHub/MambaVector/src/mamba/base/engine/shape/attributes/MPathTypeGeneric.java</file>
+            <file>file:/C:/Users/jmburu/Documents/GitHub/MambaVector/src/mamba/base/engine/shape/MEllipse.java</file>
+            <file>file:/C:/Users/jmburu/Documents/GitHub/MambaVector/src/mamba/base/engine/shape/attributes/MPathPoint.java</file>
+            <file>file:/C:/Users/jmburu/Documents/GitHub/MambaVector/test/simple/SimpleCanvas.java</file>
+            <file>file:/C:/Users/jmburu/Documents/GitHub/MambaVector/src/mamba/base/engine/shape/MLine.java</file>
+            <file>file:/C:/Users/jmburu/Documents/GitHub/MambaVector/src/mamba/base/engine/shape/attributes/MPathPointGeneric.java</file>
+            <file>file:/C:/Users/jmburu/Documents/GitHub/MambaVector/src/mamba/treeview/MambaShapeData.java</file>
+            <file>file:/C:/Users/jmburu/Documents/GitHub/MambaVector/src/mamba/overlayselect/drag/MDrag.java</file>
+            <file>file:/C:/Users/jmburu/Documents/GitHub/MambaVector/src/mamba/components/ResizeableCanvas.java</file>
+            <file>file:/C:/Users/jmburu/Documents/GitHub/MambaVector/src/mamba/util/MouseActivity.java</file>
+            <file>file:/C:/Users/user/Documents/GitHub/MambaVector/src/mamba/base/engine/shape/attributes/MPathPointGeneric.java</file>
+            <file>file:/C:/Users/user/Documents/GitHub/MambaVector/src/mamba/base/engine/shape/MPath.java</file>
+            <file>file:/C:/Users/user/Documents/GitHub/MambaVector/src/mamba/base/engine/shape/attributes/MPathBezier.java</file>
+            <file>file:/C:/Users/user/Documents/GitHub/MambaVector/src/mamba/base/engine/MEngine.java</file>
+            <file>file:/C:/Users/user/Documents/GitHub/MambaVector/src/mamba/overlayselect/drag/MDragLine.java</file>
+            <file>file:/C:/Users/user/Documents/GitHub/MambaVector/test/bezier/ArcToCubicConversion.java</file>
+            <file>file:/C:/Users/user/Documents/GitHub/MambaVector/src/mamba/components/ResizeableCanvas.java</file>
+            <file>file:/C:/Users/user/Documents/GitHub/MambaVector/src/mamba/base/engine/shape/attributes/MPathPoint.java</file>
+            <file>file:/C:/Users/user/Documents/GitHub/MambaVector/src/mamba/BuilderController.java</file>
+            <file>file:/C:/Users/user/Documents/GitHub/MambaVector/src/mamba/base/engine/shape/attributes/MCubicBezier.java</file>
+            <file>file:/C:/Users/user/Documents/GitHub/MambaVector/src/mamba/util/MSelectionModel.java</file>
+            <file>file:/C:/Users/user/Documents/GitHub/MambaVector/src/mamba/base/engine/shape/attributes/MPathEditing.java</file>
+            <file>file:/C:/Users/user/Documents/GitHub/MambaVector/src/mamba/util/ArcToCubic.java</file>
         </group>
     </open-files>
 </project-private>
