@@ -4,12 +4,10 @@ package mamba;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Rectangle2D;
-import javafx.scene.ImageCursor;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
-import mamba.snapshot.NodeSnapshot;
 import mamba.util.MultipleKeyCombination;
 
 /*
@@ -43,6 +41,8 @@ public class MambaVector extends Application{
        // primaryStage.setMaximized(true);
         primaryStage.show();
     }
+    
+    
     
     public static void main(String[] args) {
         launch(args);
