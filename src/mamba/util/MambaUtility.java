@@ -5,7 +5,12 @@
  */
 package mamba.util;
 
+import javafx.geometry.Bounds;
 import javafx.scene.control.TreeItem;
+import javafx.scene.shape.Rectangle;
+import javafx.scene.shape.Shape;
+import javafx.scene.text.Font;
+import javafx.scene.text.Text;
 import mamba.base.MambaEngine2D;
 import mamba.base.MambaShape;
 
@@ -54,4 +59,19 @@ public class MambaUtility {
         
         return diff < intervalRangeMsec && intervalRangeMsec > 0;
     }    
+    
+    //https://stackoverflow.com/questions/32237048/javafx-fontmetrics
+    public static Bounds reportSize(String s, Font myFont) {
+        Text text = new Text(s);
+        text.setFont(myFont);
+        Bounds tb = text.getBoundsInLocal();
+        Rectangle stencil = new Rectangle(
+                tb.getMinX(), tb.getMinY(), tb.getWidth(), tb.getHeight()
+        );
+
+        Shape intersection = Shape.intersect(text, stencil);
+
+        Bounds ib = intersection.getBoundsInLocal();
+        return ib;
+    }
 }
