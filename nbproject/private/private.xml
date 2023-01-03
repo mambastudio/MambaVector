@@ -2,7 +2,6 @@
 <project-private xmlns="http://www.netbeans.org/ns/project-private/1">
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
-        <group/>
         <group>
             <file>file:/C:/Users/user/Documents/GitHub/MambaVector/src/mamba/util/MambaUtility.java</file>
             <file>file:/C:/Users/user/Documents/GitHub/MambaVector/src/mamba/MambaVector.java</file>
@@ -34,6 +33,15 @@
             <file>file:/C:/Users/user/Documents/GitHub/MambaVector/src/mamba/util/MSelectionModel.java</file>
             <file>file:/C:/Users/user/Documents/GitHub/MambaVector/src/mamba/base/engine/shape/attributes/MPathEditing.java</file>
             <file>file:/C:/Users/user/Documents/GitHub/MambaVector/src/mamba/util/ArcToCubic.java</file>
+        </group>
+        <group>
+            <file>file:/C:/Users/jmburu/Documents/GitHub/MambaVector/src/mamba/base/engine/shape/attributes/bezier/MQuadraticBezier.java</file>
+            <file>file:/C:/Users/jmburu/Documents/GitHub/MambaVector/src/mamba/base/engine/shape/attributes/MSpline.java</file>
+            <file>file:/C:/Users/jmburu/Documents/GitHub/MambaVector/src/mamba/base/engine/shape/MPath.java</file>
+            <file>file:/C:/Users/jmburu/Documents/GitHub/MambaVector/src/mamba/base/engine/shape/MPath2.java</file>
+            <file>file:/C:/Users/jmburu/Documents/GitHub/MambaVector/src/mamba/base/engine/shape/attributes/bezier/MCubicBezier.java</file>
+            <file>file:/C:/Users/jmburu/Documents/GitHub/MambaVector/src/mamba/base/engine/shape/attributes/MPathSpline.java</file>
+            <file>file:/C:/Users/jmburu/Documents/GitHub/MambaVector/src/mamba/util/MSplineUtility.java</file>
         </group>
     </open-files>
 </project-private>

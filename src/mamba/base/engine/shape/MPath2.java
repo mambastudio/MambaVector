@@ -23,9 +23,18 @@
  */
 package mamba.base.engine.shape;
 
+import javafx.beans.property.BooleanProperty;
+import javafx.beans.property.DoubleProperty;
+import javafx.beans.property.ObjectProperty;
+import javafx.beans.property.SimpleBooleanProperty;
+import javafx.beans.property.SimpleDoubleProperty;
+import javafx.beans.property.SimpleObjectProperty;
 import javafx.collections.ObservableList;
 import javafx.geometry.Bounds;
 import javafx.geometry.Point2D;
+import javafx.scene.paint.Color;
+import javafx.scene.shape.StrokeLineCap;
+import static javafx.scene.shape.StrokeLineCap.BUTT;
 import mamba.base.engine.shape.attributes.MArcData;
 import mamba.base.engine.shape.attributes.bezier.MCubicBezier;
 import mamba.base.engine.shape.attributes.MSpline;
@@ -38,6 +47,34 @@ import mamba.util.MIntersection;
  * @author user
  */
 public class MPath2 extends MSpline<MCubicBezier>{
+    
+    private final ObjectProperty<Color> lineColor;
+    private final DoubleProperty lineWidth;
+    private final BooleanProperty isClosed;
+    private final ObjectProperty<Color> fillColor;
+    private final BooleanProperty fillPath;
+    private final ObjectProperty<StrokeLineCap> lineCap;
+    private final BooleanProperty dashedLine;
+    private final DoubleProperty dashSize;
+    private final DoubleProperty gapSize;
+    
+    public MPath2()
+    {
+        lineColor = new SimpleObjectProperty(Color.BLACK);
+        lineWidth = new SimpleDoubleProperty(2);
+        fillColor = new SimpleObjectProperty(Color.BLACK);
+        isClosed = new SimpleBooleanProperty(false);
+        fillPath = new SimpleBooleanProperty(false);
+        dashedLine = new SimpleBooleanProperty(false);
+        dashSize = new SimpleDoubleProperty(5);
+        gapSize = new SimpleDoubleProperty(5);
+        lineCap = new SimpleObjectProperty(BUTT);
+    }
+    
+    public void addCurve(MCubicBezier bezier)
+    {
+        this.add(bezier);
+    }
     
     public void addArc(Point2D previousPoint, MArcData arcData)
     {

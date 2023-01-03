@@ -25,6 +25,7 @@ package mamba.base.engine.shape.attributes.bezier;
 
 import javafx.geometry.Point2D;
 import mamba.base.engine.shape.MPath2;
+import mamba.util.MSplineUtility;
 
 /**
  *
@@ -67,6 +68,9 @@ public class MQuadraticBezier implements MBezier<MPath2>{
         this.control = control;
     }
     
-    
+    public MCubicBezier convertToBezier(Point2D previousPoint)
+    {        
+        return MSplineUtility.convertQuadraticToCubic(previousPoint, this);
+    }
     
 }
