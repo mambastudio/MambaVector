@@ -57,6 +57,11 @@ public abstract class MSpline<Bezier extends MBezier> extends MambaShapeAbstract
         return this.startPoint;
     }
     
+    public int getIndex(Bezier bezier)
+    {
+        return bezierList.indexOf(bezier);
+    }
+    
     public void add(Bezier bezier)
     {
         bezierList.add(bezier);
@@ -142,6 +147,11 @@ public abstract class MSpline<Bezier extends MBezier> extends MambaShapeAbstract
         if(bezierList.size() > 0)
             return bezierList.get(0);
         else return null;
+    }
+    
+    public ObservableList<Bezier> getList()
+    {
+        return bezierList;
     }
     
     public int size()

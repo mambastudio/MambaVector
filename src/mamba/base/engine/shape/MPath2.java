@@ -30,6 +30,7 @@ import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleDoubleProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.collections.ObservableList;
+import javafx.geometry.BoundingBox;
 import javafx.geometry.Bounds;
 import javafx.geometry.Point2D;
 import javafx.scene.paint.Color;
@@ -38,6 +39,7 @@ import static javafx.scene.shape.StrokeLineCap.BUTT;
 import mamba.base.engine.shape.attributes.MArcData;
 import mamba.base.engine.shape.attributes.bezier.MCubicBezier;
 import mamba.base.engine.shape.attributes.MSpline;
+import mamba.base.math.MBound;
 import mamba.overlayselect.drag.MDrag;
 import mamba.util.MSplineUtility;
 import mamba.util.MIntersection;
@@ -97,13 +99,17 @@ public class MPath2 extends MSpline<MCubicBezier>{
     }
 
     @Override
-    public Bounds getShapeBound() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    public BoundingBox getShapeBound() {
+        MBound shapeBound = new MBound();
+        getList().forEach(point -> {        
+            shapeBound.include(point.getPoint());
+        });        
+        return shapeBound.getBoundingBox();
     }
 
     @Override
     public boolean isComplete() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return size() > 0;
     }
 
     @Override
@@ -120,5 +126,11 @@ public class MPath2 extends MSpline<MCubicBezier>{
     public boolean containsGlobalPoint(Point2D globalPoint) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
+    
+    @Override
+    public String toString()
+    {
+        return "Path";
+    }    
     
 }

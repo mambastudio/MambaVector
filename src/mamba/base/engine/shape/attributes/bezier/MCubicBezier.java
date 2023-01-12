@@ -53,6 +53,13 @@ public class MCubicBezier implements MBezier<MPath2>{
         this.c2 = c2;
     }
     
+    public void set(Point2D p, Point2D c1, Point2D c2)
+    {
+        this.point = p;       
+        this.c1 = c1;
+        this.c2 = c2;
+    }
+    
     public Point2D getPoint()
     {
         return point;
