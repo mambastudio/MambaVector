@@ -132,10 +132,10 @@ public class MPath extends MPathSpline<MPathPoint>{
             {
                 MPathPoint previousPoint = getPrevious(point);
                 getGraphicsContext().bezierCurveTo(
-                        previousPoint.getMirrorShapeControl().getX(), 
-                        previousPoint.getMirrorShapeControl().getY(), 
-                        point.getShapeControl().getX(), 
-                        point.getShapeControl().getY(), 
+                        previousPoint.getSecondControl().getX(), 
+                        previousPoint.getSecondControl().getY(), 
+                        point.getFirstControl().getX(), 
+                        point.getFirstControl().getY(), 
                         point.getShapePoint().getX(), 
                         point.getShapePoint().getY());
             }           

@@ -53,8 +53,8 @@ public interface MPathPointGeneric<Bezier extends MPathSpline>
         
     }
     
-    public Point2D getShapeControl();  
-    public Point2D getMirrorShapeControl();
+    public Point2D getFirstControl();  
+    public Point2D getSecondControl();
     
     public boolean contains(MDrag drag);
 }

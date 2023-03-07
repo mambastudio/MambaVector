@@ -10,6 +10,7 @@ import javafx.collections.ObservableList;
 import javafx.geometry.Point2D;
 import mamba.base.engine.shape.MPath;
 import static mamba.base.engine.shape.MPath.PathToMove.MOVE_TO;
+import mamba.base.math.MTransform;
 import mamba.overlayselect.drag.MDrag;
 import mamba.overlayselect.drag.MDragC;
 import mamba.overlayselect.drag.MDragLine;
@@ -31,11 +32,7 @@ public class MPathPoint implements MPathPointGeneric{
     MDrag dragC2; //mirror or reflection of dragC1
     MDragLine dragLine;
     
-    //for calculating control points (control drags too) relative to drag pathPointLocal
-    //To delete
-   double tC;
-    Point2D dirC;
-    
+       
     public MPathPoint(MPath path)
     {
         this.path = path;
@@ -43,7 +40,6 @@ public class MPathPoint implements MPathPointGeneric{
         this.pathPointLocal = Point2D.ZERO;
         this.pathControlLocal_1 = Point2D.ZERO;
         this.pathControlLocal_2 = Point2D.ZERO;
-        initShapeControlDrags();
     }
     
     public MPathPoint(MPath path, MPathTypeGeneric pathType, Point2D shapePoint)
@@ -51,16 +47,8 @@ public class MPathPoint implements MPathPointGeneric{
         this.path = path;
         this.pathType = pathType;        
         this.pathPointLocal = shapePoint;
-        this.pathControlLocal_1 = Point2D.ZERO;
-        this.pathControlLocal_2 = Point2D.ZERO;
-        initShapeControlDrags();
-    }
-    
-    private void initShapeControlDrags()
-    {
-        tC = 0;
-        dirC = Point2D.ZERO;        
-        
+        this.pathControlLocal_1 = new Point2D(shapePoint.getX(), shapePoint.getY());
+        this.pathControlLocal_2 = new Point2D(shapePoint.getX(), shapePoint.getY());
     }
     
     @Override
@@ -88,14 +76,12 @@ public class MPathPoint implements MPathPointGeneric{
            initDragHandles();
         
         drag.setPosition(path.shapeToGlobalTransform(pathPointLocal));        
-        Point2D pC1 = getShapeControl();
-        Point2D pC2 = getMirrorShapeControl();
-        
+               
         //if editing bezier control points
         if(path.isBezierEdit())
         {
-            dragC1.setPosition(path.shapeToGlobalTransform(pC1));
-            dragC2.setPosition(path.shapeToGlobalTransform(pC2));
+            dragC1.setPosition(path.shapeToGlobalTransform(pathControlLocal_1));
+            dragC2.setPosition(path.shapeToGlobalTransform(pathControlLocal_2));
             
             dragLine.setStart(dragC1.getPosition());
             dragLine.setEnd(dragC2.getPosition());
@@ -110,21 +96,19 @@ public class MPathPoint implements MPathPointGeneric{
         //update bezier point and control points (all drag nodes will be updated in the updateDragHandles())
         drag.setOnMouseDrag(e->{
             
-            //get current distribution of control points from the current bezier point (distance and direction)
-            //can this be presented as a matrix in future?
-            Point2D dir1 = pathControlLocal_1.subtract(pathPointLocal).normalize();
-            double t1 = pathPointLocal.distance(pathControlLocal_1);
-            Point2D dir2 = pathControlLocal_2.subtract(pathPointLocal).normalize();
-            double t2 = pathPointLocal.distance(pathControlLocal_2);
+            //store current state of bezier point      
+            Point2D pathPointLocalPrev = new Point2D(pathPointLocal.getX(), pathPointLocal.getY());
             
             //new bezier point after drag
             Point2D p = new Point2D(e.getX(), e.getY());   //in global coordinates             
             pathPointLocal = path.globalToShapeTransform(p);   //transform to local coordinates
             
-            //update the controls based on the new bezier point
-            //pc = p + td
-            pathControlLocal_1 = pathPointLocal.add(dir1.multiply(t1));
-            pathControlLocal_2 = pathPointLocal.add(dir2.multiply(t2));
+            //get transform of current translated bezier point
+            MTransform translate = MTransform.translate(pathPointLocal.subtract(pathPointLocalPrev));
+            
+            //update the controls based on the new bezier point           
+            pathControlLocal_1 = translate.transform(pathControlLocal_1);
+            pathControlLocal_2 = translate.transform(pathControlLocal_2);
             
             updateDragHandles();
             path.getEngine2D().draw();
@@ -146,75 +130,53 @@ public class MPathPoint implements MPathPointGeneric{
     private ObservableList<MDrag> initDragControlHandles()
     {
         //color
-        MDrag c1 = new MDragC(path);
-        //O + tD and when you initialise drag position       
-        c1.setPosition(path.shapeToGlobalTransform(pathPointLocal)); 
-        dragC1 = c1;
-        
-        c1.setOnMouseDrag(e->{
+        dragC1 = new MDragC(path);     
+        dragC1.setPosition(path.shapeToGlobalTransform(pathPointLocal)); 
+        dragC1.setOnMouseDrag(e->{
             Point2D p = new Point2D(e.getX(), e.getY());   //in global coordinates             
-            Point2D ep = path.globalToShapeTransform(p);   //transform to local coordinates
             
-            //update relative control points data
-            this.updateControlPointData(ep, false);
-            
+            pathControlLocal_1 = path.globalToShapeTransform(p);   //transform to local coordinates            
+            pathControlLocal_2 = this.getMirrorControlPoint(pathPointLocal, pathControlLocal_1);
+                        
             path.updateDragHandles();                
             path.getEngine2D().draw();
         });
         
         //color
-        MDrag c2 = new MDragC(path);
-        //O + tD      
-        c2.setPosition(path.shapeToGlobalTransform(pathPointLocal));               
-        dragC2 = c2;
-        
-        c2.setOnMouseDrag(e->{
+        dragC2 = new MDragC(path);
+        dragC2.setPosition(path.shapeToGlobalTransform(pathControlLocal_2));   
+        dragC2.setOnMouseDrag(e->{
             Point2D p = new Point2D(e.getX(), e.getY());   //in global coordinates             
-            Point2D ep = this.path.globalToShapeTransform(p);   //transform to local coordinates
             
-            //update relative control points data
-            this.updateControlPointData(ep, true);
+            pathControlLocal_2 = path.globalToShapeTransform(p);   //transform to local coordinates            
+            pathControlLocal_1 = this.getMirrorControlPoint(pathPointLocal, pathControlLocal_2);
             
             path.updateDragHandles();                
             path.getEngine2D().draw();
         });
         
         dragLine = new MDragLine(path);
-        dragLine.setStart(c1.getPosition());
-        dragLine.setEnd(c2.getPosition());
-        return FXCollections.observableArrayList(dragLine, c1, c2);
+        dragLine.setStart(dragC1.getPosition());
+        dragLine.setEnd(dragC2.getPosition());
+        return FXCollections.observableArrayList(dragLine, dragC1, dragC2);
     }
     
     @Override
-    public Point2D getShapeControl()
+    public Point2D getFirstControl()
     {
-        return pathPointLocal.add(dirC.multiply(tC));
+        return pathControlLocal_1;
     }
     
     @Override
-    public Point2D getMirrorShapeControl()
+    public Point2D getSecondControl()
     {
-        return pathPointLocal.add(dirC.multiply(-1d).multiply(tC)); //opposite
-    }
-    
-    public void updateControlPointData(Point2D ep, boolean isMirror)
-    {
-        //update relative control points data
-        tC = ep.distance(pathPointLocal);
-        dirC = (tC > 0) ? ep.subtract(pathPointLocal).normalize() : Point2D.ZERO;  
-        //negate if it's mirror
-        dirC = isMirror ? dirC.multiply(-1) : dirC;
+        return pathControlLocal_2; //opposite
     }
         
-    public boolean isInBezierRange()
-    {
-        return tC > 0.5;
-    }
-    
-    public Point2D getMirrorControlPoint(Point2D point, Point2D control1)
+    public Point2D getMirrorControlPoint(Point2D bezierPoint, Point2D control1)
     {
         //The Continuity of Splines (YouTube - Time: 20:00) by Freya Holmér
-        return point.multiply(2).subtract(control1);
+        return bezierPoint.multiply(2).subtract(control1);
     }
     
     @Override
