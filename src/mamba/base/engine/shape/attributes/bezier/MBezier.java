@@ -29,6 +29,9 @@ import mamba.base.engine.shape.attributes.MSpline;
  *
  * @author user
  * @param <Spline>
+ * 
+ * bezier can either be quadratic or cubic, but in our application we focus on cubic
+ * 
  */
 public interface MBezier<Spline extends MSpline<? extends MBezier>> {
     default void set(Spline spline)

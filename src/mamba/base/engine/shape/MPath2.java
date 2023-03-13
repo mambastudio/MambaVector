@@ -39,6 +39,7 @@ import static javafx.scene.shape.StrokeLineCap.BUTT;
 import mamba.base.engine.shape.attributes.MArcData;
 import mamba.base.engine.shape.attributes.bezier.MCubicBezier;
 import mamba.base.engine.shape.attributes.MSpline;
+import mamba.base.engine.shape.attributes.bezier.MBezier;
 import mamba.base.math.MBound;
 import mamba.overlayselect.drag.MDrag;
 import mamba.util.MSplineUtility;
@@ -85,7 +86,37 @@ public class MPath2 extends MSpline<MCubicBezier>{
 
     @Override
     public void draw() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        getGraphicsContext().save();
+        //apply transform first
+        this.shapeToGlobalTransform().transformGraphicsContext(getGraphicsContext());
+        
+        getGraphicsContext().setLineWidth(lineWidth.get());
+        // Set the Color
+        getGraphicsContext().setStroke(lineColor.get());  
+        
+        //draw shape, this is just local coordinates         
+        getGraphicsContext().setLineCap(lineCap.get());   
+        
+        if(dashedLine.get())
+            getGraphicsContext().setLineDashes(dashSize.get(), gapSize.get());
+        
+        getGraphicsContext().setFill(fillColor.get());
+        
+        getGraphicsContext().beginPath(); 
+        
+        for(MBezier point : getList())
+        {
+            
+        }                        
+        
+        if(this.isClosed.get())
+            getGraphicsContext().closePath();
+        
+        getGraphicsContext().setEffect(getEffect());     
+        if(this.fillPath.get())
+            getGraphicsContext().fill();
+        getGraphicsContext().setEffect(null);        
+        getGraphicsContext().stroke();
     }
 
     @Override
@@ -130,7 +161,7 @@ public class MPath2 extends MSpline<MCubicBezier>{
     @Override
     public String toString()
     {
-        return "Path";
+        return "Path: \n" +getList();
     }    
     
 }

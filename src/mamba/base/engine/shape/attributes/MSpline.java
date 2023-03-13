@@ -27,7 +27,6 @@ import mamba.base.engine.shape.attributes.bezier.MBezier;
 import java.util.ArrayList;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.geometry.Point2D;
 import mamba.base.MambaShapeAbstract;
 import mamba.base.engine.MEngine;
 
@@ -38,25 +37,12 @@ import mamba.base.engine.MEngine;
  */
 public abstract class MSpline<Bezier extends MBezier> extends MambaShapeAbstract<MEngine>{
     private final ObservableList<Bezier> bezierList;
-    
-    private Point2D startPoint;
-    
+        
     protected MSpline()
     {
-        bezierList = FXCollections.observableArrayList();
-        startPoint = Point2D.ZERO;
+        bezierList = FXCollections.observableArrayList();       
     }
-    
-    public void setStartPoint(Point2D startPoint)
-    {
-        this.startPoint = startPoint;
-    }
-    
-    public Point2D getStartPoint()
-    {
-        return this.startPoint;
-    }
-    
+        
     public int getIndex(Bezier bezier)
     {
         return bezierList.indexOf(bezier);

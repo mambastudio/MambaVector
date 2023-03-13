@@ -37,13 +37,19 @@ public class MCubicBezier implements MBezier<MPath2>{
     
     private Point2D c1;
     private Point2D c2;
-    
-    public MCubicBezier()
+        
+    public MCubicBezier(Point2D p)
     {
-        point = Point2D.ZERO;
-              
-        c1 = Point2D.ZERO;
-        c2 = Point2D.ZERO;
+        point = p;
+        c1 = null;
+        c2 = null;
+    }
+    
+    public MCubicBezier(Point2D p, Point2D c2)
+    {
+        this.point = p;       
+        this.c1 = null;
+        this.c2 = c2;
     }
     
     public MCubicBezier(Point2D p, Point2D c1, Point2D c2)
@@ -79,43 +85,22 @@ public class MCubicBezier implements MBezier<MPath2>{
     {
         this.c1 = c1;
     }
-    
-    public Point2D getC1Mirror(Point2D previousPoint)
-    {
-        return previousPoint.add(previousPoint.subtract(c1));
-    }
-    
+        
     public Point2D getC2()
     {
         return c2;
     }
-    
-    public Point2D getC2Mirror()
-    {
-        return point.add(point.subtract(c2));
-    }
         
-    
     public void setC2(Point2D c2)
     {
         this.c2 = c2;
     }
-    
-    public double getDistanceC1()
-    {
-        return c1.distance(point);
-    }
-    
-    public double getDistanceC2(Point2D previousPoint)
-    {
-        return c2.distance(previousPoint);
-    }
-    
+        
     @Override
     public String toString()
     {
         StringBuilder builder = new StringBuilder();
-        builder.append("p ").append(point).append("\n");       
+        builder.append("\n p ").append(point).append("\n");       
         builder.append("c1 ").append(c1).append("\n");
         builder.append("c2 ").append(c2).append("\n");
         return builder.toString();
@@ -131,4 +116,8 @@ public class MCubicBezier implements MBezier<MPath2>{
         return spline;
     }
 
+    public boolean isIsolated()
+    {
+        return c1 == null && c2 == null;
+    }
 }
