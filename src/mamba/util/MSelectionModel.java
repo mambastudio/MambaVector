@@ -13,7 +13,6 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.geometry.Point2D;
 import mamba.base.MambaShape;
-import mamba.base.engine.shape.MPath;
 import mamba.overlayselect.drag.MDrag;
 
 /**
@@ -149,13 +148,5 @@ public class MSelectionModel {
 
     public void setPathEditingMode(boolean isPathEditingMode) {
         this.isPathEditingMode.set(isPathEditingMode);
-    }
-    
-    public MPath getSelectedPath()
-    {
-        if(getSelected() instanceof MPath)
-            return (MPath)getSelected();
-        else
-            return null;
-    }
+    }    
 }

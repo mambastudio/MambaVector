@@ -293,4 +293,10 @@ public class MSplineUtility {
             this.ang2 = ang2;
         }
     }
+    
+    public static Point2D getMirrorControlPoint(Point2D point, Point2D control)
+    {
+        //The Continuity of Splines (YouTube - Time: 20:00) by Freya Holmér
+        return point.multiply(2).subtract(control);
+    }
 }

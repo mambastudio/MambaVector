@@ -25,15 +25,14 @@ package mamba.base.engine.shape.attributes;
 
 import javafx.geometry.Point2D;
 import mamba.base.engine.MEngine;
-import mamba.base.engine.shape.MPath;
+import mamba.base.engine.shape.MPathCubic;
 
 /**
  *
  * @author user
  */
 public class MPathEditing {
-    MEngine engine;
-    
+    MEngine engine;    
     
     public MPathEditing(MEngine engine)
     {        
@@ -46,9 +45,13 @@ public class MPathEditing {
         {
             if(isPenToolSelected)
             {
-                MPath path = engine.getSelectionModel().getSelectedPath();
-                Point2D tP = path.globalToShapeTransform(globalPoint);
-                engine.getSelectionModel().getSelectedPath().addLineTo(tP.getX(), tP.getY());
+                MSpline path = (MSpline) engine.getSelectionModel().getSelected();
+                Point2D tP = path.globalToShapeTransform(globalPoint); //very important
+                
+                Point2D p = new Point2D(tP.getX(), tP.getY());
+                Point2D c = new Point2D(tP.getX(), tP.getY());
+                
+                path.add(new MCubicPoint(p, c));
                 return true;
             }            
         }
@@ -61,8 +64,9 @@ public class MPathEditing {
         {
             if(isEraserToolSelected && engine.getSelectionModel().isDragHandleSelected())
             {
-                MPath path = engine.getSelectionModel().getSelectedPath();
-                path.removePoint(path.getPoint(engine.getSelectionModel().getDragHandleSelected()).get());               
+                MPathCubic path = (MPathCubic) engine.getSelectionModel().getSelected();
+                //containsDrag(MDrag drag) returns Optional<MCubicPoint> which we can now remove from path
+                path.remove(path.containsDrag(engine.getSelectionModel().getDragHandleSelected()).get());      
             }
         }
         return false;

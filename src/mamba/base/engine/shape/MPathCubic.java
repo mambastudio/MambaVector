@@ -23,12 +23,15 @@
  */
 package mamba.base.engine.shape;
 
+import java.util.Objects;
+import java.util.Optional;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleDoubleProperty;
 import javafx.beans.property.SimpleObjectProperty;
+import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.geometry.BoundingBox;
 import javafx.geometry.Bounds;
@@ -36,10 +39,8 @@ import javafx.geometry.Point2D;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.StrokeLineCap;
 import static javafx.scene.shape.StrokeLineCap.BUTT;
-import mamba.base.engine.shape.attributes.MArcData;
-import mamba.base.engine.shape.attributes.bezier.MCubicBezier;
+import mamba.base.engine.shape.attributes.MCubicPoint;
 import mamba.base.engine.shape.attributes.MSpline;
-import mamba.base.engine.shape.attributes.bezier.MBezier;
 import mamba.base.math.MBound;
 import mamba.overlayselect.drag.MDrag;
 import mamba.util.MSplineUtility;
@@ -49,7 +50,7 @@ import mamba.util.MIntersection;
  *
  * @author user
  */
-public class MPath2 extends MSpline<MCubicBezier>{
+public class MPathCubic extends MSpline<MCubicPoint>{
     
     private final ObjectProperty<Color> lineColor;
     private final DoubleProperty lineWidth;
@@ -61,7 +62,9 @@ public class MPath2 extends MSpline<MCubicBezier>{
     private final DoubleProperty dashSize;
     private final DoubleProperty gapSize;
     
-    public MPath2()
+    private final BooleanProperty isBezierEdit;
+    
+    public MPathCubic()
     {
         lineColor = new SimpleObjectProperty(Color.BLACK);
         lineWidth = new SimpleDoubleProperty(2);
@@ -72,18 +75,14 @@ public class MPath2 extends MSpline<MCubicBezier>{
         dashSize = new SimpleDoubleProperty(5);
         gapSize = new SimpleDoubleProperty(5);
         lineCap = new SimpleObjectProperty(BUTT);
+        
+        isBezierEdit = new SimpleBooleanProperty(false);
+        isBezierEdit.addListener((o, ov, nv)->{
+            getEngine2D().getSelectionModel().refreshDragHandlesAndDraw(); //refresh overlay
+        });
+        
     }
-    
-    public void addCurve(MCubicBezier bezier)
-    {
-        this.add(bezier);
-    }
-    
-    public void addArc(Point2D previousPoint, MArcData arcData)
-    {
-        this.addAll(MSplineUtility.convertArcToCubic(previousPoint, arcData));
-    }
-
+        
     @Override
     public void draw() {
         getGraphicsContext().save();
@@ -104,9 +103,23 @@ public class MPath2 extends MSpline<MCubicBezier>{
         
         getGraphicsContext().beginPath(); 
         
-        for(MBezier point : getList())
+        for(MCubicPoint point : getList())
         {
-            
+            boolean isFirst = this.isFirst(point);
+            if(isFirst)
+                getGraphicsContext().moveTo(
+                        point.getPoint().getX(), 
+                        point.getPoint().getY());            
+            else
+            {
+                getGraphicsContext().bezierCurveTo(
+                        point.getC1().getX(), 
+                        point.getC1().getY(), 
+                        point.getC2().getX(), 
+                        point.getC2().getY(), 
+                        point.getPoint().getX(), 
+                        point.getPoint().getY());
+            }
         }                        
         
         if(this.isClosed.get())
@@ -121,12 +134,43 @@ public class MPath2 extends MSpline<MCubicBezier>{
 
     @Override
     public boolean intersect(Point2D parentPoint, MIntersection isect) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        //transform p to local coordinates
+        Point2D invP = this.localToShapeTransform(parentPoint);
+        Bounds bound = getShapeBound();
+        if(bound.contains(invP))
+        {
+            isect.shape = this;
+            return true;
+        }
+        else 
+            return false;
     }
 
     @Override
     public boolean intersect(Bounds parentBound, MIntersection isect) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        //transform p to local coordinates
+        Bounds invBound = this.localToShapeTransform(parentBound);
+        Bounds bound = getShapeBound();        
+        if(bound.contains(invBound))
+        {
+            isect.shape = this;
+            return true;
+        }
+        else 
+            return false;
+    }
+    
+    @Override
+    public void add(MCubicPoint point)
+    {
+        if(!this.isEmpty())
+        {
+            MCubicPoint lastPoint = this.getLast();
+            //get mirror of c2 of last point
+            point.setC1(MSplineUtility.getMirrorControlPoint(lastPoint.getPoint(), lastPoint.getC2()));
+        }
+        point.setSpline(this); //very important
+        super.add(point);
     }
 
     @Override
@@ -145,12 +189,20 @@ public class MPath2 extends MSpline<MCubicBezier>{
 
     @Override
     public ObservableList<MDrag> initDragHandles() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        ObservableList<MDrag> handles = FXCollections.observableArrayList();
+        for(MCubicPoint point: getList())
+        {
+            handles.addAll(point.initDragHandles());
+        }
+        return handles;
     }
 
     @Override
     public void updateDragHandles() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        for(MCubicPoint point: getList())
+        {
+            point.updateDragHandles();
+        }    
     }
 
     @Override
@@ -158,10 +210,28 @@ public class MPath2 extends MSpline<MCubicBezier>{
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
     
+    public BooleanProperty getIsBezierEdit()
+    {
+        return isBezierEdit;
+    }
+        
+    public boolean isBezierEdit()
+    {
+        return isBezierEdit.get();
+    }
+    
     @Override
     public String toString()
     {
         return "Path: \n" +getList();
     }    
-    
+
+    @Override
+    public Optional<MCubicPoint> containsDrag(MDrag drag) {
+        Objects.requireNonNull(drag, "drag should be non-null");
+        for(MCubicPoint point : getList())        
+            if(point.containsDrag(drag))
+                Optional.of(point);
+        return Optional.empty();        
+    }
 }

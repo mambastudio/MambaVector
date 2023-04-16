@@ -23,18 +23,34 @@
  */
 package mamba.base.engine.shape.attributes.bezier;
 
+import java.util.Objects;
 import javafx.geometry.Point2D;
-import mamba.base.engine.shape.MPath2;
+import mamba.base.engine.shape.MPathCubic;
 
 /**
  *
  * @author user
  */
-public class MCubicBezier implements MBezier<MPath2>{
-    private MPath2 spline;
+public class MCubicBezier implements MBezier<MPathCubic>{
+    private MPathCubic spline;
     
-    private Point2D point;
     
+    /**
+     * Cubic Bezier in graphics is defined by a current point and two control points 
+     * (c1, c2).
+     *     
+     * In a spline, c1 belongs to the previous point, and c2 for current point, 
+     * but both belong in the same bezier class here which has a single 
+     * point (current point). Therefore, c1, has to be obtained in the previous
+     * point.
+     * 
+     * Hence, cubic bezier class here is a reference to the current point 
+     * (bezier point). It therefore means, to get control points like c1, it has 
+     * to obtain it in previous bezier point.
+     */
+    
+    
+    private Point2D point;  //local space
     private Point2D c1;
     private Point2D c2;
         
@@ -45,6 +61,7 @@ public class MCubicBezier implements MBezier<MPath2>{
         c2 = null;
     }
     
+    //when you add in spline
     public MCubicBezier(Point2D p, Point2D c2)
     {
         this.point = p;       
@@ -107,17 +124,17 @@ public class MCubicBezier implements MBezier<MPath2>{
     }
 
     @Override
-    public void set(MPath2 spline) {
+    public void setSpline(MPathCubic spline) {
         this.spline = spline;
     }
 
     @Override
-    public MPath2 getSpline() {
+    public MPathCubic getSpline() {
         return spline;
     }
 
     public boolean isIsolated()
     {
-        return c1 == null && c2 == null;
+        return Objects.isNull(c1) && Objects.isNull(c2);
     }
 }

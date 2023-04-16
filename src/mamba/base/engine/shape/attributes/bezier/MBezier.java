@@ -34,7 +34,7 @@ import mamba.base.engine.shape.attributes.MSpline;
  * 
  */
 public interface MBezier<Spline extends MSpline<? extends MBezier>> {
-    default void set(Spline spline)
+    default void setSpline(Spline spline)
     {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
@@ -47,5 +47,7 @@ public interface MBezier<Spline extends MSpline<? extends MBezier>> {
     {
         return getSpline() != null;
     }
+    
+  
     
 }

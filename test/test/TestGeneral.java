@@ -6,7 +6,7 @@
 package test;
 
 import javafx.geometry.Point2D;
-import mamba.base.engine.shape.MPath2;
+import mamba.base.engine.shape.MPathCubic;
 import mamba.base.engine.shape.attributes.bezier.MCubicBezier;
 
 /**
@@ -16,7 +16,7 @@ import mamba.base.engine.shape.attributes.bezier.MCubicBezier;
 public class TestGeneral {
     public static void main(String... args)
     {
-        MPath2 path = new MPath2();
+        MPathCubic path = new MPathCubic();
         MCubicBezier b1 = new MCubicBezier(Point2D.ZERO);
         MCubicBezier b2 = new MCubicBezier(Point2D.ZERO);
         MCubicBezier b3 = new MCubicBezier(Point2D.ZERO);

@@ -1,7 +1,7 @@
 /*
  * The MIT License
  *
- * Copyright 2022 user.
+ * Copyright 2023 user.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -21,56 +21,21 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package mamba.base.engine.shape.attributes.bezier;
+package mamba.base.engine.shape.attributes;
 
-import javafx.geometry.Point2D;
-import mamba.base.engine.shape.MPathCubic;
-import mamba.util.MSplineUtility;
+import javafx.collections.ObservableList;
+import mamba.base.engine.shape.attributes.bezier.MBezier;
+import mamba.overlayselect.drag.MDrag;
 
 /**
  *
  * @author user
+ * @param <Bezier>
+ * @param <BezierSpline>
  */
-public class MQuadraticBezier implements MBezier<MPathCubic>{
-
-    private Point2D point;    
-    private Point2D c1;
+public interface MSplineDragHandles<Bezier extends MBezier, BezierSpline extends MSpline<Bezier>>  {
     
-    public MQuadraticBezier()
-    {
-        point = Point2D.ZERO;              
-        c1 = Point2D.ZERO;
-    }
-    
-    public MQuadraticBezier(Point2D point, Point2D control)
-    {
-        this.point = point;              
-        this.c1 = control;
-    }
-    
-    public Point2D getPoint()
-    {
-        return point;
-    }
-    
-    public void setPoint(Point2D point)
-    {
-        this.point = point;
-    }
-    
-    public Point2D getControl()
-    {
-        return c1;
-    }
-    
-    public void setControl(Point2D control)
-    {
-        this.c1 = control;
-    }
-    
-    public MCubicBezier convertToBezier(Point2D previousPoint)
-    {        
-        return MSplineUtility.convertQuadraticToCubic(previousPoint, this);
-    }
-    
+    public ObservableList<MDrag> initDragHandles();
+    public void updateDragHandles();   
+    public boolean containsDrag(MDrag drag);
 }
