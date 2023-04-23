@@ -24,6 +24,7 @@
 package mamba.base.engine.shape.attributes.bezier;
 
 import mamba.base.engine.shape.attributes.MSpline;
+import mamba.base.math.MTransform;
 
 /**
  *
@@ -48,6 +49,5 @@ public interface MBezier<Spline extends MSpline<? extends MBezier>> {
         return getSpline() != null;
     }
     
-  
     
 }

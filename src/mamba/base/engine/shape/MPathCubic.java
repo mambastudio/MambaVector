@@ -52,54 +52,191 @@ import mamba.util.MIntersection;
  */
 public class MPathCubic extends MSpline<MCubicPoint>{
     
-    private final ObjectProperty<Color> lineColor;
-    private final DoubleProperty lineWidth;
-    private final BooleanProperty isClosed;
-    private final ObjectProperty<Color> fillColor;
-    private final BooleanProperty fillPath;
-    private final ObjectProperty<StrokeLineCap> lineCap;
-    private final BooleanProperty dashedLine;
-    private final DoubleProperty dashSize;
-    private final DoubleProperty gapSize;
+    private final ObjectProperty<Color> lineColorProperty;
+    private final DoubleProperty lineWidthProperty;
+    private final BooleanProperty isClosedProperty;
+    private final ObjectProperty<Color> fillColorProperty;
+    private final BooleanProperty fillPathProperty;
+    private final ObjectProperty<StrokeLineCap> lineCapProperty;
+    private final BooleanProperty dashedLineProperty;
+    private final DoubleProperty dashSizeProperty;
+    private final DoubleProperty gapSizeProperty;
     
     private final BooleanProperty isBezierEdit;
     
     public MPathCubic()
     {
-        lineColor = new SimpleObjectProperty(Color.BLACK);
-        lineWidth = new SimpleDoubleProperty(2);
-        fillColor = new SimpleObjectProperty(Color.BLACK);
-        isClosed = new SimpleBooleanProperty(false);
-        fillPath = new SimpleBooleanProperty(false);
-        dashedLine = new SimpleBooleanProperty(false);
-        dashSize = new SimpleDoubleProperty(5);
-        gapSize = new SimpleDoubleProperty(5);
-        lineCap = new SimpleObjectProperty(BUTT);
-        
+        lineColorProperty   = new SimpleObjectProperty(Color.BLACK);
+        lineWidthProperty   = new SimpleDoubleProperty(2);
+        fillColorProperty   = new SimpleObjectProperty(Color.BLACK);
+        isClosedProperty    = new SimpleBooleanProperty(false);
+        fillPathProperty    = new SimpleBooleanProperty(false);
+        dashedLineProperty  = new SimpleBooleanProperty(false);
+        dashSizeProperty    = new SimpleDoubleProperty(5);
+        gapSizeProperty     = new SimpleDoubleProperty(5);
+        lineCapProperty     = new SimpleObjectProperty(BUTT);
+                
         isBezierEdit = new SimpleBooleanProperty(false);
         isBezierEdit.addListener((o, ov, nv)->{
             getEngine2D().getSelectionModel().refreshDragHandlesAndDraw(); //refresh overlay
         });
         
+        add(new MCubicPoint(Point2D.ZERO, Point2D.ZERO));
+        add(new MCubicPoint(new Point2D(100, 100), new Point2D(100, 100)));
+    }
+    
+    public Color getLineColor()
+    {
+        return lineColorProperty.get();
+    }
+    
+    public void setLineColor(Color color)
+    {
+        this.lineColorProperty.set(color);
     }
         
+    public ObjectProperty<Color> lineColorProperty()
+    {
+        return lineColorProperty;
+    }
+    
+    public double getLineWidth()
+    {
+        return lineWidthProperty.get();
+    }
+    
+    public void setLineWidth(double lineWidth)
+    {
+        this.lineWidthProperty.set(lineWidth);
+    }
+    
+    public DoubleProperty lineWidthProperty()
+    {
+        return lineWidthProperty;
+    } 
+    
+    public Color getFillColor()
+    {
+        return fillColorProperty.get();
+    }
+    
+    public void setFillColor(Color fillColor)
+    {
+        this.fillColorProperty.set(fillColor);
+    }
+    
+    public ObjectProperty<Color> fillColorProperty()
+    {
+        return fillColorProperty;
+    }  
+    
+    public boolean getIsClosed()
+    {
+        return isClosedProperty.get();
+    }
+    
+    public void setIsClosed(boolean isClosed)
+    {
+        this.isClosedProperty.set(isClosed);
+    }
+    
+    public BooleanProperty isClosedProperty()
+    {
+        return isClosedProperty;
+    }  
+    
+    public boolean getFillPath()
+    {
+        return fillPathProperty.get();
+    }
+    
+    public void setFillPath(boolean fillPath)
+    {
+        this.fillPathProperty.set(fillPath);
+    }
+    
+    public BooleanProperty fillPathProperty()
+    {
+        return fillPathProperty;
+    } 
+    
+    public boolean getDashedLine()
+    {
+        return dashedLineProperty.get();
+    }
+    
+    public void setDashedLine(boolean dashedLine)
+    {
+        this.dashedLineProperty.set(dashedLine);
+    }
+    
+    public BooleanProperty dashedLineProperty()
+    {
+        return dashedLineProperty;
+    } 
+    
+    public double getDashSize()
+    {
+        return dashSizeProperty.get();
+    }
+    
+    public void setDashSize(double dashSize)
+    {
+        this.dashSizeProperty.set(dashSize);
+    }
+    
+    public DoubleProperty dashSizeProperty()
+    {
+        return dashSizeProperty;
+    }  
+    
+    public double getGapSize()
+    {
+        return gapSizeProperty.get();
+    }
+    
+    public void setGapSize(double gapSize)
+    {
+        this.gapSizeProperty.set(gapSize);
+    }
+    
+    public DoubleProperty gapSizeProperty()
+    {
+        return gapSizeProperty;
+    }  
+    
+    public StrokeLineCap getLineCap()
+    {
+        return lineCapProperty.get();
+    }
+    
+    public void setLineCap(StrokeLineCap cap)
+    {
+        this.lineCapProperty.set(cap);
+    }
+    
+    public ObjectProperty<StrokeLineCap> lineCapProperty()
+    {
+        return lineCapProperty;
+    }    
+            
     @Override
     public void draw() {
         getGraphicsContext().save();
         //apply transform first
         this.shapeToGlobalTransform().transformGraphicsContext(getGraphicsContext());
         
-        getGraphicsContext().setLineWidth(lineWidth.get());
+        getGraphicsContext().setLineWidth(lineWidthProperty.get());
         // Set the Color
-        getGraphicsContext().setStroke(lineColor.get());  
+        getGraphicsContext().setStroke(lineColorProperty.get());  
         
         //draw shape, this is just local coordinates         
-        getGraphicsContext().setLineCap(lineCap.get());   
+        getGraphicsContext().setLineCap(lineCapProperty.get());   
         
-        if(dashedLine.get())
-            getGraphicsContext().setLineDashes(dashSize.get(), gapSize.get());
+        if(dashedLineProperty.get())
+            getGraphicsContext().setLineDashes(dashSizeProperty.get(), gapSizeProperty.get());
         
-        getGraphicsContext().setFill(fillColor.get());
+        getGraphicsContext().setFill(fillColorProperty.get());
         
         getGraphicsContext().beginPath(); 
         
@@ -122,14 +259,16 @@ public class MPathCubic extends MSpline<MCubicPoint>{
             }
         }                        
         
-        if(this.isClosed.get())
+        if(this.isClosedProperty.get())
             getGraphicsContext().closePath();
         
         getGraphicsContext().setEffect(getEffect());     
-        if(this.fillPath.get())
+        if(this.fillPathProperty.get())
             getGraphicsContext().fill();
         getGraphicsContext().setEffect(null);        
         getGraphicsContext().stroke();
+        
+        getGraphicsContext().restore();
     }
 
     @Override
@@ -166,11 +305,13 @@ public class MPathCubic extends MSpline<MCubicPoint>{
         if(!this.isEmpty())
         {
             MCubicPoint lastPoint = this.getLast();
-            //get mirror of c2 of last point
-            point.setC1(MSplineUtility.getMirrorControlPoint(lastPoint.getPoint(), lastPoint.getC2()));
+            MSplineUtility.chainCubicPoints(lastPoint, point);
         }
         point.setSpline(this); //very important
         super.add(point);
+        
+        if(this.hasEngine2D())
+            this.getEngine2D().draw();
     }
 
     @Override
@@ -223,7 +364,7 @@ public class MPathCubic extends MSpline<MCubicPoint>{
     @Override
     public String toString()
     {
-        return "Path: \n" +getList();
+        return "Path";
     }    
 
     @Override
@@ -231,7 +372,7 @@ public class MPathCubic extends MSpline<MCubicPoint>{
         Objects.requireNonNull(drag, "drag should be non-null");
         for(MCubicPoint point : getList())        
             if(point.containsDrag(drag))
-                Optional.of(point);
+                return Optional.of(point);
         return Optional.empty();        
     }
 }

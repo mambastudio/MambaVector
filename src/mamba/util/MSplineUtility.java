@@ -23,6 +23,7 @@ import javafx.geometry.Point2D;
 import mamba.base.engine.shape.attributes.MArcData;
 import mamba.base.engine.shape.attributes.bezier.MCubicBezier;
 import mamba.base.engine.shape.attributes.bezier.MQuadraticBezier;
+import mamba.base.math.MTransform;
 
 /**
  *
@@ -299,4 +300,18 @@ public class MSplineUtility {
         //The Continuity of Splines (YouTube - Time: 20:00) by Freya Holmér
         return point.multiply(2).subtract(control);
     }
+    
+    //Useful when adding or removing a point to a spline
+    public static void chainCubicPoints(MCubicBezier cubic1, MCubicBezier cubic2)
+    {
+        cubic2.setC1(getMirrorControlPoint(cubic1.getPoint(), cubic1.getC2()));
+    }
+    
+    public static void applyTransformToMidPointControls(MTransform transform, MCubicBezier cubic1, MCubicBezier cubic2)
+    {
+        //update the controls based relative to the midpoint
+        cubic1.setC2(transform.transform(cubic1.getC2()));
+        if(cubic2 != null)
+            cubic2.setC1(transform.transform(cubic2.getC1()));
+    }    
 }

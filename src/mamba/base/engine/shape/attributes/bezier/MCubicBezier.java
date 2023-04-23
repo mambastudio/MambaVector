@@ -24,8 +24,11 @@
 package mamba.base.engine.shape.attributes.bezier;
 
 import java.util.Objects;
+import javafx.beans.property.ObjectProperty;
+import javafx.beans.property.SimpleObjectProperty;
 import javafx.geometry.Point2D;
 import mamba.base.engine.shape.MPathCubic;
+import mamba.base.math.MTransform;
 
 /**
  *
@@ -50,76 +53,103 @@ public class MCubicBezier implements MBezier<MPathCubic>{
      */
     
     
-    private Point2D point;  //local space
-    private Point2D c1;
-    private Point2D c2;
+    private ObjectProperty<Point2D> pointProperty = new SimpleObjectProperty();  //local space
+    private ObjectProperty<Point2D> c1Property = new SimpleObjectProperty();
+    private ObjectProperty<Point2D> c2Property = new SimpleObjectProperty();
         
     public MCubicBezier(Point2D p)
     {
-        point = p;
-        c1 = null;
-        c2 = null;
+        pointProperty.set(p);      
     }
     
     //when you add in spline
     public MCubicBezier(Point2D p, Point2D c2)
     {
-        this.point = p;       
-        this.c1 = null;
-        this.c2 = c2;
+        this.pointProperty.set(p);               
+        this.c2Property.set(c2);
     }
     
     public MCubicBezier(Point2D p, Point2D c1, Point2D c2)
     {
-        this.point = p;       
-        this.c1 = c1;
-        this.c2 = c2;
+        this.pointProperty.set(p);       
+        this.c1Property.set(c1);
+        this.c2Property.set(c2);
     }
     
     public void set(Point2D p, Point2D c1, Point2D c2)
     {
-        this.point = p;       
-        this.c1 = c1;
-        this.c2 = c2;
+        this.pointProperty.set(p);       
+        this.c1Property.set(c1);
+        this.c2Property.set(c2);
     }
     
     public Point2D getPoint()
     {
-        return point;
+        return pointProperty.get();
+    }
+    
+    public ObjectProperty<Point2D> getPointProperty()
+    {
+        return pointProperty;
     }
     
     public void setPoint(Point2D point)
     {
-        this.point = point;
+        this.pointProperty.set(point);
+    }
+    
+    public void setPointProperty(ObjectProperty<Point2D> pointProperty)
+    {
+        this.pointProperty = pointProperty;
     }
            
     public Point2D getC1()
     {
-        return c1;
+        return c1Property.get();
+    }
+    
+    public ObjectProperty<Point2D> getC1Property()
+    {
+        return c1Property;
     }
         
     public void setC1(Point2D c1)
     {
-        this.c1 = c1;
+        this.c1Property.set(c1);
+    }
+    
+    public void setC1(ObjectProperty<Point2D> c1Property)
+    {
+        this.c1Property = c1Property;
     }
         
     public Point2D getC2()
     {
-        return c2;
+        return c2Property.get();
+    }
+    
+    public ObjectProperty<Point2D> getC2Property()
+    {
+        return c2Property;
+    }
+    
+    public void setC2(ObjectProperty<Point2D> c2Property)
+    {
+        this.c2Property = c2Property;
     }
         
     public void setC2(Point2D c2)
     {
-        this.c2 = c2;
+        this.c2Property.set(c2);
     }
         
     @Override
     public String toString()
     {
         StringBuilder builder = new StringBuilder();
-        builder.append("\n p ").append(point).append("\n");       
-        builder.append("c1 ").append(c1).append("\n");
-        builder.append("c2 ").append(c2).append("\n");
+        builder.append("\n p ").append(pointProperty.get()).append("\n");       
+        builder.append("c1 ").append(c1Property.get()).append("\n");
+        builder.append("c2 ").append(c2Property.get()).append("\n");
         return builder.toString();
     }
 
@@ -135,6 +165,8 @@ public class MCubicBezier implements MBezier<MPathCubic>{
 
     public boolean isIsolated()
     {
-        return Objects.isNull(c1) && Objects.isNull(c2);
+        return Objects.isNull(c1Property) && Objects.isNull(c2Property);
     }
+
+    
 }

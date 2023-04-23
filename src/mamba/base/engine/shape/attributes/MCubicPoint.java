@@ -29,8 +29,10 @@ import javafx.collections.ObservableList;
 import javafx.geometry.Point2D;
 import mamba.base.engine.shape.MPathCubic;
 import mamba.base.engine.shape.attributes.bezier.MCubicBezier;
+import mamba.base.math.MTransform;
 import mamba.overlayselect.drag.MDrag;
 import mamba.overlayselect.drag.MDragC;
+import mamba.util.MSplineUtility;
 
 /**
  *
@@ -66,11 +68,20 @@ public class MCubicPoint extends MCubicBezier implements MSplineDragHandles<MCub
         
         //update bezier point and control points (all drag nodes will be updated in the updateDragHandles())
         drag.setOnMouseDrag(e->{
+            //get previous point
+            Point2D prevP = new Point2D(getPoint().getX(), getPoint().getY());   
                         
             //new bezier point after drag
-            Point2D p = new Point2D(e.getX(), e.getY());   //in global coordinates             
-            setPoint(getSpline().globalToShapeTransform(p));   //transform to local coordinates
-                                   
+            Point2D p = new Point2D(e.getX(), e.getY());   //in global coordinates    
+            Point2D pLocal = getSpline().globalToShapeTransform(p);   //transform to local coordinates
+            setPoint(pLocal);   
+            
+            //get transform of current translated bezier point
+            MTransform translate = MTransform.translate(pLocal.subtract(prevP));
+            
+            //update the controls based on the new bezier point
+            MSplineUtility.applyTransformToMidPointControls(translate, this, getSpline().getNext(this));
+           
             updateDragHandles();
             getSpline().getEngine2D().draw();
         });

@@ -26,6 +26,7 @@ package mamba.base.engine.shape.attributes;
 import javafx.geometry.Point2D;
 import mamba.base.engine.MEngine;
 import mamba.base.engine.shape.MPathCubic;
+import mamba.util.MSplineUtility;
 
 /**
  *
@@ -52,6 +53,7 @@ public class MPathEditing {
                 Point2D c = new Point2D(tP.getX(), tP.getY());
                 
                 path.add(new MCubicPoint(p, c));
+                engine.getSelectionModel().refreshDragHandlesAndDraw();
                 return true;
             }            
         }
@@ -65,8 +67,17 @@ public class MPathEditing {
             if(isEraserToolSelected && engine.getSelectionModel().isDragHandleSelected())
             {
                 MPathCubic path = (MPathCubic) engine.getSelectionModel().getSelected();
-                //containsDrag(MDrag drag) returns Optional<MCubicPoint> which we can now remove from path
-                path.remove(path.containsDrag(engine.getSelectionModel().getDragHandleSelected()).get());      
+                
+                //containsDrag(MDrag drag) returns Optional<MCubicPoint> which we can now remove from path   
+                MCubicPoint currentPoint = path.containsDrag(engine.getSelectionModel().getDragHandleSelected()).get();
+                if(path.hasNext(currentPoint))
+                {
+                    MCubicPoint nextPoint = path.getNext(currentPoint);
+                    MCubicPoint prevPoint = path.getPrevious(currentPoint);
+                    MSplineUtility.chainCubicPoints(prevPoint, nextPoint);
+                }
+                path.remove(currentPoint);      
+                engine.getSelectionModel().refreshDragHandlesAndDraw();
             }
         }
         return false;

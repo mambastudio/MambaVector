@@ -91,12 +91,9 @@ public abstract class MSpline<Bezier extends MBezier> extends MambaShapeAbstract
     
     public Bezier getNext(Bezier bezier)
     {
-        if(absent(bezier))
+        if(absent(bezier) || isLast(bezier))
             return null;
-        
-        if(isLast(bezier))
-            return getFirst();        
-       
+               
         return bezierList.get(bezierList.indexOf(bezier) + 1);
     }
     
