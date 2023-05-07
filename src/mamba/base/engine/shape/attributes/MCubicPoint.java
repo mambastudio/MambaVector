@@ -89,7 +89,8 @@ public class MCubicPoint extends MCubicBezier implements MSplineDragHandles<MCub
         //if editing bezier control points
         if(getSpline().isBezierEdit())
         {
-            
+            drags.setAll(initDragControlHandles());
+            drags.add(drag);
         }
         
         return drags;
@@ -107,6 +108,12 @@ public class MCubicPoint extends MCubicBezier implements MSplineDragHandles<MCub
         {
             
         }
+    }
+    
+    //control points for path point (called from initDragHandles)
+    private ObservableList<MDrag> initDragControlHandles()
+    {
+        return FXCollections.emptyObservableList();
     }
     
     @Override
