@@ -55,10 +55,15 @@ public interface MambaShape<Engine2D extends MambaEngine2D> extends MambaHierarc
     
     public Engine2D getEngine2D();
     public void setEngine2D(Engine2D engine2D);
+    default boolean hasEngine2D()
+    {
+        return getEngine2D() != null;
+    }
+    
     
     public void setGraphicContext(GraphicsContext context);
     public GraphicsContext getGraphicsContext();
-    
+        
     //where we do the drawing
     public void draw();
     

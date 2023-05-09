@@ -5,10 +5,9 @@
  */
 package test;
 
-import mamba.base.mode.CanvasModes.EditModeState;
-import mamba.base.mode.CanvasModes.HitModeState;
-import static mamba.base.mode.CanvasModes.HitModeState.HIT;
-import mamba.base.mode.CanvasModeState;
+import javafx.geometry.Point2D;
+import mamba.base.engine.shape.MPathCubic;
+import mamba.base.engine.shape.attributes.bezier.MCubicBezier;
 
 /**
  *
@@ -17,7 +16,13 @@ import mamba.base.mode.CanvasModeState;
 public class TestGeneral {
     public static void main(String... args)
     {
-        CanvasModeState mode = HIT;
-        System.out.println(mode instanceof HitModeState);
+        MPathCubic path = new MPathCubic();
+        MCubicBezier b1 = new MCubicBezier(Point2D.ZERO);
+        MCubicBezier b2 = new MCubicBezier(Point2D.ZERO);
+        MCubicBezier b3 = new MCubicBezier(Point2D.ZERO);
+        path.addAll(b1, b2, b3);
+        System.out.println(path.hasNext(b1));
+        System.out.println(path);
     }
+    
 }

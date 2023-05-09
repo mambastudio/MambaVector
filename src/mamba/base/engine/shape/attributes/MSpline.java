@@ -25,11 +25,12 @@ package mamba.base.engine.shape.attributes;
 
 import mamba.base.engine.shape.attributes.bezier.MBezier;
 import java.util.ArrayList;
+import java.util.Optional;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.geometry.Point2D;
 import mamba.base.MambaShapeAbstract;
 import mamba.base.engine.MEngine;
+import mamba.overlayselect.drag.MDrag;
 
 /**
  *
@@ -38,25 +39,12 @@ import mamba.base.engine.MEngine;
  */
 public abstract class MSpline<Bezier extends MBezier> extends MambaShapeAbstract<MEngine>{
     private final ObservableList<Bezier> bezierList;
-    
-    private Point2D startPoint;
-    
+        
     protected MSpline()
     {
-        bezierList = FXCollections.observableArrayList();
-        startPoint = Point2D.ZERO;
+        bezierList = FXCollections.observableArrayList();       
     }
-    
-    public void setStartPoint(Point2D startPoint)
-    {
-        this.startPoint = startPoint;
-    }
-    
-    public Point2D getStartPoint()
-    {
-        return this.startPoint;
-    }
-    
+        
     public int getIndex(Bezier bezier)
     {
         return bezierList.indexOf(bezier);
@@ -65,7 +53,7 @@ public abstract class MSpline<Bezier extends MBezier> extends MambaShapeAbstract
     public void add(Bezier bezier)
     {
         bezierList.add(bezier);
-        bezier.set(this);
+        bezier.setSpline(this);
     }
     
     public void addAll(Bezier... bezierArray)
@@ -83,7 +71,7 @@ public abstract class MSpline<Bezier extends MBezier> extends MambaShapeAbstract
     public void remove(Bezier bezier)
     {
         bezierList.remove(bezier);
-        bezier.set(null);
+        bezier.setSpline(null);
     }
     
     public boolean contains(Bezier bezier)
@@ -103,12 +91,9 @@ public abstract class MSpline<Bezier extends MBezier> extends MambaShapeAbstract
     
     public Bezier getNext(Bezier bezier)
     {
-        if(absent(bezier))
+        if(absent(bezier) || isLast(bezier))
             return null;
-        
-        if(isLast(bezier))
-            return getFirst();        
-       
+               
         return bezierList.get(bezierList.indexOf(bezier) + 1);
     }
     
@@ -148,7 +133,7 @@ public abstract class MSpline<Bezier extends MBezier> extends MambaShapeAbstract
             return bezierList.get(0);
         else return null;
     }
-    
+        
     public ObservableList<Bezier> getList()
     {
         return bezierList;
@@ -157,5 +142,18 @@ public abstract class MSpline<Bezier extends MBezier> extends MambaShapeAbstract
     public int size()
     {
         return bezierList.size();
+    }
+    
+    public boolean isEmpty()
+    {
+        return bezierList.isEmpty();
+    }
+    
+    public abstract Optional<Bezier> containsDrag(MDrag drag);
+        
+    @Override
+    public boolean isPath()
+    {
+        return true;
     }
 }

@@ -23,112 +23,150 @@
  */
 package mamba.base.engine.shape.attributes.bezier;
 
+import java.util.Objects;
+import javafx.beans.property.ObjectProperty;
+import javafx.beans.property.SimpleObjectProperty;
 import javafx.geometry.Point2D;
-import mamba.base.engine.shape.MPath2;
+import mamba.base.engine.shape.MPathCubic;
+import mamba.base.math.MTransform;
 
 /**
  *
  * @author user
  */
-public class MCubicBezier implements MBezier<MPath2>{
-    private MPath2 spline;
+public class MCubicBezier implements MBezier<MPathCubic>{
+    private MPathCubic spline;
     
-    private Point2D point;
     
-    private Point2D c1;
-    private Point2D c2;
+    /**
+     * Cubic Bezier in graphics is defined by a current point and two control points 
+     * (c1, c2).
+     *     
+     * In a spline, c1 belongs to the previous point, and c2 for current point, 
+     * but both belong in the same bezier class here which has a single 
+     * point (current point). Therefore, c1, has to be obtained in the previous
+     * point.
+     * 
+     * Hence, cubic bezier class here is a reference to the current point 
+     * (bezier point). It therefore means, to get control points like c1, it has 
+     * to obtain it in previous bezier point.
+     */
     
-    public MCubicBezier()
+    
+    private ObjectProperty<Point2D> pointProperty = new SimpleObjectProperty();  //local space
+    private ObjectProperty<Point2D> c1Property = new SimpleObjectProperty();
+    private ObjectProperty<Point2D> c2Property = new SimpleObjectProperty();
+        
+    public MCubicBezier(Point2D p)
     {
-        point = Point2D.ZERO;
-              
-        c1 = Point2D.ZERO;
-        c2 = Point2D.ZERO;
+        pointProperty.set(p);      
+    }
+    
+    //when you add in spline
+    public MCubicBezier(Point2D p, Point2D c2)
+    {
+        this.pointProperty.set(p);               
+        this.c2Property.set(c2);
     }
     
     public MCubicBezier(Point2D p, Point2D c1, Point2D c2)
     {
-        this.point = p;       
-        this.c1 = c1;
-        this.c2 = c2;
+        this.pointProperty.set(p);       
+        this.c1Property.set(c1);
+        this.c2Property.set(c2);
     }
     
     public void set(Point2D p, Point2D c1, Point2D c2)
     {
-        this.point = p;       
-        this.c1 = c1;
-        this.c2 = c2;
+        this.pointProperty.set(p);       
+        this.c1Property.set(c1);
+        this.c2Property.set(c2);
     }
     
     public Point2D getPoint()
     {
-        return point;
+        return pointProperty.get();
+    }
+    
+    public ObjectProperty<Point2D> getPointProperty()
+    {
+        return pointProperty;
     }
     
     public void setPoint(Point2D point)
     {
-        this.point = point;
+        this.pointProperty.set(point);
+    }
+    
+    public void setPointProperty(ObjectProperty<Point2D> pointProperty)
+    {
+        this.pointProperty = pointProperty;
     }
            
     public Point2D getC1()
     {
-        return c1;
+        return c1Property.get();
+    }
+    
+    public ObjectProperty<Point2D> getC1Property()
+    {
+        return c1Property;
     }
         
     public void setC1(Point2D c1)
     {
-        this.c1 = c1;
+        this.c1Property.set(c1);
     }
     
-    public Point2D getC1Mirror(Point2D previousPoint)
+    public void setC1(ObjectProperty<Point2D> c1Property)
     {
-        return previousPoint.add(previousPoint.subtract(c1));
-    }
-    
-    public Point2D getC2()
-    {
-        return c2;
-    }
-    
-    public Point2D getC2Mirror()
-    {
-        return point.add(point.subtract(c2));
+        this.c1Property = c1Property;
     }
         
+    public Point2D getC2()
+    {
+        return c2Property.get();
+    }
     
+    public ObjectProperty<Point2D> getC2Property()
+    {
+        return c2Property;
+    }
+    
+    public void setC2(ObjectProperty<Point2D> c2Property)
+    {
+        this.c2Property = c2Property;
+    }
+        
     public void setC2(Point2D c2)
     {
-        this.c2 = c2;
+        this.c2Property.set(c2);
     }
-    
-    public double getDistanceC1()
-    {
-        return c1.distance(point);
-    }
-    
-    public double getDistanceC2(Point2D previousPoint)
-    {
-        return c2.distance(previousPoint);
-    }
-    
+        
     @Override
     public String toString()
     {
         StringBuilder builder = new StringBuilder();
-        builder.append("p ").append(point).append("\n");       
-        builder.append("c1 ").append(c1).append("\n");
-        builder.append("c2 ").append(c2).append("\n");
+        builder.append("\n p ").append(pointProperty.get()).append("\n");       
+        builder.append("c1 ").append(c1Property.get()).append("\n");
+        builder.append("c2 ").append(c2Property.get()).append("\n");
         return builder.toString();
     }
 
     @Override
-    public void set(MPath2 spline) {
+    public void setSpline(MPathCubic spline) {
         this.spline = spline;
     }
 
     @Override
-    public MPath2 getSpline() {
+    public MPathCubic getSpline() {
         return spline;
     }
 
+    public boolean isIsolated()
+    {
+        return Objects.isNull(c1Property) && Objects.isNull(c2Property);
+    }
+
+    
 }

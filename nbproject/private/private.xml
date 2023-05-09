@@ -2,6 +2,7 @@
 <project-private xmlns="http://www.netbeans.org/ns/project-private/1">
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
+<<<<<<< HEAD
         <group/>
         <group>
             <file>file:/C:/Users/jmburu/Documents/GitHub/MambaVector/src/mamba/base/engine/shape/attributes/MSpline.java</file>
@@ -14,6 +15,36 @@
             <file>file:/C:/Users/jmburu/Documents/GitHub/MambaVector/src/mamba/base/engine/shape/attributes/bezier/MBezier.java</file>
             <file>file:/C:/Users/jmburu/Documents/GitHub/MambaVector/src/mamba/base/engine/shape/attributes/bezier/MCubicBezier.java</file>
             <file>file:/C:/Users/jmburu/Documents/GitHub/MambaVector/src/mamba/base/engine/shape/attributes/MPathPoint.java</file>
+=======
+        <group>
+            <file>file:/C:/Users/user/Documents/GitHub/MambaVector/src/mamba/base/engine/shape/attributes/MPathPointGeneric.java</file>
+            <file>file:/C:/Users/user/Documents/GitHub/MambaVector/src/mamba/base/engine/shape/attributes/MPathPoint.java</file>
+            <file>file:/C:/Users/user/Documents/GitHub/MambaVector/src/mamba/base/engine/shape/attributes/MPathSpline.java</file>
+            <file>file:/C:/Users/user/Documents/GitHub/MambaVector/src/mamba/base/engine/shape/attributes/MCubicPoint.java</file>
+            <file>file:/C:/Users/user/Documents/GitHub/MambaVector/src/mamba/base/engine/shape/attributes/MSpline.java</file>
+            <file>file:/C:/Users/user/Documents/GitHub/MambaVector/src/mamba/base/engine/shape/MPathCubic.java</file>
+        </group>
+        <group>
+            <file>file:/C:/Users/user/Documents/GitHub/MambaVector/src/mamba/base/engine/shape/attributes/MPathPointGeneric.java</file>
+            <file>file:/C:/Users/user/Documents/GitHub/MambaVector/src/mamba/base/engine/shape/attributes/MPathPoint.java</file>
+            <file>file:/C:/Users/user/Documents/GitHub/MambaVector/src/mamba/base/engine/shape/attributes/MPathSpline.java</file>
+            <file>file:/C:/Users/user/Documents/GitHub/MambaVector/src/mamba/base/engine/shape/attributes/MCubicPoint.java</file>
+            <file>file:/C:/Users/user/Documents/GitHub/MambaVector/src/mamba/util/MSplineUtility.java</file>
+            <file>file:/C:/Users/user/Documents/GitHub/MambaVector/src/mamba/base/engine/shape/attributes/MSpline.java</file>
+            <file>file:/C:/Users/user/Documents/GitHub/MambaVector/src/mamba/base/engine/shape/attributes/MPathEditing.java</file>
+            <file>file:/C:/Users/user/Documents/GitHub/MambaVector/src/mamba/base/engine/shape/MPathCubic.java</file>
+        </group>
+        <group>
+            <file>file:/C:/Users/user/Documents/GitHub/MambaVector/src/mamba/base/engine/shape/attributes/MPathPointGeneric.java</file>
+            <file>file:/C:/Users/user/Documents/GitHub/MambaVector/src/mamba/base/engine/shape/attributes/MPathPoint.java</file>
+            <file>file:/C:/Users/user/Documents/GitHub/MambaVector/src/mamba/base/engine/shape/attributes/MPathSpline.java</file>
+            <file>file:/C:/Users/user/Documents/GitHub/MambaVector/src/mamba/base/engine/shape/attributes/MCubicPoint.java</file>
+            <file>file:/C:/Users/user/Documents/GitHub/MambaVector/src/mamba/overlayselect/drag/MDragC.java</file>
+            <file>file:/C:/Users/user/Documents/GitHub/MambaVector/src/mamba/util/MSplineUtility.java</file>
+            <file>file:/C:/Users/user/Documents/GitHub/MambaVector/src/mamba/base/engine/shape/attributes/MSpline.java</file>
+            <file>file:/C:/Users/user/Documents/GitHub/MambaVector/src/mamba/base/engine/shape/attributes/MPathEditing.java</file>
+            <file>file:/C:/Users/user/Documents/GitHub/MambaVector/src/mamba/base/engine/shape/MPathCubic.java</file>
+>>>>>>> 51d9e6705b9e776872c8a9c74d2e47a5e5328673
         </group>
     </open-files>
 </project-private>

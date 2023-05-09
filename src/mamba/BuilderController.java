@@ -51,8 +51,9 @@ import mamba.base.engine.shape.MCircle;
 import mamba.base.engine.shape.MEllipse;
 import mamba.base.engine.shape.MImage;
 import mamba.base.engine.shape.MLine;
-import mamba.base.engine.shape.MPath;
+import mamba.base.engine.shape.MPathCubic;
 import mamba.base.engine.shape.MRectangle;
+import mamba.base.engine.shape.attributes.MSpline;
 import mamba.base.parser.svg.SVGDocument;
 import mamba.base.parser.svg.SVGParser;
 import mamba.components.BackgroundPane;
@@ -209,7 +210,7 @@ public class BuilderController implements Initializable {
         pathEditButtons.disable();
         
         engine2D.getSelectionModel().getSelectionProperty().addListener((o, ov, nv)->{
-            if(nv != null && nv instanceof MPath)
+            if(nv != null && nv instanceof MSpline)
             {
                 pathEditButtons.enable();
                 if(this.editToolGroup.getSelectedToggle() == null)
@@ -245,9 +246,9 @@ public class BuilderController implements Initializable {
         });
         
         bendTool.selectedProperty().addListener((o, ov, nv)->{
-            if(nv != null && engine2D.getSelected() instanceof MPath)
+            if(nv != null && engine2D.getSelected() instanceof MPathCubic)
             {
-                MPath path = (MPath)engine2D.getSelected();
+                MPathCubic path = (MPathCubic)engine2D.getSelected();
                 path.getIsBezierEdit().set(nv);
             }
         });
@@ -293,7 +294,7 @@ public class BuilderController implements Initializable {
     
     public void addPath(ActionEvent e)
     {
-        engine2D.addShape(new MPath());   
+        engine2D.addShape(new MPathCubic());   
     }
     
     public void clearAll(ActionEvent e)

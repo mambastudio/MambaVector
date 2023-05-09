@@ -33,7 +33,6 @@ import mamba.BuilderController;
 import mamba.base.MambaCanvas;
 import mamba.base.MambaShape;
 import mamba.base.engine.MEngine;
-import mamba.base.engine.shape.MPath;
 import mamba.base.engine.shape.attributes.MPathEditing;
 import mamba.base.math.MTransform;
 import mamba.beans.MBeanPropertyItem;

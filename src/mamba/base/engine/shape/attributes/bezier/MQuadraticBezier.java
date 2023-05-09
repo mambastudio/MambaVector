@@ -24,28 +24,28 @@
 package mamba.base.engine.shape.attributes.bezier;
 
 import javafx.geometry.Point2D;
-import mamba.base.engine.shape.MPath2;
+import mamba.base.engine.shape.MPathCubic;
 import mamba.util.MSplineUtility;
 
 /**
  *
  * @author user
  */
-public class MQuadraticBezier implements MBezier<MPath2>{
+public class MQuadraticBezier implements MBezier<MPathCubic>{
 
     private Point2D point;    
-    private Point2D control;
+    private Point2D c1;
     
     public MQuadraticBezier()
     {
         point = Point2D.ZERO;              
-        control = Point2D.ZERO;
+        c1 = Point2D.ZERO;
     }
     
     public MQuadraticBezier(Point2D point, Point2D control)
     {
         this.point = point;              
-        this.control = control;
+        this.c1 = control;
     }
     
     public Point2D getPoint()
@@ -60,12 +60,12 @@ public class MQuadraticBezier implements MBezier<MPath2>{
     
     public Point2D getControl()
     {
-        return control;
+        return c1;
     }
     
     public void setControl(Point2D control)
     {
-        this.control = control;
+        this.c1 = control;
     }
     
     public MCubicBezier convertToBezier(Point2D previousPoint)
