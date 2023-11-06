@@ -28,7 +28,6 @@ import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.geometry.Point2D;
 import mamba.base.engine.shape.MPathCubic;
-import mamba.base.math.MTransform;
 
 /**
  *
@@ -49,7 +48,7 @@ public class MCubicBezier implements MBezier<MPathCubic>{
      * 
      * Hence, cubic bezier class here is a reference to the current point 
      * (bezier point). It therefore means, to get control points like c1, it has 
-     * to obtain it in previous bezier point.
+     * to be obtained in previous bezier point.
      */
     
     

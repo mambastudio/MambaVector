@@ -1,7 +1,7 @@
 /*
  * The MIT License
  *
- * Copyright 2022 user.
+ * Copyright 2023 jmburu.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -21,32 +21,29 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package mamba.base.engine.shape.attributes.bezier;
+package mamba.base.engine.shape.spline;
 
-import mamba.base.engine.shape.attributes.MSpline;
+import javafx.beans.property.ObjectProperty;
+import javafx.beans.property.SimpleObjectProperty;
+import javafx.geometry.Point2D;
 
 /**
  *
- * @author user
- * @param <Spline>
- * 
- * bezier can either be quadratic or cubic, but in our application we focus on cubic
- * 
+ * @author jmburu
  */
-public interface MBezier<Spline extends MSpline<? extends MBezier>> {
-    default void setSpline(Spline spline)
-    {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-    default Spline getSpline()
-    {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
+public class MSplinePoint {
+    private final ObjectProperty<Point2D> controlProperty = new SimpleObjectProperty();
+    private final ObjectProperty<Point2D> pointProperty = new SimpleObjectProperty();
     
-    default boolean hasParentSpline()
+    public MSplinePoint(Point2D p)
     {
-        return getSpline() != null;
+        pointProperty.set(p);      
     }
     
-    
+    //when you add in spline
+    public MSplinePoint(Point2D p, Point2D control)
+    {
+        this.pointProperty.set(p);               
+        this.controlProperty.set(control);
+    }
 }

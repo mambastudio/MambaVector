@@ -7,7 +7,7 @@ package test;
 
 import javafx.geometry.Point2D;
 import mamba.base.engine.shape.MPathCubic;
-import mamba.base.engine.shape.attributes.bezier.MCubicBezier;
+import mamba.base.engine.shape.attributes.MCubicPoint;
 
 /**
  *
@@ -17,10 +17,10 @@ public class TestGeneral {
     public static void main(String... args)
     {
         MPathCubic path = new MPathCubic();
-        MCubicBezier b1 = new MCubicBezier(Point2D.ZERO);
-        MCubicBezier b2 = new MCubicBezier(Point2D.ZERO);
-        MCubicBezier b3 = new MCubicBezier(Point2D.ZERO);
-        path.addAll(b1, b2, b3);
+        MCubicPoint b1 = new MCubicPoint(Point2D.ZERO);
+        MCubicPoint b2 = new MCubicPoint(Point2D.ZERO);
+        MCubicPoint b3 = new MCubicPoint(Point2D.ZERO);
+        path.addAll(b1, b2);
         System.out.println(path.hasNext(b1));
         System.out.println(path);
     }

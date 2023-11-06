@@ -50,7 +50,7 @@ import mamba.util.MIntersection;
  *
  * @author user
  */
-public class MPathCubic extends MSpline<MCubicPoint>{
+public final class MPathCubic extends MSpline<MCubicPoint>{
     
     private final ObjectProperty<Color> lineColorProperty;
     private final DoubleProperty lineWidthProperty;
@@ -240,24 +240,23 @@ public class MPathCubic extends MSpline<MCubicPoint>{
         
         getGraphicsContext().beginPath(); 
         
-        for(MCubicPoint point : getList())
-        {
+        getList().forEach(point -> {
             boolean isFirst = this.isFirst(point);
             if(isFirst)
                 getGraphicsContext().moveTo(
-                        point.getPoint().getX(), 
+                        point.getPoint().getX(),
                         point.getPoint().getY());            
             else
             {
                 getGraphicsContext().bezierCurveTo(
-                        point.getC1().getX(), 
-                        point.getC1().getY(), 
-                        point.getC2().getX(), 
-                        point.getC2().getY(), 
+                        point.getC1().getX(),
+                        point.getC1().getY(),
+                        point.getC2().getX(),
+                        point.getC2().getY(),
                         point.getPoint().getX(), 
                         point.getPoint().getY());
             }
-        }                        
+        });                        
         
         if(this.isClosedProperty.get())
             getGraphicsContext().closePath();
@@ -313,7 +312,7 @@ public class MPathCubic extends MSpline<MCubicPoint>{
         if(this.hasEngine2D())
             this.getEngine2D().draw();
     }
-
+    
     @Override
     public BoundingBox getShapeBound() {
         MBound shapeBound = new MBound();
@@ -331,19 +330,17 @@ public class MPathCubic extends MSpline<MCubicPoint>{
     @Override
     public ObservableList<MDrag> initDragHandles() {
         ObservableList<MDrag> handles = FXCollections.observableArrayList();
-        for(MCubicPoint point: getList())
-        {
+        getList().forEach(point -> {
             handles.addAll(point.initDragHandles());
-        }
+        });
         return handles;
     }
 
     @Override
     public void updateDragHandles() {
-        for(MCubicPoint point: getList())
-        {
+        getList().forEach(point -> {
             point.updateDragHandles();
-        }    
+        });    
     }
 
     @Override

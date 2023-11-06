@@ -1,7 +1,7 @@
 /*
  * The MIT License
  *
- * Copyright 2022 user.
+ * Copyright 2023 jmburu.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -21,26 +21,30 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package mamba.base.engine.shape.attributes;
+package mamba.base.engine.shape.spline;
 
-import mamba.base.engine.shape.attributes.bezier.MBezier;
+import mamba.base.engine.shape.spline.bezier.MBezierN;
 import java.util.ArrayList;
 import java.util.Optional;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.geometry.Bounds;
+import javafx.geometry.Point2D;
 import mamba.base.MambaShapeAbstract;
 import mamba.base.engine.MEngine;
 import mamba.overlayselect.drag.MDrag;
+import mamba.util.MIntersection;
 
 /**
  *
- * @author user
+ * @author jmburu
  * @param <Bezier>
  */
-public abstract class MSpline<Bezier extends MBezier> extends MambaShapeAbstract<MEngine>{
+public class MSplineN<Bezier extends MBezierN> extends MambaShapeAbstract<MEngine> {
+    
     private final ObservableList<Bezier> bezierList;
         
-    public MSpline()
+    public MSplineN()
     {
         bezierList = FXCollections.observableArrayList();       
     }
@@ -149,11 +153,55 @@ public abstract class MSpline<Bezier extends MBezier> extends MambaShapeAbstract
         return bezierList.isEmpty();
     }
     
-    public abstract Optional<Bezier> containsDrag(MDrag drag);
+    public Optional<Bezier> containsDrag(MDrag drag)
+    {
+        return null;
+    }
         
     @Override
     public boolean isPath()
     {
         return true;
     }
+
+    @Override
+    public void draw() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public boolean intersect(Point2D parentPoint, MIntersection isect) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public boolean intersect(Bounds parentBound, MIntersection isect) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public Bounds getShapeBound() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public boolean isComplete() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public ObservableList<MDrag> initDragHandles() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public void updateDragHandles() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public boolean containsGlobalPoint(Point2D globalPoint) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+    
 }

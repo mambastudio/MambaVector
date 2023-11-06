@@ -1,7 +1,7 @@
 /*
  * The MIT License
  *
- * Copyright 2022 user.
+ * Copyright 2023 jmburu.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -21,32 +21,37 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package mamba.base.engine.shape.attributes.bezier;
+package mamba.base.engine.shape.spline.bezier;
 
-import mamba.base.engine.shape.attributes.MSpline;
+import mamba.base.engine.shape.spline.MSplineN;
+import mamba.base.engine.shape.spline.MSplinePoint;
 
 /**
  *
- * @author user
- * @param <Spline>
+ * @author jmburu
  * 
- * bezier can either be quadratic or cubic, but in our application we focus on cubic
+ * FIXME IN COMMENT
+ * Cubic Bezier in graphics is defined by a current point and two control points 
+ * (c1, c2).
+ *     
+ * In a spline, c1 belongs to the previous point, and c2 for current point, 
+ * but both belong in the same bezier class here which has a single 
+ * point (current point). Therefore, c1, has to be obtained in the previous
+ * point.
  * 
+ * Hence, cubic bezier class here is a reference to the current point 
+ * (bezier point). It therefore means, to get control points like c1, it has 
+ * to be obtained in previous bezier point.
  */
-public interface MBezier<Spline extends MSpline<? extends MBezier>> {
-    default void setSpline(Spline spline)
-    {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-    default Spline getSpline()
-    {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
+ 
+public class MCubicBezierN extends MBezierN<MSplineN<MCubicBezierN>>
+{
+    protected final MSplinePoint p1; 
+    protected final MSplinePoint p2;
     
-    default boolean hasParentSpline()
+    public MCubicBezierN(MSplinePoint p1, MSplinePoint p2)
     {
-        return getSpline() != null;
+        this.p1 = p1;
+        this.p2 = p2;
     }
-    
-    
 }

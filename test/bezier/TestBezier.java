@@ -1,7 +1,7 @@
 /*
  * The MIT License
  *
- * Copyright 2022 user.
+ * Copyright 2023 jmburu.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -21,32 +21,19 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package mamba.base.engine.shape.attributes.bezier;
+package bezier;
 
-import mamba.base.engine.shape.attributes.MSpline;
+import mamba.base.engine.shape.spline.bezier.MCubicBezierN;
+import mamba.base.engine.shape.spline.MSplineN;
 
 /**
  *
- * @author user
- * @param <Spline>
- * 
- * bezier can either be quadratic or cubic, but in our application we focus on cubic
- * 
+ * @author jmburu
  */
-public interface MBezier<Spline extends MSpline<? extends MBezier>> {
-    default void setSpline(Spline spline)
+public class TestBezier {
+    public static void main(String... args)
     {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        MSplineN<MCubicBezierN> spline = new MSplineN();
+        
     }
-    default Spline getSpline()
-    {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-    
-    default boolean hasParentSpline()
-    {
-        return getSpline() != null;
-    }
-    
-    
 }
