@@ -23,6 +23,7 @@
  */
 package mamba.base.engine.shape.spline.bezier;
 
+import javafx.geometry.Bounds;
 import mamba.base.engine.shape.spline.MSplineN;
 
 /**
@@ -46,4 +47,6 @@ public abstract class MBezierN<Spline extends MSplineN<? extends MBezierN>> {
     {
         return getSpline() != null;
     }
+    
+    public abstract Bounds getBound();
 }

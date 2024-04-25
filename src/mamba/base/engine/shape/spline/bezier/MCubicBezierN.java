@@ -23,8 +23,11 @@
  */
 package mamba.base.engine.shape.spline.bezier;
 
+import javafx.geometry.Bounds;
+import javafx.geometry.Point2D;
 import mamba.base.engine.shape.spline.MSplineN;
 import mamba.base.engine.shape.spline.MSplinePoint;
+import mamba.base.math.MBound;
 
 /**
  *
@@ -53,5 +56,18 @@ public class MCubicBezierN extends MBezierN<MSplineN<MCubicBezierN>>
     {
         this.p1 = p1;
         this.p2 = p2;
+    }
+    
+    public MCubicBezierN(Point2D p1, Point2D p2)
+    {
+        this.p1 = new MSplinePoint(p1);
+        this.p2 = new MSplinePoint(p2);
+    }
+
+    @Override
+    public Bounds getBound() {
+        MBound shapeBound = new MBound();
+        shapeBound.include(p1.getPoint(), p2.getPoint());
+        return shapeBound.getBoundingBox();
     }
 }

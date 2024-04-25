@@ -46,4 +46,34 @@ public class MSplinePoint {
         this.pointProperty.set(p);               
         this.controlProperty.set(control);
     }
+    
+    public Point2D getPoint()
+    {
+        return pointProperty.get();
+    }
+    
+    public void setPoint(Point2D point)
+    {
+        pointProperty.set(point);
+    }
+    
+    public ObjectProperty<Point2D> pointProperty()
+    {
+        return pointProperty;
+    }
+    
+    public Point2D getControl()
+    {
+        return controlProperty.get();
+    }
+    
+    public void setControl(Point2D control)
+    {
+        controlProperty.set(control);
+    }
+    
+    public ObjectProperty<Point2D> controlProperty()
+    {
+        return controlProperty;
+    }
 }

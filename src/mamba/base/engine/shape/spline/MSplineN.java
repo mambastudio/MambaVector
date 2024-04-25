@@ -26,12 +26,22 @@ package mamba.base.engine.shape.spline;
 import mamba.base.engine.shape.spline.bezier.MBezierN;
 import java.util.ArrayList;
 import java.util.Optional;
+import javafx.beans.property.BooleanProperty;
+import javafx.beans.property.DoubleProperty;
+import javafx.beans.property.ObjectProperty;
+import javafx.beans.property.SimpleBooleanProperty;
+import javafx.beans.property.SimpleDoubleProperty;
+import javafx.beans.property.SimpleObjectProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.geometry.Bounds;
 import javafx.geometry.Point2D;
+import javafx.scene.paint.Color;
+import javafx.scene.shape.StrokeLineCap;
+import static javafx.scene.shape.StrokeLineCap.BUTT;
 import mamba.base.MambaShapeAbstract;
 import mamba.base.engine.MEngine;
+import mamba.base.math.MBound;
 import mamba.overlayselect.drag.MDrag;
 import mamba.util.MIntersection;
 
@@ -43,10 +53,37 @@ import mamba.util.MIntersection;
 public class MSplineN<Bezier extends MBezierN> extends MambaShapeAbstract<MEngine> {
     
     private final ObservableList<Bezier> bezierList;
+    
+    private final ObjectProperty<Color> lineColorProperty;
+    private final DoubleProperty lineWidthProperty;
+    private final BooleanProperty isClosedProperty;
+    private final ObjectProperty<Color> fillColorProperty;
+    private final BooleanProperty fillPathProperty;
+    private final ObjectProperty<StrokeLineCap> lineCapProperty;
+    private final BooleanProperty dashedLineProperty;
+    private final DoubleProperty dashSizeProperty;
+    private final DoubleProperty gapSizeProperty;
+    
+    private final BooleanProperty isBezierEdit;
         
     public MSplineN()
     {
         bezierList = FXCollections.observableArrayList();       
+        
+        lineColorProperty   = new SimpleObjectProperty(Color.BLACK);
+        lineWidthProperty   = new SimpleDoubleProperty(2);
+        fillColorProperty   = new SimpleObjectProperty(Color.BLACK);
+        isClosedProperty    = new SimpleBooleanProperty(false);
+        fillPathProperty    = new SimpleBooleanProperty(false);
+        dashedLineProperty  = new SimpleBooleanProperty(false);
+        dashSizeProperty    = new SimpleDoubleProperty(5);
+        gapSizeProperty     = new SimpleDoubleProperty(5);
+        lineCapProperty     = new SimpleObjectProperty(BUTT);
+        
+        isBezierEdit = new SimpleBooleanProperty(false);
+        isBezierEdit.addListener((o, ov, nv)->{
+            getEngine2D().getSelectionModel().refreshDragHandlesAndDraw(); //refresh overlay
+        });        
     }
         
     public int getIndex(Bezier bezier)
@@ -68,8 +105,9 @@ public class MSplineN<Bezier extends MBezierN> extends MambaShapeAbstract<MEngin
     
     public void addAll(ArrayList<Bezier> bezierList)
     {
-        for(Bezier bezier : bezierList)
+        bezierList.forEach(bezier -> {
             add(bezier);
+        });
     }
     
     public void remove(Bezier bezier)
@@ -163,6 +201,141 @@ public class MSplineN<Bezier extends MBezierN> extends MambaShapeAbstract<MEngin
     {
         return true;
     }
+    
+    public Color getLineColor()
+    {
+        return lineColorProperty.get();
+    }
+    
+    public void setLineColor(Color color)
+    {
+        this.lineColorProperty.set(color);
+    }
+        
+    public ObjectProperty<Color> lineColorProperty()
+    {
+        return lineColorProperty;
+    }
+    
+    public double getLineWidth()
+    {
+        return lineWidthProperty.get();
+    }
+    
+    public void setLineWidth(double lineWidth)
+    {
+        this.lineWidthProperty.set(lineWidth);
+    }
+    
+    public DoubleProperty lineWidthProperty()
+    {
+        return lineWidthProperty;
+    } 
+    
+    public Color getFillColor()
+    {
+        return fillColorProperty.get();
+    }
+    
+    public void setFillColor(Color fillColor)
+    {
+        this.fillColorProperty.set(fillColor);
+    }
+    
+    public ObjectProperty<Color> fillColorProperty()
+    {
+        return fillColorProperty;
+    }  
+    
+    public boolean getIsClosed()
+    {
+        return isClosedProperty.get();
+    }
+    
+    public void setIsClosed(boolean isClosed)
+    {
+        this.isClosedProperty.set(isClosed);
+    }
+    
+    public BooleanProperty isClosedProperty()
+    {
+        return isClosedProperty;
+    }  
+    
+    public boolean getFillPath()
+    {
+        return fillPathProperty.get();
+    }
+    
+    public void setFillPath(boolean fillPath)
+    {
+        this.fillPathProperty.set(fillPath);
+    }
+    
+    public BooleanProperty fillPathProperty()
+    {
+        return fillPathProperty;
+    } 
+    
+    public boolean getDashedLine()
+    {
+        return dashedLineProperty.get();
+    }
+    
+    public void setDashedLine(boolean dashedLine)
+    {
+        this.dashedLineProperty.set(dashedLine);
+    }
+    
+    public BooleanProperty dashedLineProperty()
+    {
+        return dashedLineProperty;
+    } 
+    
+    public double getDashSize()
+    {
+        return dashSizeProperty.get();
+    }
+    
+    public void setDashSize(double dashSize)
+    {
+        this.dashSizeProperty.set(dashSize);
+    }
+    
+    public DoubleProperty dashSizeProperty()
+    {
+        return dashSizeProperty;
+    }  
+    
+    public double getGapSize()
+    {
+        return gapSizeProperty.get();
+    }
+    
+    public void setGapSize(double gapSize)
+    {
+        this.gapSizeProperty.set(gapSize);
+    }
+    
+    public DoubleProperty gapSizeProperty()
+    {
+        return gapSizeProperty;
+    }  
+    
+    public StrokeLineCap getLineCap()
+    {
+        return lineCapProperty.get();
+    }
+    
+    public void setLineCap(StrokeLineCap cap)
+    {
+        this.lineCapProperty.set(cap);
+    }
+    
+    public ObjectProperty<StrokeLineCap> lineCapProperty()
+    {
+        return lineCapProperty;
+    }    
 
     @Override
     public void draw() {
@@ -171,22 +344,44 @@ public class MSplineN<Bezier extends MBezierN> extends MambaShapeAbstract<MEngin
 
     @Override
     public boolean intersect(Point2D parentPoint, MIntersection isect) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        //transform p to local coordinates
+        Point2D invP = this.localToShapeTransform(parentPoint);
+        Bounds bound = getShapeBound();
+        if(bound.contains(invP))
+        {
+            isect.shape = this;
+            return true;
+        }
+        else 
+            return false;
     }
 
     @Override
     public boolean intersect(Bounds parentBound, MIntersection isect) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        //transform p to local coordinates
+        Bounds invBound = this.localToShapeTransform(parentBound);
+        Bounds bound = getShapeBound();        
+        if(bound.contains(invBound))
+        {
+            isect.shape = this;
+            return true;
+        }
+        else 
+            return false;
     }
 
     @Override
     public Bounds getShapeBound() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        MBound shapeBound = new MBound();
+        getList().forEach(bezier -> {        
+            shapeBound.include(bezier.getBound());
+        });        
+        return shapeBound.getBoundingBox();
     }
 
     @Override
     public boolean isComplete() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return size() > 0;
     }
 
     @Override
