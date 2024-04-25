@@ -1,7 +1,7 @@
 /*
  * The MIT License
  *
- * Copyright 2022 user.
+ * Copyright 2024 user.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -21,40 +21,29 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package mamba.base.engine.shape.attributes;
+package mamba.base.engine.shape.spline;
 
-import javafx.collections.ObservableList;
 import javafx.geometry.Point2D;
-import mamba.overlayselect.drag.MDrag;
 
 /**
  *
  * @author user
- * @param <Bezier>
  */
-public interface MPathPointGeneric<Bezier extends MPathSpline> 
-{
-    public MPathTypeGeneric getPathType();
-    public ObservableList<MDrag> initDragHandles();
-    public void updateDragHandles();
-    
-    public default Bezier getBezier()
+public interface SplinePoint {
+    default void setSpline(Spline spline)
     {
-        return null;
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+    default Spline getSpline()
+    {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
     
-    public default Point2D getShapePoint()
+    default boolean hasParentSpline()
     {
-        return null;
+        return getSpline() != null;
     }
     
-    public default void setShapePoint(Point2D point)
-    {
-        
-    }
-    
-    public Point2D getFirstControl();  
-    public Point2D getSecondControl();
-    
-    public boolean contains(MDrag drag);
+    public Point2D getPoint();
+    public void setPoint(Point2D point);
 }

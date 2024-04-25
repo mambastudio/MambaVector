@@ -49,7 +49,7 @@ public class RecursiveTreeItem<T> extends TreeItem<T> {
             }
         });
 
-        this.setExpanded(true);
+        this.expandedProperty().set(true);
     }
     
     private void addChildrenListener(T value){

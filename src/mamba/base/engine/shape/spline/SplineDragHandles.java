@@ -1,7 +1,7 @@
 /*
  * The MIT License
  *
- * Copyright 2022 user.
+ * Copyright 2024 user.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -21,15 +21,18 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package mamba.base.engine.shape.attributes;
+package mamba.base.engine.shape.spline;
 
-import mamba.base.MambaEngine2D;
+import javafx.collections.ObservableList;
+import mamba.overlayselect.drag.MDrag;
 
 /**
  *
  * @author user
- * @param <Engine2D>
+ * @param <S>
  */
-public interface MPathTypeGeneric<Engine2D extends MambaEngine2D> {
-    
+public interface SplineDragHandles<S extends Spline> {
+    public ObservableList<MDrag> initDragHandles();
+    public void updateDragHandles();   
+    public boolean containsDrag(MDrag drag);
 }
