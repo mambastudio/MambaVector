@@ -2,31 +2,6 @@
 <project-private xmlns="http://www.netbeans.org/ns/project-private/1">
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
-        <group>
-            <file>file:/C:/Users/user/Documents/GitHub/MambaVector/src/mamba/base/engine/shape/spline/SplineCubicPoint.java</file>
-            <file>file:/C:/Users/user/Documents/GitHub/MambaVector/src/mamba/base/engine/shape/spline/MSplinePoint.java</file>
-            <file>file:/C:/Users/user/Documents/GitHub/MambaVector/src/mamba/base/engine/shape/MCircle.java</file>
-            <file>file:/C:/Users/user/Documents/GitHub/MambaVector/src/mamba/base/engine/shape/spline/SplinePoint.java</file>
-            <file>file:/C:/Users/user/Documents/GitHub/MambaVector/src/mamba/base/engine/shape/attributes/MSplineDragHandles.java</file>
-            <file>file:/C:/Users/user/Documents/GitHub/MambaVector/src/mamba/base/engine/shape/attributes/bezier/MCubicBezier.java</file>
-            <file>file:/C:/Users/user/Documents/GitHub/MambaVector/src/mamba/base/MambaShapeAbstract.java</file>
-            <file>file:/C:/Users/user/Documents/GitHub/MambaVector/src/mamba/base/engine/shape/attributes/MArcData.java</file>
-            <file>file:/C:/Users/user/Documents/GitHub/MambaVector/src/mamba/base/engine/shape/spline/bezier/MCubicBezierN.java</file>
-            <file>file:/C:/Users/user/Documents/GitHub/MambaVector/src/mamba/base/engine/shape/spline/Spline.java</file>
-            <file>file:/C:/Users/user/Documents/GitHub/MambaVector/src/mamba/base/engine/shape/spline/bezier/MBezierN.java</file>
-            <file>file:/C:/Users/user/Documents/GitHub/MambaVector/src/mamba/base/engine/shape/spline/SplineCubic.java</file>
-            <file>file:/C:/Users/user/Documents/GitHub/MambaVector/src/mamba/base/engine/shape/spline/SplineDragHandles.java</file>
-            <file>file:/C:/Users/user/Documents/GitHub/MambaVector/src/mamba/base/engine/shape/attributes/MCubicPoint.java</file>
-            <file>file:/C:/Users/user/Documents/GitHub/MambaVector/src/mamba/BuilderController.java</file>
-            <file>file:/C:/Users/user/Documents/GitHub/MambaVector/src/mamba/snapshot/NodeSnapshot.java</file>
-            <file>file:/C:/Users/user/Documents/GitHub/MambaVector/src/mamba/base/engine/shape/attributes/bezier/MQuadraticBezier.java</file>
-            <file>file:/C:/Users/user/Documents/GitHub/MambaVector/src/mamba/base/engine/shape/spline/MSplineN.java</file>
-            <file>file:/C:/Users/user/Documents/GitHub/MambaVector/src/mamba/util/MSplineUtility.java</file>
-            <file>file:/C:/Users/user/Documents/GitHub/MambaVector/src/mamba/base/engine/shape/attributes/MSpline.java</file>
-            <file>file:/C:/Users/user/Documents/GitHub/MambaVector/src/mamba/base/engine/shape/attributes/bezier/MBezier.java</file>
-            <file>file:/C:/Users/user/Documents/GitHub/MambaVector/src/mamba/base/engine/shape/attributes/MPathEditing.java</file>
-            <file>file:/C:/Users/user/Documents/GitHub/MambaVector/test/bezier/TestBezier.java</file>
-            <file>file:/C:/Users/user/Documents/GitHub/MambaVector/src/mamba/base/engine/shape/MPathCubic.java</file>
-        </group>
+        <group/>
     </open-files>
 </project-private>
